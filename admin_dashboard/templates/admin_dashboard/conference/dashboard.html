@@ -1,0 +1,153 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block page_title %}Conference Venues & Event Inquiries{% endblock %}
+{% block page_subtitle %}Manage banquet halls, capacities, event pricing, and guest catering requests.{% endblock %}
+
+{% block breadcrumbs %}
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<span class="text-neutral-500">Events & Banquets</span>
+{% endblock %}
+
+{% block page_actions %}
+<div class="flex items-center gap-3">
+    {% if active_tab == 'venues' %}
+    <a href="{% url 'admin_dashboard:event_venue_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+        <i class="fa-solid fa-plus mr-1.5"></i> Add Banquet Hall
+    </a>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Tabs navigation -->
+<div class="flex items-center gap-2 border-b border-neutral-200 dark:border-neutral-800 mb-8">
+    <a href="?tab=venues" 
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'venues' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+        Event Venues (Banquet Halls)
+    </a>
+    <a href="?tab=inquiries" 
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'inquiries' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+        Event Inquiries
+    </a>
+</div>
+
+<!-- Tab content -->
+<div class="space-y-6">
+
+    {% if active_tab == 'venues' %}
+    <!-- Venues Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for venue in venues %}
+        <div class="custom-card rounded-2xl overflow-hidden shadow-sm flex flex-col justify-between">
+            <div class="h-48 w-full bg-neutral-200 dark:bg-neutral-800 relative">
+                {% if venue.image %}
+                <img src="{{ venue.image.url }}" alt="{{ venue.name }}" class="h-full w-full object-cover">
+                {% else %}
+                <div class="h-full w-full flex items-center justify-center text-neutral-500">No Image Uploaded</div>
+                {% endif %}
+            </div>
+            <div class="p-6 flex-grow">
+                <h4 class="text-lg font-bold text-neutral-900 dark:text-neutral-100 font-serif mb-2">{{ venue.name }}</h4>
+                <div class="space-y-1 mb-4 text-xs text-neutral-500">
+                    <p><i class="fa-solid fa-user-group w-4 mr-1"></i>Max capacity: {{ venue.capacity }} Pax</p>
+                    <p><i class="fa-solid fa-tags w-4 mr-1"></i>Starting Rental Rate: <strong class="text-luxuryGold-500">NPR {{ venue.base_price }}</strong></p>
+                    <p><i class="fa-solid fa-layer-group w-4 mr-1"></i>Layout Options: {{ venue.layout_options }}</p>
+                </div>
+                <p class="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-3 leading-relaxed">
+                    {{ venue.description }}
+                </p>
+            </div>
+            <div class="px-6 py-4 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/10 flex items-center justify-between">
+                <div>
+                    {% if venue.is_active %}
+                    <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-semibold text-[11px]">Active</span>
+                    {% else %}
+                    <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 font-semibold text-[11px]">Disabled</span>
+                    {% endif %}
+                </div>
+                <div class="flex items-center gap-3 text-sm">
+                    <a href="{% url 'admin_dashboard:event_venue_edit' venue.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </a>
+                    <a href="{% url 'admin_dashboard:event_venue_delete' venue.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-2 text-center text-sm text-neutral-500 py-12">
+            No conference event venues configured yet.
+        </div>
+        {% endfor %}
+    </div>
+
+    {% elif active_tab == 'inquiries' %}
+    <!-- Event Inquiries list -->
+    <div class="custom-card rounded-2xl overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+                    <th class="px-6 py-4 font-semibold">Guest</th>
+                    <th class="px-6 py-4 font-semibold">Hall Requested</th>
+                    <th class="px-6 py-4 font-semibold">Event Date</th>
+                    <th class="px-6 py-4 font-semibold">Guests Count</th>
+                    <th class="px-6 py-4 font-semibold">Catering Needed</th>
+                    <th class="px-6 py-4 font-semibold">Status</th>
+                    <th class="px-6 py-4 text-right font-semibold">Toggle Status</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                {% for inq in inquiries %}
+                <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10 transition duration-150">
+                    <td class="px-6 py-4">
+                        <strong class="text-neutral-900 dark:text-neutral-200 block">{{ inq.name }}</strong>
+                        <span class="text-xs text-neutral-500 block">{{ inq.email }} · {{ inq.phone }}</span>
+                        {% if inq.notes %}
+                        <span class="text-xs text-neutral-400 italic block mt-1">"{{ inq.notes|truncatewords:8 }}"</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-medium">{{ inq.venue.name }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-medium">{{ inq.event_date }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-semibold text-center">{{ inq.guest_count }} Pax</td>
+                    <td class="px-6 py-4">
+                        {% if inq.catering_required %}
+                        <span class="text-emerald-500 font-semibold"><i class="fa-solid fa-utensils mr-1"></i> Yes</span>
+                        {% else %}
+                        <span class="text-neutral-500 font-medium">No</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold uppercase
+                                     {% if inq.status == 'processed' %}bg-emerald-500/10 text-emerald-500
+                                     {% elif inq.status == 'pending' %}bg-amber-500/10 text-amber-500
+                                     {% else %}bg-rose-500/10 text-rose-500{% endif %}">
+                            {{ inq.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <form action="{% url 'admin_dashboard:event_inquiry_update_status' inq.id %}" method="post" class="m-0 flex items-center justify-end gap-1.5">
+                            {% csrf_token %}
+                            <select name="status" onchange="this.form.submit()" 
+                                    class="px-2 py-1 rounded border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-xs cursor-pointer">
+                                <option value="pending" {% if inq.status == 'pending' %}selected{% endif %}>Pending</option>
+                                <option value="processed" {% if inq.status == 'processed' %}selected{% endif %}>Processed</option>
+                                <option value="cancelled" {% if inq.status == 'cancelled' %}selected{% endif %}>Cancel</option>
+                            </select>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center text-sm text-neutral-500">
+                        No event inquiries registered yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

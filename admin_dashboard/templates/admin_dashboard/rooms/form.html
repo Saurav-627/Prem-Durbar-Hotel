@@ -1,0 +1,431 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block page_title %}{{ title }}{% endblock %}
+{% block page_subtitle %}Manage room characteristics, pricing, capacities, and inline details.{% endblock %}
+
+{% block breadcrumbs %}
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<a href="{% url 'admin_dashboard:room_dashboard' %}" class="hover:text-luxuryGold-400">Rooms</a>
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<span class="text-neutral-500">Edit / Add</span>
+{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data" class="space-y-8 max-w-[90%] mx-auto">
+    {% csrf_token %}
+    
+    {% if form.errors or image_formset.errors or policy_formset.errors or price_formset.errors or currency_price_formset.errors %}
+    <div class="p-6 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-800 dark:text-rose-300 text-sm space-y-2">
+        <h4 class="font-bold text-base text-rose-700 dark:text-rose-400">Please correct the following errors:</h4>
+        <ul class="list-disc pl-5 space-y-1">
+            {% if form.non_field_errors %}
+                {% for err in form.non_field_errors %}
+                    <li>{{ err }}</li>
+                {% endfor %}
+            {% endif %}
+            {% for field in form %}
+                {% if field.errors %}
+                    <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if image_formset.non_form_errors %}
+                {% for err in image_formset.non_form_errors %}
+                    <li><strong>Image Gallery:</strong> {{ err }}</li>
+                {% endfor %}
+            {% endif %}
+            {% for f in image_formset %}
+                {% if f.errors %}
+                    <li><strong>Image Gallery Row {{ forloop.counter }}:</strong> {{ f.errors|striptags }}</li>
+                {% endif %}
+            {% endfor %}
+
+            {% if policy_formset.non_form_errors %}
+                {% for err in policy_formset.non_form_errors %}
+                    <li><strong>Room Policies:</strong> {{ err }}</li>
+                {% endfor %}
+            {% endif %}
+            {% for f in policy_formset %}
+                {% if f.errors %}
+                    <li><strong>Room Policies Row {{ forloop.counter }}:</strong> {{ f.errors|striptags }}</li>
+                {% endif %}
+            {% endfor %}
+
+            {% if price_formset.non_form_errors %}
+                {% for err in price_formset.non_form_errors %}
+                    <li><strong>Seasonal Pricing:</strong> {{ err }}</li>
+                {% endfor %}
+            {% endif %}
+            {% for f in price_formset %}
+                {% if f.errors %}
+                    <li><strong>Seasonal Pricing Row {{ forloop.counter }}:</strong> {{ f.errors|striptags }}</li>
+                {% endif %}
+            {% endfor %}
+
+            {% if currency_price_formset.non_form_errors %}
+                {% for err in currency_price_formset.non_form_errors %}
+                    <li><strong>Multi-Currency Pricing:</strong> {{ err }}</li>
+                {% endfor %}
+            {% endif %}
+            {% for f in currency_price_formset %}
+                {% if f.errors %}
+                    <li><strong>Multi-Currency Pricing Row {{ forloop.counter }}:</strong> {{ f.errors|striptags }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    
+    <!-- Core fields card -->
+    <div class="custom-card rounded-2xl p-6 bg-white/50 dark:bg-neutral-900/50">
+        <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-6 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+            Core Specifications
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Title -->
+            <div class="md:col-span-2">
+                <label class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">Room Title / Name <span class="text-rose-500">*</span></label>
+                {{ form.title }}
+                {{ form.title.errors }}
+            </div>
+            
+            <!-- Slug (auto-generated from title) -->
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">
+                    Slug URL Path
+                    <span class="normal-case font-normal text-neutral-400 ml-1">(auto-generated from title)</span>
+                </label>
+                {{ form.slug }}
+                {{ form.slug.errors }}
+            </div>
+
+            <!-- Category -->
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">Category <span class="text-rose-500">*</span></label>
+                {{ form.category }}
+                {{ form.category.errors }}
+            </div>
+            <!-- Tax Percentage -->
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">Tax Percentage (%)</label>
+                {{ form.tax_percentage }}
+                {{ form.tax_percentage.errors }}
+            </div>
+
+            <!-- Inventory Rooms — read-only, driven by category selection -->
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">Total Room Units Inventory</label>
+                <div id="inventory-display"
+                     class="flex items-center gap-3 px-4 py-3 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-900/50 text-sm font-medium text-neutral-700 dark:text-neutral-300 min-h-[42px]">
+                    <i class="fa-solid fa-layer-group text-luxuryGold-500 text-xs"></i>
+                    <span id="inventory-value" class="text-neutral-400 italic">Select a category to see inventory</span>
+                </div>
+            </div>
+
+            <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const categoryMap = {{ category_inventory_map|safe }};
+
+                // ── Slug auto-generation from title ──────────────────────────
+                const titleInput = document.getElementById('id_title');
+                const slugInput  = document.getElementById('id_slug');
+                if (titleInput && slugInput) {
+                    let userEditedSlug = slugInput.value.length > 0;  // pre-filled = edit mode
+
+                    function toSlug(str) {
+                        return str.toLowerCase().trim()
+                            .replace(/[^a-z0-9\s-]/g, '')
+                            .replace(/\s+/g, '-')
+                            .replace(/-+/g, '-');
+                    }
+
+                    titleInput.addEventListener('input', function () {
+                        if (!userEditedSlug) {
+                            slugInput.value = toSlug(this.value);
+                        }
+                    });
+                    slugInput.addEventListener('input', function () {
+                        userEditedSlug = this.value.length > 0;
+                    });
+                }
+
+                // ── Inventory display from category ──────────────────────────
+                const categorySelect   = document.getElementById('id_category');
+                const inventoryValue   = document.getElementById('inventory-value');
+
+                if (categorySelect && inventoryValue) {
+                    function updateInventory() {
+                        const id = categorySelect.value;
+                        if (id && categoryMap[id] !== undefined) {
+                            inventoryValue.textContent = categoryMap[id] + ' unit(s)';
+                            inventoryValue.classList.remove('italic', 'text-neutral-400');
+                            inventoryValue.classList.add('font-semibold', 'text-neutral-800', 'dark:text-neutral-100');
+                        } else {
+                            inventoryValue.textContent = 'Select a category to see inventory';
+                            inventoryValue.classList.add('italic', 'text-neutral-400');
+                            inventoryValue.classList.remove('font-semibold', 'text-neutral-800', 'dark:text-neutral-100');
+                        }
+                    }
+
+                    categorySelect.addEventListener('change', updateInventory);
+                    updateInventory(); // run on load for edit mode
+                }
+            });
+            </script>
+
+            <!-- Amenities/Highlights -->
+            <div class="md:col-span-2">
+                <label class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">Highlights (Highlights text) <span class="text-rose-500">*</span></label>
+                {{ form.highlights }}
+                {{ form.highlights.errors }}
+            </div>
+
+            <!-- Description -->
+            <div class="md:col-span-2">
+                <label class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">Description Detail <span class="text-rose-500">*</span></label>
+                {{ form.description }}
+                {{ form.description.errors }}
+            </div>
+
+            <!-- Toggles -->
+            <div class="md:col-span-2 flex flex-wrap gap-8 items-center pt-2">
+                <div class="flex items-center gap-3">
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        {{ form.is_published }}
+                        <div class="w-11 h-6 bg-neutral-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-luxuryGold-500"></div>
+                    </label>
+                    <span class="text-sm font-semibold text-neutral-700">Publish Visibility (Live on website)</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        {{ form.is_featured }}
+                        <div class="w-11 h-6 bg-neutral-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-luxuryGold-500"></div>
+                    </label>
+                    <span class="text-sm font-semibold text-neutral-700">Mark as Featured Type</span>
+                </div>
+            </div>
+
+            <!-- Facilities -->
+            <div class="md:col-span-2">
+                <label class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">Select Amenities / Facilities</label>
+                {{ form.facilities }}
+                {{ form.facilities.errors }}
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Room Capacity & Features card -->
+    <div class="custom-card rounded-2xl p-6 bg-white/50 dark:bg-neutral-900/50 mt-6">
+        <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-6 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+            Capacity & Dimensions
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <!-- Room Size -->
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">Room Size (sq. ft.) <span class="text-rose-500">*</span></label>
+                {{ form.room_size }}
+                {{ form.room_size.errors }}
+            </div>
+            <!-- Bed Type -->
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">Bed Type <span class="text-rose-500">*</span></label>
+                {{ form.bed_type }}
+                {{ form.bed_type.errors }}
+            </div>
+            <!-- Max Adults -->
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">Max Adults <span class="text-rose-500">*</span></label>
+                {{ form.max_adults }}
+                {{ form.max_adults.errors }}
+            </div>
+            <!-- Max Children -->
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">Max Children <span class="text-rose-500">*</span></label>
+                {{ form.max_children }}
+                {{ form.max_children.errors }}
+            </div>
+            <!-- Virtual Tour URL -->
+            <div class="md:col-span-2">
+                <label class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">3D Virtual Tour URL (Optional)</label>
+                {{ form.virtual_tour_url }}
+                {{ form.virtual_tour_url.errors }}
+            </div>
+            <!-- Video URL -->
+            <div class="md:col-span-2">
+                <label class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">YouTube/Vimeo Video URL (Optional)</label>
+                {{ form.video_url }}
+                {{ form.video_url.errors }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Images Inline Formset -->
+    <div class="custom-card rounded-2xl p-6 bg-white/50 dark:bg-neutral-900/50">
+        <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-6 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+            Image Gallery (Drag/Drop or Select Images)
+        </h3>
+        {{ image_formset.management_form }}
+        <div class="space-y-4">
+            {% for image_form in image_formset %}
+            <div class="flex items-center justify-between gap-4 p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/20">
+                {{ image_form.id }}
+                
+                <div class="flex-1">
+                    {{ image_form.image }}
+                    {{ image_form.image.errors }}
+                </div>
+                
+                {% if image_form.instance.pk and image_form.instance.image %}
+                <div class="h-16 w-16 shrink-0 rounded overflow-hidden border border-neutral-200 dark:border-neutral-800 bg-neutral-100">
+                    <img src="{{ image_form.instance.image.url }}" alt="Room Image" class="h-full w-full object-cover">
+                </div>
+                {% endif %}
+                
+                {% if image_formset.can_delete %}
+                <div class="flex items-center gap-2 text-xs font-semibold text-rose-500">
+                    {{ image_form.DELETE }}
+                    <span>Delete Image</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Policies Inline Formset -->
+    <div class="custom-card rounded-2xl p-6 bg-white/50 dark:bg-neutral-900/50">
+        <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-6 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+            Room Policies rules
+        </h3>
+        {{ policy_formset.management_form }}
+        <div class="space-y-4">
+            {% for policy_form in policy_formset %}
+            <div class="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/20 space-y-3">
+                {{ policy_form.id }}
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-neutral-700 mb-1">Policy Title</label>
+                        {{ policy_form.title }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-neutral-700 mb-1">Policy Description</label>
+                        {{ policy_form.description }}
+                    </div>
+                </div>
+                {% if policy_formset.can_delete %}
+                <div class="flex items-center gap-2 text-xs font-semibold text-rose-500 pt-1">
+                    {{ policy_form.DELETE }}
+                    <span>Delete Policy Rule</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Seasonal Price override Formset -->
+    <div class="custom-card rounded-2xl p-6 bg-white/50 dark:bg-neutral-900/50">
+        <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-6 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+            Seasonal Pricing Overrides
+        </h3>
+        {{ price_formset.management_form }}
+        <div class="space-y-4">
+            {% for price_form in price_formset %}
+            <div class="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/20 space-y-3">
+                {{ price_form.id }}
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-neutral-700 mb-1">Season Name</label>
+                        {{ price_form.name }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-neutral-700 mb-1">Currency</label>
+                        {{ price_form.currency }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-neutral-700 mb-1">Override Price Rate</label>
+                        {{ price_form.price_override }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-neutral-700 mb-1">Start Date</label>
+                        {{ price_form.start_date }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-neutral-700 mb-1">End Date</label>
+                        {{ price_form.end_date }}
+                    </div>
+                </div>
+                <div class="flex items-center justify-between gap-4 pt-2">
+                    <div class="flex items-center gap-3">
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            {{ price_form.is_active }}
+                            <div class="w-11 h-6 bg-neutral-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-luxuryGold-500"></div>
+                        </label>
+                        <span class="text-xs font-semibold text-neutral-700 dark:text-neutral-300">Rule Is Active</span>
+                    </div>
+                    {% if price_formset.can_delete %}
+                    <div class="flex items-center gap-2 text-xs font-semibold text-rose-500">
+                        {{ price_form.DELETE }}
+                        <span>Delete Price Override</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Currency Pricing Formset -->
+    <div class="custom-card rounded-2xl p-6 bg-white/50 dark:bg-neutral-900/50 mt-6">
+        <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-6 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+            Multi-Currency Base Prices
+        </h3>
+        {{ currency_price_formset.management_form }}
+        <div class="space-y-4">
+            {% for cp_form in currency_price_formset %}
+            <div class="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-950/20 space-y-3">
+                {{ cp_form.id }}
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">Currency Type</label>
+                        {{ cp_form.currency }}
+                        {{ cp_form.currency.errors }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">Base Price (Per Night)</label>
+                        {{ cp_form.base_price }}
+                        {{ cp_form.base_price.errors }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 uppercase tracking-wider mb-2">Discount Rate (Optional)</label>
+                        {{ cp_form.discount_price }}
+                        {{ cp_form.discount_price.errors }}
+                    </div>
+                </div>
+                {% if currency_price_formset.can_delete and cp_form.instance.pk %}
+                <div class="flex items-center justify-end gap-2 text-xs font-semibold text-rose-500 pt-2">
+                    {{ cp_form.DELETE }}
+                    <span>Delete Price for this Currency</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Action footer bar -->
+    <div class="mt-8 pt-6 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-end gap-4">
+        <button type="submit" 
+                class="px-6 py-3 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-xl shadow-lg shadow-luxuryGold-500/10 transition">
+            Save Specifications
+        </button>
+        <a href="{% url 'admin_dashboard:room_dashboard' %}" 
+           class="px-6 py-3 border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400 font-semibold rounded-xl transition">
+            Cancel
+        </a>
+    </div>
+
+</form>
+{% endblock %}

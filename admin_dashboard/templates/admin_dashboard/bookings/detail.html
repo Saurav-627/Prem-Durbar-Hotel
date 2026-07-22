@@ -1,0 +1,271 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block page_title %}Booking Details{% endblock %}
+{% block page_subtitle %}Review guest reservation parameters, check-in status, payments logs and invoice info.{% endblock %}
+
+{% block breadcrumbs %}
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<a href="{% url 'admin_dashboard:booking_list' %}" class="hover:text-luxuryGold-400">Bookings</a>
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<span class="text-neutral-500">{{ booking.booking_uid|slice:":8" }}...</span>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- Left columns: Details & Payments -->
+    <div class="lg:col-span-2 space-y-8">
+        
+        <!-- Booking details card -->
+        <div class="custom-card rounded-2xl p-6 relative">
+            <div class="absolute top-6 right-6">
+                <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider
+                             {% if booking.status == 'confirmed' %}bg-emerald-500/10 text-emerald-500
+                             {% elif booking.status == 'pending' %}bg-amber-500/10 text-amber-500
+                             {% elif booking.status == 'checked_in' %}bg-blue-500/10 text-blue-500
+                             {% elif booking.status == 'checked_out' %}bg-neutral-500/10 text-neutral-400
+                             {% elif booking.status == 'cancelled' %}bg-rose-500/10 text-rose-500
+                             {% else %}bg-neutral-200 text-neutral-600{% endif %}">
+                    {{ booking.get_status_display }}
+                </span>
+            </div>
+
+            <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-6 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+                Reservation Parameters
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8 text-sm">
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">Booking UID</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1">{{ booking.booking_uid }}</strong>
+                </div>
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">Source Channel</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1 uppercase">{{ booking.channel_name }}</strong>
+                </div>
+                {% if booking.ota_reservation_id %}
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">OTA Reservation ID</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1">{{ booking.ota_reservation_id }}</strong>
+                </div>
+                {% endif %}
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">Payment Method Choice</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1 uppercase">{{ booking.get_payment_method_display }}</strong>
+                </div>
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">Check-In Date</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1"><i class="fa-regular fa-calendar mr-2"></i>{{ booking.check_in|date:"l, M d, Y" }}</strong>
+                </div>
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">Check-Out Date</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1"><i class="fa-regular fa-calendar mr-2"></i>{{ booking.check_out|date:"l, M d, Y" }}</strong>
+                </div>
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">Occupancy Count</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1">
+                        {{ booking.adults }} Adults, {{ booking.children }} Children
+                    </strong>
+                </div>
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">Rooms Reserved</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1">
+                        {{ booking.num_rooms }} room(s)
+                    </strong>
+                </div>
+            </div>
+
+            {% if booking.special_requests %}
+            <div class="mt-6 p-4 rounded-xl bg-neutral-100 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 text-sm">
+                <span class="text-xs text-neutral-400 uppercase font-semibold block mb-1.5">Special Requests</span>
+                <p class="text-neutral-700 dark:text-neutral-300 leading-relaxed">{{ booking.special_requests }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Payments associated -->
+        <div class="custom-card rounded-2xl p-6">
+            <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-4">Transactions History</h3>
+            {% if payments %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 pb-3">
+                            <th class="py-3 font-semibold">Transaction ID</th>
+                            <th class="py-3 font-semibold">Gateway</th>
+                            <th class="py-3 font-semibold">Amount</th>
+                            <th class="py-3 font-semibold">Status</th>
+                            <th class="py-3 font-semibold">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                        {% for p in payments %}
+                        <tr>
+                            <td class="py-3.5 font-semibold text-neutral-800 dark:text-neutral-200">{{ p.transaction_id }}</td>
+                            <td class="py-3.5 text-neutral-600 dark:text-neutral-400 uppercase">{{ p.gateway }}</td>
+                            <td class="py-3.5 text-neutral-900 dark:text-neutral-100 font-medium">{{ p.currency.iso_code|default:booking.currency_code }} {{ p.amount }}</td>
+                            <td class="py-3.5">
+                                <span class="px-2 py-0.5 rounded-full text-xs font-bold
+                                             {% if p.status == 'success' %}bg-emerald-500/10 text-emerald-500
+                                             {% elif p.status == 'pending' %}bg-amber-500/10 text-amber-500
+                                             {% else %}bg-rose-500/10 text-rose-500{% endif %}">
+                                    {{ p.get_status_display }}
+                                </span>
+                            </td>
+                            <td class="py-3.5 text-neutral-500 text-xs">{{ p.created_at|date:"M d, Y · H:i" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-sm text-neutral-500 py-4 text-center">No transactions registered for this booking yet.</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- Right column: Guest Card, Invoices & Actions workflows -->
+    <div class="space-y-8">
+        
+        <!-- Guest Details Card -->
+        <div class="custom-card rounded-2xl p-6">
+            <h3 class="text-base font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-4">Guest Information</h3>
+            <div class="space-y-4 text-sm">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 bg-luxuryGold-500/10 text-luxuryGold-500 rounded-full flex items-center justify-center font-bold">
+                        {{ booking.guest_name|slice:":2"|upper }}
+                    </div>
+                    <div>
+                        <strong class="text-neutral-800 dark:text-neutral-200">{{ booking.guest_name }}</strong>
+                        <p class="text-xs text-neutral-500">Primary Registrant</p>
+                    </div>
+                </div>
+                <div class="pt-2 space-y-2 border-t border-neutral-200 dark:border-neutral-800">
+                    <p class="text-neutral-600 dark:text-neutral-400 flex items-center gap-2">
+                        <i class="fa-solid fa-envelope w-4 text-neutral-400"></i>
+                        {{ booking.guest_email }}
+                    </p>
+                    <p class="text-neutral-600 dark:text-neutral-400 flex items-center gap-2">
+                        <i class="fa-solid fa-phone w-4 text-neutral-400"></i>
+                        {{ booking.guest_phone }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Room Type details -->
+        <div class="custom-card rounded-2xl p-6">
+            <h3 class="text-base font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-4">Assigned Room Type</h3>
+            <div class="text-sm">
+                <strong class="text-neutral-800 dark:text-neutral-200">{{ booking.room.title }}</strong>
+                <p class="text-xs text-neutral-500 mt-0.5">Category: {{ booking.room.category.name }}</p>
+                <div class="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-800 text-xs">
+                    <div>
+                        <span class="text-neutral-400 block">Base Price Per Night</span>
+                        <strong class="text-neutral-800 dark:text-neutral-200 font-medium">
+                            {% for cp in booking.room.base_prices.all %}
+                            <span class="block">{{ cp.currency.iso_code }} {{ cp.base_price }}</span>
+                            {% empty %}
+                            <span class="italic text-neutral-400">No price defined</span>
+                            {% endfor %}
+                        </strong>
+                    </div>
+                    <div>
+                        <span class="text-neutral-400 block">Tax Configured</span>
+                        <strong class="text-neutral-800 dark:text-neutral-200 font-medium">{{ booking.room.tax_percentage }}%</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Billing Invoice Summary -->
+        <div class="custom-card rounded-2xl p-6">
+            <h3 class="text-base font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-4">Financial Summary</h3>
+            <div class="space-y-2.5 text-sm">
+                 <div class="flex justify-between text-neutral-500">
+                    <span>Subtotal Price</span>
+                    <span>{{ booking.currency_code }} {{ booking.subtotal }}</span>
+                </div>
+                {% if booking.coupon %}
+                <div class="flex justify-between text-emerald-500 font-medium">
+                    <span>Discount ({{ booking.coupon.code }})</span>
+                    <span>-{{ booking.currency_code }} {{ booking.discount }}</span>
+                </div>
+                {% endif %}
+                <div class="flex justify-between text-neutral-500">
+                    <span>Tax (13% Standard)</span>
+                    <span>{{ booking.currency_code }} {{ booking.tax }}</span>
+                </div>
+                <div class="flex justify-between font-bold text-neutral-900 dark:text-neutral-100 pt-2 border-t border-neutral-200 dark:border-neutral-800">
+                    <span>Total Bill</span>
+                    <span>{{ booking.currency_code }} {{ booking.total }}</span>
+                </div>
+            </div>
+            
+            <a href="{% url 'admin_dashboard:booking_invoice' booking.id %}" target="_blank"
+               class="w-full mt-6 py-2.5 bg-neutral-900 hover:bg-neutral-850 dark:bg-neutral-850 dark:hover:bg-neutral-800 text-luxuryGold-400 hover:text-luxuryGold-300 font-semibold border border-luxuryGold-500/20 rounded-xl text-center flex items-center justify-center gap-2 transition text-sm">
+                <i class="fa-solid fa-file-invoice"></i> View PDF Invoice
+            </a>
+        </div>
+
+        <!-- Actions Workflows Control Panel -->
+        <div class="custom-card rounded-2xl p-6">
+            <h3 class="text-base font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-4">Administrative Workflows</h3>
+            
+            <div class="space-y-3">
+                {% if booking.status == 'confirmed' or booking.status == 'pending' or booking.status == 'draft' %}
+                <!-- Check-In workflow -->
+                <form action="{% url 'admin_dashboard:booking_update_status' booking.id %}" method="post" class="m-0">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="check_in">
+                    <button type="submit" 
+                            class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-600/10 transition text-sm">
+                        Process Guest Check-In
+                    </button>
+                </form>
+                
+                <!-- Cancel workflow -->
+                <form action="{% url 'admin_dashboard:booking_update_status' booking.id %}" method="post" class="m-0" onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="cancel">
+                    <button type="submit" 
+                            class="w-full py-3 border border-rose-500/30 text-rose-500 hover:bg-rose-500/5 font-semibold rounded-xl transition text-sm">
+                        Cancel Reservation
+                    </button>
+                </form>
+                {% endif %}
+
+                {% if booking.status == 'checked_in' %}
+                <!-- Check-Out workflow -->
+                <form action="{% url 'admin_dashboard:booking_update_status' booking.id %}" method="post" class="m-0">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="check_out">
+                    <button type="submit" 
+                            class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/10 transition text-sm">
+                        Process Guest Check-Out
+                    </button>
+                </form>
+                {% endif %}
+
+                {% if booking.status == 'checked_out' %}
+                <div class="p-4 rounded-xl bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-center text-neutral-400 text-xs">
+                    <i class="fa-solid fa-circle-check text-emerald-500 text-lg mb-1.5 block"></i>
+                    Workflow Completed: Guest checked out.
+                </div>
+                {% endif %}
+
+                {% if booking.status == 'cancelled' %}
+                <div class="p-4 rounded-xl bg-rose-500/5 border border-rose-500/10 text-center text-rose-400 text-xs">
+                    <i class="fa-solid fa-circle-xmark text-rose-500 text-lg mb-1.5 block"></i>
+                    Reservation Cancelled.
+                </div>
+                {% endif %}
+            </div>
+            
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

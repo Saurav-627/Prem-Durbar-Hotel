@@ -1,0 +1,293 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block page_title %}Rooms & Categories Management{% endblock %}
+{% block page_subtitle %}Review room inventories, categories configurations, seasonal prices and facilities rules.{% endblock %}
+
+{% block breadcrumbs %}
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<span class="text-neutral-500">Rooms & Inventories</span>
+{% endblock %}
+
+{% block page_actions %}
+<div class="flex items-center gap-3">
+    {% if active_tab == 'categories' %}
+    <a href="{% url 'admin_dashboard:room_category_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+        <i class="fa-solid fa-plus mr-1.5"></i> Add Category
+    </a>
+    {% elif active_tab == 'facilities' %}
+    <a href="{% url 'admin_dashboard:room_facility_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+        <i class="fa-solid fa-plus mr-1.5"></i> Add Facility
+    </a>
+    {% else %}
+    <a href="{% url 'admin_dashboard:room_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+        <i class="fa-solid fa-plus mr-1.5"></i> Add Room Type
+    </a>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Module Tabs navigation -->
+<div class="flex items-center gap-2 border-b border-neutral-200 dark:border-neutral-800 mb-8">
+    <a href="?tab=rooms" 
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'rooms' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+        Rooms (Inventory types)
+    </a>
+    <a href="?tab=categories" 
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'categories' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+        Room Categories
+    </a>
+    <a href="?tab=facilities" 
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'facilities' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+        Room Facilities
+    </a>
+</div>
+
+<!-- Tab content -->
+<div class="space-y-6">
+
+    {% if active_tab == 'rooms' %}
+    <!-- Rooms inventory content -->
+    
+    <!-- Bulk options panel -->
+    <div x-data="{ checkedCount: 0 }" class="custom-card rounded-2xl p-4 bg-white/50 dark:bg-neutral-900/50 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="text-sm font-medium text-neutral-500">
+            Bulk Operations: Select rooms in table to perform updates
+        </div>
+        <div class="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            
+            <!-- Bulk Price Form -->
+            <form action="{% url 'admin_dashboard:room_bulk_price' %}" method="post" id="bulk-price-form" class="m-0 flex items-center gap-2">
+                {% csrf_token %}
+                <input type="hidden" name="selected_rooms" id="bulk-price-selected-rooms">
+                <select name="adjustment_type" class="px-2.5 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-xs">
+                    <option value="percentage">Adjust By %</option>
+                    <option value="fixed">Adjust By Fixed Amount</option>
+                </select>
+                <input type="number" name="adjustment_value" placeholder="Value (+/-)" step="0.01" required
+                       class="w-24 px-2.5 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-xs">
+                <button type="button" onclick="submitBulk('bulk-price-form')" 
+                        class="px-3.5 py-1.5 bg-neutral-900 dark:bg-neutral-850 hover:bg-neutral-800 border border-luxuryGold-500/20 text-luxuryGold-400 rounded-lg text-xs font-bold transition">
+                    Update Pricing
+                </button>
+            </form>
+
+            <span class="text-neutral-700 hidden md:inline">|</span>
+
+            <!-- Bulk Publish Form -->
+            <form action="{% url 'admin_dashboard:room_bulk_publish' %}" method="post" id="bulk-publish-form" class="m-0 flex items-center gap-2">
+                {% csrf_token %}
+                <input type="hidden" name="selected_rooms" id="bulk-publish-selected-rooms">
+                <select name="bulk_action" class="px-2.5 py-1.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-xs">
+                    <option value="publish">Publish</option>
+                    <option value="unpublish">Unpublish</option>
+                </select>
+                <button type="button" onclick="submitBulk('bulk-publish-form')" 
+                        class="px-3.5 py-1.5 bg-neutral-900 dark:bg-neutral-850 hover:bg-neutral-800 border border-luxuryGold-500/20 text-luxuryGold-400 rounded-lg text-xs font-bold transition">
+                    Toggle Visibility
+                </button>
+            </form>
+            
+        </div>
+    </div>
+
+    <!-- Table of rooms -->
+    <div class="custom-card rounded-2xl overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+                    <th class="px-6 py-4 w-10 text-center">
+                        <input type="checkbox" id="select-all-rooms" onchange="toggleAllCheckboxes(this)" class="rounded border-neutral-700 text-luxuryGold-500 focus:ring-luxuryGold-500">
+                    </th>
+                    <th class="px-6 py-4 font-semibold">Room Type / Title</th>
+                    <th class="px-6 py-4 font-semibold">Category</th>
+                    <th class="px-6 py-4 font-semibold">Base Price</th>
+                    <th class="px-6 py-4 font-semibold">Inventory Rooms</th>
+                    <th class="px-6 py-4 font-semibold">Featured</th>
+                    <th class="px-6 py-4 font-semibold">Status</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                {% for room in rooms %}
+                <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10 transition duration-150">
+                    <td class="px-6 py-4 text-center">
+                        <input type="checkbox" name="room_checkbox" value="{{ room.id }}" class="room-selector rounded border-neutral-700 text-luxuryGold-500 focus:ring-luxuryGold-500">
+                    </td>
+                    <td class="px-6 py-4 font-bold text-neutral-900 dark:text-neutral-200">
+                        {{ room.title }}
+                        <span class="text-xs text-neutral-500 block font-normal">{{ room.slug }}</span>
+                    </td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-medium">{{ room.category.name }}</td>
+                    <td class="px-6 py-4 text-neutral-900 dark:text-neutral-100 font-semibold">
+                        {% for cp in room.base_prices.all %}
+                        <span class="block text-xs">{{ cp.currency.iso_code }} {{ cp.base_price }}</span>
+                        {% empty %}
+                        <span class="text-neutral-400 text-xs italic">No price set</span>
+                        {% endfor %}
+                    </td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-medium">{{ room.total_rooms }}</td>
+                    <td class="px-6 py-4">
+                        {% if room.is_featured %}
+                        <span class="text-emerald-500"><i class="fa-solid fa-circle-check"></i> Featured</span>
+                        {% else %}
+                        <span class="text-neutral-500"><i class="fa-regular fa-circle"></i> Standard</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if room.is_published %}
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-semibold text-xs">Published</span>
+                        {% else %}
+                        <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 font-semibold text-xs">Draft</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-3 text-sm">
+                            <a href="{% url 'admin_dashboard:room_edit' room.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="{% url 'admin_dashboard:room_delete' room.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="8" class="px-6 py-12 text-center text-sm text-neutral-500">
+                        No rooms configured yet. Click "Add Room Type" to create one.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    {% elif active_tab == 'categories' %}
+    <!-- Room Categories tab -->
+    <div class="custom-card rounded-2xl overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+                    <th class="px-6 py-4 font-semibold">Category Name</th>
+                    <th class="px-6 py-4 font-semibold">Slug Identifier</th>
+                    <th class="px-6 py-4 font-semibold">Ordering Sequence</th>
+                    <th class="px-6 py-4 font-semibold">Total Capacity Count</th>
+                    <th class="px-6 py-4 font-semibold">Is Visible</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                {% for cat in categories %}
+                <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10 transition duration-150">
+                    <td class="px-6 py-4 font-bold text-neutral-900 dark:text-neutral-200">{{ cat.name }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400">{{ cat.slug }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-semibold">{{ cat.order }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-semibold">{{ cat.total_rooms }}</td>
+                    <td class="px-6 py-4">
+                        {% if cat.is_published %}
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-semibold text-xs">Active</span>
+                        {% else %}
+                        <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 font-semibold text-xs">Hidden</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-3 text-sm">
+                            <a href="{% url 'admin_dashboard:room_category_edit' cat.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="{% url 'admin_dashboard:room_category_delete' cat.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-sm text-neutral-500">
+                        No categories created. Click "Add Category" to initialize.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% elif active_tab == 'facilities' %}
+    <!-- Room Facilities tab -->
+    <div class="custom-card rounded-2xl overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+                    <th class="px-6 py-4 font-semibold">Facility Name</th>
+                    <th class="px-6 py-4 font-semibold">Icon Identifier</th>
+                    <th class="px-6 py-4 font-semibold">Featured Badge</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                {% for fac in facilities %}
+                <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10 transition duration-150">
+                    <td class="px-6 py-4 font-bold text-neutral-900 dark:text-neutral-200">{{ fac.name }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-medium">
+                        <i class="{{ fac.icon_class }} text-base text-luxuryGold-500 mr-2"></i> {{ fac.icon_class }}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if fac.is_featured %}
+                        <span class="text-emerald-500"><i class="fa-solid fa-circle-check"></i> Featured</span>
+                        {% else %}
+                        <span class="text-neutral-500"><i class="fa-regular fa-circle"></i> Standard</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-3 text-sm">
+                            <a href="{% url 'admin_dashboard:room_facility_edit' fac.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="{% url 'admin_dashboard:room_facility_delete' fac.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="px-6 py-12 text-center text-sm text-neutral-500">
+                        No facilities added. Click "Add Facility" to expand options.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% endif %}
+
+</div>
+
+<script>
+    function toggleAllCheckboxes(source) {
+        let checkboxes = document.querySelectorAll('.room-selector');
+        checkboxes.forEach(c => c.checked = source.checked);
+    }
+
+    function getCheckedIds() {
+        let checkboxes = document.querySelectorAll('.room-selector:checked');
+        return Array.from(checkboxes).map(c => c.value);
+    }
+
+    function submitBulk(formId) {
+        let ids = getCheckedIds();
+        if (ids.length === 0) {
+            alert('Please select at least one room.');
+            return;
+        }
+        
+        let targetForm = document.getElementById(formId);
+        let hiddenInput = targetForm.querySelector('input[name="selected_rooms"]');
+        hiddenInput.value = ids.join(',');
+        
+        targetForm.submit();
+    }
+</script>
+{% endblock %}

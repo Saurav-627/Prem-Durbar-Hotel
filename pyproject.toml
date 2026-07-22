@@ -1,0 +1,30 @@
+[project]
+name = "hotel-ichchha"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "celery>=5.6.3",
+    "django>=6.0.7",
+    "django-compressor>=4.6.0",
+    "django-environ>=0.14.0",
+    "django-imagekit>=6.1.0",
+    "django-import-export>=4.4.1",
+    "gunicorn>=26.0.0",
+    "pillow>=12.3.0",
+    "psycopg2-binary>=2.9.12",
+    "pyyaml>=6.0.3",
+    "redis>=8.0.1",
+    "requests>=2.32.3",
+    "whitenoise>=6.12.0",
+]
+
+[tool.pyrefly]
+search_path = ["."]
+
+[dependency-groups]
+dev = [
+    "django-stubs>=6.0.7",
+]
+

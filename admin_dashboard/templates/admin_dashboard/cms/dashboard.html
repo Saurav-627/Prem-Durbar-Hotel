@@ -1,0 +1,406 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load dashboard_tags %}
+
+{% block page_title %}Website Content CMS{% endblock %}
+{% block page_subtitle %}Manage hero banners, blog posts, guest testimonials, gallery media uploads, and SEO settings.{% endblock %}
+
+{% block breadcrumbs %}
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<span class="text-neutral-500">CMS Content</span>
+{% endblock %}
+
+{% block page_actions %}
+<div class="flex items-center gap-3">
+    {% if active_tab == 'hero' %}
+    <a href="{% url 'admin_dashboard:hero_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+        <i class="fa-solid fa-plus mr-1.5"></i> Add Hero Slide
+    </a>
+    {% elif active_tab == 'testimonials' %}
+    <a href="{% url 'admin_dashboard:testimonial_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+        <i class="fa-solid fa-plus mr-1.5"></i> Add Testimonial
+    </a>
+    {% elif active_tab == 'nearby' %}
+    <a href="{% url 'admin_dashboard:attraction_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+        <i class="fa-solid fa-plus mr-1.5"></i> Add Attraction
+    </a>
+    {% elif active_tab == 'seo' %}
+    <a href="{% url 'admin_dashboard:seo_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+        <i class="fa-solid fa-plus mr-1.5"></i> Add SEO Rule
+    </a>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Tabs navigation -->
+<div class="flex items-center gap-2 border-b border-neutral-200 dark:border-neutral-800 mb-8 overflow-x-auto no-scrollbar">
+    <a href="?tab=hero" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'hero' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">Hero slides</a>
+    <a href="?tab=about" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'about' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">About Preview</a>
+    <a href="?tab=testimonials" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'testimonials' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">Testimonials</a>
+    <a href="?tab=nearby" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'nearby' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">Nearby Attractions</a>
+    <a href="?tab=gallery" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'gallery' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">Gallery bulk</a>
+    <a href="?tab=seo" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'seo' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">SEO Meta tags</a>
+</div>
+
+<!-- Tab content -->
+<div class="space-y-6">
+
+    {% if active_tab == 'hero' %}
+    <!-- Hero slides grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for slide in hero_slides %}
+        <div class="custom-card rounded-2xl overflow-hidden shadow-sm flex flex-col justify-between">
+            <div class="h-44 w-full bg-neutral-200 dark:bg-neutral-800 relative">
+                {% if slide.background_image %}
+                <img src="{{ slide.background_image.url }}" alt="{{ slide.title }}" class="h-full w-full object-cover">
+                {% else %}
+                <div class="h-full w-full flex items-center justify-center text-neutral-500">Video background configured</div>
+                {% endif %}
+                <span class="absolute top-4 left-4 px-2 py-0.5 rounded bg-black/60 backdrop-blur-sm text-xs font-semibold text-luxuryGold-400">Order: {{ slide.order }}</span>
+            </div>
+            <div class="p-6 flex-grow">
+                <h4 class="text-base font-bold text-neutral-900 dark:text-neutral-100 font-serif mb-1">{{ slide.title }}</h4>
+                <p class="text-xs text-neutral-500 mb-3">{{ slide.subtitle|default:"-" }}</p>
+                <div class="space-y-1 text-xs text-neutral-600 dark:text-neutral-400">
+                    <p><i class="fa-solid fa-play-circle mr-1 text-neutral-400"></i> CTA 1: {{ slide.cta_text }} ({{ slide.cta_url }})</p>
+                    {% if slide.cta2_text %}
+                    <p><i class="fa-solid fa-play-circle mr-1 text-neutral-400"></i> CTA 2: {{ slide.cta2_text }} ({{ slide.cta2_url }})</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="px-6 py-4 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/10 flex items-center justify-between">
+                <div>
+                    {% if slide.is_active %}
+                    <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-semibold text-[11px]">Active</span>
+                    {% else %}
+                    <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 font-semibold text-[11px]">Disabled</span>
+                    {% endif %}
+                </div>
+                <div class="flex items-center gap-3 text-sm">
+                    <a href="{% url 'admin_dashboard:hero_edit' slide.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </a>
+                    <a href="{% url 'admin_dashboard:hero_delete' slide.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-2 text-center text-sm text-neutral-500 py-12">
+            No hero slides created.
+        </div>
+        {% endfor %}
+    </div>
+
+    {% elif active_tab == 'about' %}
+    <!-- About Preview singleton form -->
+    <div class="max-w-3xl">
+        <div class="custom-card rounded-2xl p-8 bg-white/50 dark:bg-neutral-900/50">
+            <form action="{% url 'admin_dashboard:about_update' %}" method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                <h4 class="text-base font-bold text-neutral-900 dark:text-neutral-100 font-serif pb-2 border-b border-neutral-200 dark:border-neutral-800">
+                    About Preview Section Settings
+                </h4>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-neutral-700 uppercase mb-2">Section Title</label>
+                        {{ about_form.title }}
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-neutral-700 uppercase mb-2">Subtitle</label>
+                        {{ about_form.subtitle }}
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-neutral-700 uppercase mb-2">Intro content text</label>
+                        {{ about_form.content }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 uppercase mb-2">Illustration image</label>
+                        {{ about_form.image }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 uppercase mb-2">Promo Video URL</label>
+                        {{ about_form.video_url }}
+                    </div>
+                </div>
+
+                <h4 class="text-base font-bold text-neutral-900 dark:text-neutral-100 font-serif mt-8 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+                    Statistic counters (Home section)
+                </h4>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+                    <div>
+                        <label class="block text-neutral-700 mb-1">Stat 1 Value</label>
+                        {{ about_form.stat1_value }}
+                        <label class="block text-neutral-700 mt-2 mb-1">Stat 1 Label</label>
+                        {{ about_form.stat1_label }}
+                    </div>
+                    <div>
+                        <label class="block text-neutral-700 mb-1">Stat 2 Value</label>
+                        {{ about_form.stat2_value }}
+                        <label class="block text-neutral-700 mt-2 mb-1">Stat 2 Label</label>
+                        {{ about_form.stat2_label }}
+                    </div>
+                    <div>
+                        <label class="block text-neutral-700 mb-1">Stat 3 Value</label>
+                        {{ about_form.stat3_value }}
+                        <label class="block text-neutral-700 mt-2 mb-1">Stat 3 Label</label>
+                        {{ about_form.stat3_label }}
+                    </div>
+                    <div>
+                        <label class="block text-neutral-700 mb-1">Stat 4 Value</label>
+                        {{ about_form.stat4_value }}
+                        <label class="block text-neutral-700 mt-2 mb-1">Stat 4 Label</label>
+                        {{ about_form.stat4_label }}
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-end">
+                    <button type="submit" 
+                            class="px-6 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-xl shadow-lg transition">
+                        Update CMS Section
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% elif active_tab == 'testimonials' %}
+    <!-- Testimonials list -->
+    <div class="custom-card rounded-2xl overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+                    <th class="px-6 py-4 font-semibold">Guest name</th>
+                    <th class="px-6 py-4 font-semibold">Country</th>
+                    <th class="px-6 py-4 font-semibold">Source</th>
+                    <th class="px-6 py-4 font-semibold">Rating Stars</th>
+                    <th class="px-6 py-4 font-semibold">Featured</th>
+                    <th class="px-6 py-4 font-semibold">Visibility</th>
+                    <th class="px-6 py-4 text-right font-semibold">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                {% for test in testimonials %}
+                <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10 transition duration-150">
+                    <td class="px-6 py-4 font-bold text-neutral-900 dark:text-neutral-200">{{ test.guest_name }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400">{{ test.country|default:"-" }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 uppercase text-xs font-semibold">{{ test.source }}</td>
+                    <td class="px-6 py-4 text-amber-500">
+                        <i class="fa-solid fa-star"></i> {{ test.rating }}/5
+                    </td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-semibold">
+                        {% if test.is_featured %}Yes{% else %}No{% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if test.is_published %}
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-semibold text-xs">Visible</span>
+                        {% else %}
+                        <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 font-semibold text-xs">Hidden</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-3 text-sm">
+                            <a href="{% url 'admin_dashboard:testimonial_edit' test.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="{% url 'admin_dashboard:testimonial_delete' test.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center text-sm text-neutral-500">No guest reviews registered.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% elif active_tab == 'nearby' %}
+    <!-- Nearby Attractions list -->
+    <div class="custom-card rounded-2xl overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+                    <th class="px-6 py-4 font-semibold">Place name</th>
+                    <th class="px-6 py-4 font-semibold">Category</th>
+                    <th class="px-6 py-4 font-semibold">Distance</th>
+                    <th class="px-6 py-4 font-semibold">Travel Time</th>
+                    <th class="px-6 py-4 font-semibold">Order</th>
+                    <th class="px-6 py-4 font-semibold">Status</th>
+                    <th class="px-6 py-4 text-right font-semibold">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                {% for place in attractions %}
+                <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10 transition duration-150">
+                    <td class="px-6 py-4 font-bold text-neutral-900 dark:text-neutral-200">{{ place.name }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 uppercase text-xs">{{ place.category }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-semibold">{{ place.distance }}</td>
+                    <td class="px-6 py-4 text-neutral-650 dark:text-neutral-400">{{ place.travel_time }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-semibold">{{ place.order }}</td>
+                    <td class="px-6 py-4">
+                        {% if place.is_active %}
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-semibold text-xs">Active</span>
+                        {% else %}
+                        <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 font-semibold text-xs">Disabled</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-3 text-sm">
+                            <a href="{% url 'admin_dashboard:attraction_edit' place.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="{% url 'admin_dashboard:attraction_delete' place.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center text-sm text-neutral-500">No attractions configured yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% elif active_tab == 'gallery' %}
+    <!-- Gallery Bulk Upload & items -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Bulk Form card & Categories Manager -->
+        <div class="space-y-6">
+            <!-- Uploader Card -->
+            <div class="custom-card rounded-2xl p-6 bg-white/50 dark:bg-neutral-900/50">
+                <h4 class="text-base font-bold text-neutral-900 dark:text-neutral-100 font-serif mb-4 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+                    Bulk Image Uploader
+                </h4>
+                <form action="{% url 'admin_dashboard:gallery_bulk_upload' %}" method="post" enctype="multipart/form-data" class="space-y-4">
+                    {% csrf_token %}
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 uppercase mb-2">Category</label>
+                        <select name="category" required
+                                class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 outline-none">
+                            <option value="">Select Gallery Category</option>
+                            {% for cat in gallery_categories %}
+                            <option value="{{ cat.id }}">{{ cat.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 uppercase mb-2">Select Images (Multiple Uploads)</label>
+                        <input type="file" name="images" multiple required
+                               class="block w-full text-sm text-neutral-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-luxuryGold-50/50 file:text-luxuryGold-700 hover:file:bg-luxuryGold-100/50 cursor-pointer bg-white dark:bg-neutral-800 rounded-lg border border-neutral-300 dark:border-neutral-700 px-4 py-2">
+                    </div>
+                    <button type="submit" 
+                            class="w-full py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-xl shadow-lg transition">
+                        Upload Images
+                    </button>
+                </form>
+            </div>
+
+            <!-- Categories Card -->
+            <div class="custom-card rounded-2xl p-6 bg-white/50 dark:bg-neutral-900/50">
+                <div class="flex items-center justify-between mb-4 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+                    <h4 class="text-base font-bold text-neutral-900 dark:text-neutral-100 font-serif">
+                        Gallery Categories
+                    </h4>
+                    <a href="{% url 'admin_dashboard:gallery_category_create' %}" class="text-xs font-bold text-luxuryGold-500 hover:text-luxuryGold-400">
+                        <i class="fa-solid fa-plus mr-1"></i> Add Category
+                    </a>
+                </div>
+                <div class="space-y-2">
+                    {% for cat in gallery_categories %}
+                    <div class="flex items-center justify-between p-2 rounded bg-neutral-50 dark:bg-neutral-900/40 text-xs">
+                        <span class="font-semibold text-neutral-800 dark:text-neutral-200">{{ cat.name }}</span>
+                        <div class="flex items-center gap-2">
+                            <a href="{% url 'admin_dashboard:gallery_category_edit' cat.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="{% url 'admin_dashboard:gallery_category_delete' cat.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-xs text-neutral-500 italic text-center py-4">No categories created yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Media Grid items -->
+        <div class="lg:col-span-2 custom-card rounded-2xl p-6 bg-white/50 dark:bg-neutral-900/50">
+            <h4 class="text-base font-bold text-neutral-900 dark:text-neutral-100 font-serif mb-6 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+                Uploaded Gallery Items
+            </h4>
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {% for item in gallery_items %}
+                <div class="relative group h-24 rounded-lg overflow-hidden border border-neutral-200 dark:border-neutral-800">
+                    {% if item.image %}
+                    <img src="{{ item.image.url }}" alt="Gallery" class="h-full w-full object-cover">
+                    {% else %}
+                    <div class="h-full w-full bg-neutral-800 flex items-center justify-center text-[10px] text-neutral-400">Video Item</div>
+                    {% endif %}
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition duration-150">
+                        <a href="{% url 'admin_dashboard:gallery_delete' item.id %}" class="text-rose-500 hover:text-rose-400 text-sm font-semibold">
+                            <i class="fa-solid fa-trash-can mr-1"></i> Delete
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="col-span-4 text-center text-sm text-neutral-500 py-6">No gallery items uploaded yet.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+
+    {% elif active_tab == 'seo' %}
+    <!-- SEO meta tag page list -->
+    <div class="custom-card rounded-2xl overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+                    <th class="px-6 py-4 font-semibold">Page URL Path</th>
+                    <th class="px-6 py-4 font-semibold">Meta Title Override</th>
+                    <th class="px-6 py-4 font-semibold">Meta Description Snippet</th>
+                    <th class="px-6 py-4 text-right font-semibold">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                {% for data in seo_data %}
+                <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10 transition duration-150">
+                    <td class="px-6 py-4 font-mono text-xs font-bold text-neutral-900 dark:text-neutral-200">{{ data.path }}</td>
+                    <td class="px-6 py-4 text-neutral-850 dark:text-neutral-300 font-semibold">{{ data.meta_title }}</td>
+                    <td class="px-6 py-4 text-neutral-500 max-w-xs truncate" title="{{ data.meta_description }}">{{ data.meta_description }}</td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-3 text-sm">
+                            <a href="{% url 'admin_dashboard:seo_edit' data.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="{% url 'admin_dashboard:seo_delete' data.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="px-6 py-12 text-center text-sm text-neutral-500">No custom SEO overrides defined.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% endif %}
+
+</div>
+{% endblock %}

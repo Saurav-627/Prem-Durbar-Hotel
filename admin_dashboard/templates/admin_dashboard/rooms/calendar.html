@@ -1,0 +1,113 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load dashboard_tags %}
+
+{% block page_title %}Room Availability Calendar{% endblock %}
+{% block page_subtitle %}Monthly visual occupancy planner of booked vs available rooms.{% endblock %}
+
+{% block breadcrumbs %}
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<a href="{% url 'admin_dashboard:room_dashboard' %}" class="hover:text-luxuryGold-400">Rooms</a>
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<span class="text-neutral-500">Calendar Planner</span>
+{% endblock %}
+
+{% block content %}
+<div class="custom-card rounded-2xl p-6 bg-white/50 dark:bg-neutral-900/50 mb-8">
+    
+    <!-- Month/Year Navigation header -->
+    <div class="flex items-center justify-between mb-8">
+        <h3 class="text-xl font-semibold text-neutral-900 dark:text-neutral-100 font-serif">
+            {{ month_name }} {{ current_year }}
+        </h3>
+        <div class="flex items-center gap-2">
+            <a href="?month={{ prev_month }}&year={{ prev_year }}" 
+               class="px-4 py-2 border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400 rounded-lg text-sm transition">
+                <i class="fa-solid fa-angle-left mr-1"></i> Prev Month
+            </a>
+            <a href="?month={{ next_month }}&year={{ next_year }}" 
+               class="px-4 py-2 border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400 rounded-lg text-sm transition">
+                Next Month <i class="fa-solid fa-angle-right ml-1"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Calendar Table Grid -->
+    <div class="overflow-x-auto select-none border border-neutral-200 dark:border-neutral-800 rounded-xl">
+        <table class="w-full text-left border-collapse min-w-[800px]">
+            <thead>
+                <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+                    <th class="px-4 py-3 font-semibold w-48 border-r border-neutral-200 dark:border-neutral-800 sticky left-0 bg-white dark:bg-neutral-900 z-10">
+                        Room Type
+                    </th>
+                    {% for day in days_in_month %}
+                    <th class="px-2 py-3 text-center font-semibold text-xs border-r border-neutral-200 dark:border-neutral-800 w-10">
+                        {{ day.day }}
+                        <span class="block text-[9px] text-neutral-500 font-normal uppercase">{{ day|date:"D"|slice:":1" }}</span>
+                    </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-xs">
+                {% for room in rooms %}
+                <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10">
+                    <!-- Room Title header column -->
+                    <td class="px-4 py-3 border-r border-neutral-200 dark:border-neutral-800 sticky left-0 bg-white dark:bg-neutral-950 font-bold text-neutral-900 dark:text-neutral-200 z-10 shadow-[2px_0_5px_rgba(0,0,0,0.02)]">
+                        <div class="truncate w-40" title="{{ room.title }}">
+                            {{ room.title }}
+                        </div>
+                        <span class="text-[10px] text-neutral-500 font-normal">Cap: {{ room.total_rooms }} rooms</span>
+                    </td>
+                    
+                    <!-- Date values -->
+                    {% for day in days_in_month %}
+                    {% with cell=grid|get_item:room.id|get_item:day %}
+                    <td class="p-1 border-r border-neutral-200 dark:border-neutral-800 text-center w-10">
+                        {% if cell.rooms_booked > 0 %}
+                            {% if cell.rooms_booked >= room.total_rooms %}
+                                <!-- Fully Booked -->
+                                <div class="h-8 rounded bg-rose-500/20 border border-rose-500/30 text-rose-500 hover:bg-rose-500/30 transition flex flex-col items-center justify-center font-bold relative group"
+                                     title="Fully Booked: {{ cell.rooms_booked }}/{{ room.total_rooms }}">
+                                    {{ cell.rooms_booked }}
+                                </div>
+                            {% else %}
+                                <!-- Partially Booked -->
+                                <div class="h-8 rounded bg-amber-500/20 border border-amber-500/30 text-amber-500 hover:bg-amber-500/30 transition flex flex-col items-center justify-center font-bold relative group"
+                                     title="Partially Booked: {{ cell.rooms_booked }}/{{ room.total_rooms }}">
+                                    {{ cell.rooms_booked }}
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <!-- Available -->
+                            <div class="h-8 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 flex items-center justify-center font-medium"
+                                 title="Available: 0/{{ room.total_rooms }} booked">
+                                0
+                            </div>
+                        {% endif %}
+                    </td>
+                    {% endwith %}
+                    {% endfor %}
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- Legend indicator -->
+<div class="flex flex-wrap items-center gap-6 text-xs font-semibold text-neutral-500">
+    <span class="flex items-center gap-2">
+        <span class="h-4 w-6 rounded bg-emerald-500/10 border border-emerald-500/20 inline-block"></span>
+        Fully Available (0 booked)
+    </span>
+    <span class="flex items-center gap-2">
+        <span class="h-4 w-6 rounded bg-amber-500/20 border border-amber-500/30 inline-block"></span>
+        Partially Booked
+    </span>
+    <span class="flex items-center gap-2">
+        <span class="h-4 w-6 rounded bg-rose-500/20 border border-rose-500/30 inline-block"></span>
+        Fully Booked / Sold Out
+    </span>
+</div>
+{% endblock %}

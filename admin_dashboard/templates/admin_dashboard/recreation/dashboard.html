@@ -1,0 +1,70 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block page_title %}Recreation & Activities Management{% endblock %}
+{% block page_subtitle %}Review casino timings, pool logs, wellness spa packages and game zones settings.{% endblock %}
+
+{% block breadcrumbs %}
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<span class="text-neutral-500">Recreation</span>
+{% endblock %}
+
+{% block page_actions %}
+<a href="{% url 'admin_dashboard:recreation_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+    <i class="fa-solid fa-plus mr-1.5"></i> Add Activity
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for act in activities %}
+    <div class="custom-card rounded-2xl overflow-hidden shadow-sm flex flex-col justify-between">
+        <div class="h-44 w-full bg-neutral-200 dark:bg-neutral-800 relative">
+            {% if act.image %}
+            <img src="{{ act.image.url }}" alt="{{ act.name }}" class="h-full w-full object-cover">
+            {% else %}
+            <div class="h-full w-full flex items-center justify-center text-neutral-500">No Image Uploaded</div>
+            {% endif %}
+            <span class="absolute top-4 left-4 px-2.5 py-1 rounded bg-black/60 backdrop-blur-sm text-xs font-semibold text-luxuryGold-400 uppercase">
+                {{ act.get_category_display }}
+            </span>
+        </div>
+        
+        <div class="p-6 flex-grow">
+            <h4 class="text-base font-bold text-neutral-900 dark:text-neutral-100 font-serif mb-2">{{ act.name }}</h4>
+            <div class="space-y-1 mb-4 text-xs text-neutral-500">
+                <p><i class="fa-regular fa-clock w-4 mr-1"></i>Timings: {{ act.timings }}</p>
+                <p><i class="fa-solid fa-tags w-4 mr-1"></i>Pricing: <strong class="text-luxuryGold-500">{{ act.price_info }}</strong></p>
+                {% if act.capacity %}
+                <p><i class="fa-solid fa-user-group w-4 mr-1"></i>Capacity limit: {{ act.capacity }} pax</p>
+                {% endif %}
+            </div>
+            <p class="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-3 leading-relaxed">
+                {{ act.description }}
+            </p>
+        </div>
+
+        <div class="px-6 py-4 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/10 flex items-center justify-between">
+            <div>
+                {% if act.is_active %}
+                <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-semibold text-[11px]">Active</span>
+                {% else %}
+                <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 font-semibold text-[11px]">Inactive</span>
+                {% endif %}
+            </div>
+            <div class="flex items-center gap-3 text-sm">
+                <a href="{% url 'admin_dashboard:recreation_edit' act.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+                <a href="{% url 'admin_dashboard:recreation_delete' act.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                    <i class="fa-solid fa-trash-can"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-span-3 text-center text-sm text-neutral-500 py-12">
+        No recreational activities configured yet.
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

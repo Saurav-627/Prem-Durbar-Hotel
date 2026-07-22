@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- HEADER HERO BANNER -->
+<section class="py-20 border-b border-amber-900/10 text-center relative overflow-hidden bg-cover bg-center"
+         style="background-image: url('{% if seo_raw and seo_raw.header_image %}{{ seo_raw.header_image.url }}{% else %}https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1200{% endif %}');">
+    <div class="absolute inset-0 bg-black/75"></div>
+    <div class="relative z-10 space-y-4">
+        <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-300">{{ seo_raw.header_subtitle|default:"Sanctuary Suites" }}</span>
+        <h1 class="font-luxury-title text-4xl sm:text-6xl font-bold text-white leading-tight">{{ seo_raw.header_title|default:"Rooms &amp; Accommodation" }}</h1>
+        <p class="text-sm text-white/80 max-w-xl mx-auto">{{ seo_raw.header_description|default:"Explore our premium selection of spaces crafted with an eye for elegance and class." }}</p>
+    </div>
+</section>
+
+<!-- MAIN CONTAINER -->
+<section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-12">
+        
+        <!-- SIDEBAR FILTER PANEL -->
+        <aside class="space-y-8 lg:col-span-1">
+            <div class="rounded-2xl p-6 border shadow-sm"
+                 :class="{
+                     'bg-white border-gray-200': currentTheme === 'light',
+                     'bg-[#161412] border-amber-900/20': currentTheme !== 'light'
+                 }">
+                <h3 class="font-luxury-title text-lg font-semibold tracking-wide border-b pb-4 mb-6"
+                    :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/10': currentTheme !== 'light' }">
+                    Filter Selection
+                </h3>
+                
+                <form method="GET" action="{% url 'rooms:room_list' %}" class="space-y-6">
+                    <!-- Category selection -->
+                    <div class="space-y-3">
+                        <label class="block text-xs font-semibold uppercase tracking-wider opacity-85">Category</label>
+                        <select name="category" class="w-full px-3 py-2.5 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                                :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                            <option value="">All Categories</option>
+                            {% for category in categories %}
+                                <option value="{{ category.slug }}" {% if request.GET.category == category.slug %}selected{% endif %}>{{ category.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Occupancy selection -->
+                    <div class="space-y-3">
+                        <label class="block text-xs font-semibold uppercase tracking-wider opacity-85">Guest Capacity</label>
+                        <select name="adults" class="w-full px-3 py-2.5 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                                :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                            <option value="">Any Capacity</option>
+                            <option value="1" {% if request.GET.adults == "1" %}selected{% endif %}>1+ Adults</option>
+                            <option value="2" {% if request.GET.adults == "2" %}selected{% endif %}>2+ Adults</option>
+                            <option value="3" {% if request.GET.adults == "3" %}selected{% endif %}>3+ Adults</option>
+                            <option value="4" {% if request.GET.adults == "4" %}selected{% endif %}>4+ Adults</option>
+                        </select>
+                    </div>
+
+                    <!-- Price Min -->
+                    <div class="space-y-3">
+                        <label class="block text-xs font-semibold uppercase tracking-wider opacity-85">Min Price ({{ selected_currency_symbol }})</label>
+                        <input type="number" name="price_min" value="{{ request.GET.price_min }}" placeholder="Min Rate"
+                               class="w-full px-3 py-2.5 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                               :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                    </div>
+
+                    <!-- Price Max -->
+                    <div class="space-y-3">
+                        <label class="block text-xs font-semibold uppercase tracking-wider opacity-85">Max Price ({{ selected_currency_symbol }})</label>
+                        <input type="number" name="price_max" value="{{ request.GET.price_max }}" placeholder="Max Rate"
+                               class="w-full px-3 py-2.5 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                               :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="pt-4 space-y-2">
+                        <button type="submit" class="w-full py-3 rounded-lg text-xs font-bold uppercase tracking-wider text-center cursor-pointer"
+                                :class="{ 'bg-amber-800 text-white': currentTheme === 'light', 'bg-luxuryGold-500 text-black': currentTheme !== 'light' }">
+                            Apply Filters
+                        </button>
+                        <a href="{% url 'rooms:room_list' %}" class="block text-center w-full py-3 rounded-lg text-xs font-semibold uppercase tracking-wider border hover:bg-luxuryGold-900/10 transition-colors">
+                            Clear Filters
+                        </a>
+                    </div>
+                </form>
+
+            </div>
+        </aside>
+
+        <!-- ROOMS GRID LIST -->
+        <main class="lg:col-span-3 space-y-8">
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                {% for room in rooms %}
+                <div class="rounded-2xl overflow-hidden border shadow-lg group hover:translate-y-[-4px] duration-500 flex flex-col animate__animated animate__fadeInUp"
+                     :class="{
+                         'bg-white border-gray-200': currentTheme === 'light',
+                         'bg-[#161412] border-amber-900/20': currentTheme !== 'light'
+                     }">
+                    <!-- Room Cover Image -->
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="{% if room.images.first and room.images.first.image %}{{ room.images.first.image.url }}{% else %}https://images.unsplash.com/photo-1618773928121-c32242e63f39?q=80&w=600{% endif %}" 
+                             alt="{{ room.title }}" class="w-full h-full object-cover group-hover:scale-105 duration-700">
+                        <span class="absolute top-4 right-4 px-4 py-1 text-xs font-semibold bg-black/70 text-luxuryGold-300 rounded-full">
+                            {{ room.category.name|default:"Luxury Suite" }}
+                        </span>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="p-6 flex-grow flex flex-col justify-between">
+                        <div class="space-y-4">
+                            <div class="flex items-start justify-between gap-4">
+                                <h3 class="font-luxury-title text-xl font-bold tracking-wide">{{ room.title }}</h3>
+                                <div class="text-right flex-shrink-0 whitespace-nowrap">
+                                    <span class="text-xs uppercase opacity-75 font-semibold text-gray-500">From</span>
+                                    <p class="text-2xl font-extrabold text-luxuryGold-800 font-luxury-title whitespace-nowrap">{{ room.currency.iso_code }} {{ room.current_price }}</p>
+                                    {% if room.active_seasonal %}
+                                    <span class="text-[10px] text-green-600 font-semibold uppercase tracking-wide block mt-0.5">🏷 {{ room.active_seasonal.name }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <p class="text-sm opacity-85 line-clamp-3 leading-relaxed">{{ room.description }}</p>
+                            
+                            <!-- Specifications -->
+                            <div class="flex items-center gap-6 text-xs opacity-75 pt-2">
+                                <span><i class="fa-solid fa-maximize text-luxuryGold-400 mr-1.5"></i>{{ room.room_size }} sq.ft.</span>
+                                <span><i class="fa-solid fa-user-group text-luxuryGold-400 mr-1.5"></i>Max {{ room.max_adults }} Guest(s)</span>
+                                <span><i class="fa-solid fa-bed text-luxuryGold-400 mr-1.5"></i>{{ room.bed_type }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Card CTA -->
+                        <div class="pt-6 mt-6 border-t border-amber-900/10 flex items-center justify-between gap-4">
+                            <a href="{% url 'rooms:room_detail' room.slug %}" class="text-xs font-semibold uppercase tracking-wider hover:text-luxuryGold-400 transition-colors">Details & Specs</a>
+                            <a href="{% url 'rooms:room_detail' room.slug %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" 
+                               class="px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors border"
+                               :class="{
+                                   'bg-amber-800 text-white border-amber-800': currentTheme === 'light',
+                                   'bg-luxuryGold-500 border-luxuryGold-500 text-black': currentTheme !== 'light'
+                               }">
+                                Reserve Suite
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-2 text-center py-16">
+                    <p class="text-sm opacity-60">No rooms match your filter criteria. Try clearing search fields.</p>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- PAGINATION -->
+            {% if is_paginated %}
+            <nav class="flex justify-center items-center gap-2 pt-12">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" class="px-4 py-2 border rounded-lg hover:bg-luxuryGold-900/10 text-sm">Prev</a>
+                {% endif %}
+                
+                <span class="text-sm px-4">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}" class="px-4 py-2 border rounded-lg hover:bg-luxuryGold-900/10 text-sm">Next</a>
+                {% endif %}
+            </nav>
+            {% endif %}
+
+        </main>
+    </div>
+</section>
+{% endblock %}

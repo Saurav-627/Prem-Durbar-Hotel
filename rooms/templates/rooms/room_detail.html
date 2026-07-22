@@ -1,0 +1,569 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- ROOM DETAILS CONTAINER -->
+<section class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        
+        <!-- MAIN GALLERY & ROOM INFORMATION (LEFT 2 COLS) -->
+        <div class="lg:col-span-2 space-y-12">
+            
+            <!-- Gallery Slider (Alpine.js) -->
+            <div x-data="{ 
+                activeSlide: 0, 
+                slides: [
+                    {% for img in room.images.all %}
+                        {% if img.image %}'{{ img.image.url }}',{% endif %}
+                    {% empty %}
+                        'https://images.unsplash.com/photo-1618773928121-c32242e63f39?q=80&w=1200',
+                    {% endfor %}
+                ],
+                next() { this.activeSlide = (this.activeSlide + 1) % this.slides.length }
+            }" 
+            x-init="if (slides.length > 1) setInterval(() => next(), 5000)"
+            class="relative h-[450px] overflow-hidden rounded-2xl border border-amber-900/10">
+                <template x-for="(slide, index) in slides" :key="index">
+                    <div x-show="activeSlide === index" 
+                         x-transition:enter="transition ease-out duration-500"
+                         x-transition:enter-start="opacity-0 scale-102"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         class="absolute inset-0 w-full h-full bg-cover bg-center"
+                         :style="'background-image: url(' + slide + ')'"></div>
+                </template>
+
+                <!-- Navigation -->
+                <button @click="activeSlide = (activeSlide - 1 + slides.length) % slides.length" 
+                        class="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors">
+                    <i class="fa-solid fa-chevron-left text-xs"></i>
+                </button>
+                <button @click="activeSlide = (activeSlide + 1) % slides.length" 
+                        class="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors">
+                    <i class="fa-solid fa-chevron-right text-xs"></i>
+                </button>
+
+                <!-- Dots indicator -->
+                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                    <template x-for="(slide, index) in slides" :key="index">
+                        <button @click="activeSlide = index" 
+                                class="w-2.5 h-2.5 rounded-full transition-colors"
+                                :class="activeSlide === index ? 'bg-luxuryGold-500' : 'bg-white/50'"></button>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Core Specs -->
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-500">{{ room.category.name|default:"Luxury Suite" }}</span>
+                </div>
+                <h1 class="font-luxury-title text-4xl sm:text-5xl font-bold tracking-wide">{{ room.title }}</h1>
+                <p class="text-sm leading-relaxed opacity-85">{{ room.description }}</p>
+            </div>
+
+            <!-- Room Highlights list -->
+            {% if room.highlights %}
+            <div class="space-y-4">
+                <h3 class="font-luxury-title text-xl font-semibold">Chamber Highlights</h3>
+                <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm opacity-85">
+                    {% for highlight in room.highlights.splitlines %}
+                        {% if highlight %}
+                        <li class="flex items-center gap-3">
+                            <i class="fa-solid fa-circle-check text-luxuryGold-500"></i>
+                            <span>{{ highlight }}</span>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <!-- Room Facilities Checklist -->
+            <div class="space-y-4">
+                <h3 class="font-luxury-title text-xl font-semibold">Amenities & Comforts</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-6">
+                    {% for fac in room.facilities.all %}
+                    <div class="flex items-center gap-3 p-3 rounded-lg border"
+                         :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#161412] border-amber-900/10': currentTheme !== 'light' }">
+                        <div class="text-xl text-luxuryGold-500">
+                            {% if fac.icon_class %}
+                                <i class="{{ fac.icon_class }}"></i>
+                            {% else %}
+                                <i class="fa-solid fa-bell-concierge"></i>
+                            {% endif %}
+                        </div>
+                        <span class="text-xs font-medium tracking-wide">{{ fac.name }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Virtual 3D Tour Embed -->
+            {% if room.virtual_tour_url %}
+            <div class="space-y-4">
+                <h3 class="font-luxury-title text-xl font-semibold">Virtual 3D Space Tour</h3>
+                <div class="relative overflow-hidden rounded-2xl border border-amber-900/10 h-96">
+                    <iframe src="{{ room.virtual_tour_url }}" class="absolute inset-0 w-full h-full border-0" allowfullscreen></iframe>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Video Highlight Tour -->
+            {% if room.video_url %}
+            <div class="space-y-4">
+                <h3 class="font-luxury-title text-xl font-semibold">Video Overview</h3>
+                <div class="relative overflow-hidden rounded-2xl border border-amber-900/10 h-96">
+                    <iframe src="{{ room.video_url }}" class="absolute inset-0 w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Room Policies -->
+            {% if room.policies.all %}
+            <div class="space-y-4">
+                <h3 class="font-luxury-title text-xl font-semibold">Suite Policies & Regs</h3>
+                <div class="space-y-4">
+                    {% for policy in room.policies.all %}
+                    <div class="p-4 rounded-xl border" :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#161412] border-amber-900/10': currentTheme !== 'light' }">
+                        <h4 class="font-semibold text-sm mb-1 text-luxuryGold-400">{{ policy.title }}</h4>
+                        <p class="text-xs opacity-75 leading-relaxed">{{ policy.description }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+
+        <!-- RIGHT RESERVATION SIDEBAR (1 COL) -->
+        <div class="space-y-8 lg:col-span-1" x-data="{
+            checkIn: new URLSearchParams(window.location.search).get('check_in') || new Date(new Date().getTime() + 24*60*60*1000).toISOString().split('T')[0],
+            checkOut: new URLSearchParams(window.location.search).get('check_out') || new Date(new Date().getTime() + 2*24*60*60*1000).toISOString().split('T')[0],
+            adults: parseInt(new URLSearchParams(window.location.search).get('adults')) || 2,
+            children: parseInt(new URLSearchParams(window.location.search).get('children')) || 0,
+            numRooms: 1,
+            maxRooms: {{ room.total_rooms }},
+            showModal: false,
+            basePrice: {{ room.current_price|default:0 }},
+            roomCurrency: '{{ room.currency.iso_code|default:"USD" }}',
+            taxPercentage: {{ room.tax_percentage|default:0 }},
+            checkingAvailability: false,
+            isAvailable: true,
+            errorMessage: '',
+            async updateMaxRooms() {
+                if (!this.checkIn || !this.checkOut) {
+                    this.maxRooms = {{ room.total_rooms }};
+                    return;
+                }
+                try {
+                    const res = await fetch(`/rooms/api/{{ room.id }}/check-availability/?check_in=${this.checkIn}&check_out=${this.checkOut}&num_rooms=1`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        this.maxRooms = data.available_rooms;
+                        if (this.numRooms > this.maxRooms) {
+                            this.numRooms = Math.max(1, this.maxRooms);
+                        }
+                    }
+                } catch(e) {
+                    console.error('Error updating max rooms:', e);
+                }
+            },
+            
+            get nights() {
+                if (!this.checkIn || !this.checkOut) return 0;
+                const start = new Date(this.checkIn);
+                const end = new Date(this.checkOut);
+                const diffTime = end - start;
+                if (diffTime <= 0) return 0;
+                return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            },
+            get subtotal() {
+                return this.basePrice * this.nights * this.numRooms;
+            },
+            get tax() {
+                return this.taxPercentage > 0 ? this.subtotal * (this.taxPercentage / 100) : 0;
+            },
+            get total() {
+                return this.subtotal + this.tax;
+            },
+            validateDates() {
+                const start = new Date(this.checkIn);
+                const end = new Date(this.checkOut);
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                
+                if (start < today) {
+                    alert('Arrival date cannot be in the past.');
+                    return false;
+                }
+                if (end <= start) {
+                    alert('Departure date must be at least one day after arrival date.');
+                    return false;
+                }
+                return true;
+            },
+            async submitReservation() {
+                if (!this.validateDates()) return;
+                this.checkingAvailability = true;
+                this.errorMessage = '';
+                try {
+                    const res = await fetch(`/rooms/api/{{ room.id }}/check-availability/?check_in=${this.checkIn}&check_out=${this.checkOut}&num_rooms=${this.numRooms}`);
+                    if (!res.ok) {
+                        throw new Error('Error checking availability');
+                    }
+                    const data = await res.json();
+                    this.isAvailable = data.available;
+                    if (data.available) {
+                        this.showModal = true;
+                    } else if (data.available_rooms > 0) {
+                        this.errorMessage = `Only ${data.available_rooms} room${data.available_rooms === 1 ? '' : 's'} available for the selected dates.`;
+                    } else {
+                        this.errorMessage = 'This room is not available for the selected dates. Please adjust your dates.';
+                    }
+                } catch (e) {
+                    console.error(e);
+                    // Fallback to open modal in case of connection/server issue
+                    this.showModal = true;
+                } finally {
+                    this.checkingAvailability = false;
+                }
+            },
+            init() {
+                this.$watch('checkIn', () => this.updateMaxRooms());
+                this.$watch('checkOut', () => this.updateMaxRooms());
+                this.updateMaxRooms();
+
+                const initPickers = () => {
+                    if (typeof AirDatepicker === 'undefined') {
+                        setTimeout(initPickers, 50);
+                        return;
+                    }
+                    
+                    const formatDate = (d) => {
+                        const year = d.getFullYear();
+                        const month = String(d.getMonth() + 1).padStart(2, '0');
+                        const day = String(d.getDate()).padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                    };
+                    
+                    fetch(`/rooms/api/{{ room.id }}/booked-dates/`)
+                        .then(r => r.json())
+                        .then(data => {
+                            const booked = data.booked_dates || [];
+                            
+                            const checkInPicker = new AirDatepicker('#room_check_in', {
+                                ...window.defaultAirDatepickerConfig,
+                                minDate: new Date(),
+                                selectedDates: this.checkIn ? [new Date(this.checkIn)] : undefined,
+                                onRenderCell: ({date, cellType}) => {
+                                    if (cellType === 'day') {
+                                        const formatted = formatDate(date);
+                                        if (booked.includes(formatted)) {
+                                            return { disabled: true };
+                                        }
+                                    }
+                                },
+                                onSelect: ({date, formattedDate}) => {
+                                    this.checkIn = formattedDate || '';
+                                    if (checkOutPicker && date) {
+                                        checkOutPicker.update({
+                                            minDate: date
+                                        });
+                                    }
+                                }
+                            });
+                            
+                            const checkOutPicker = new AirDatepicker('#room_check_out', {
+                                ...window.defaultAirDatepickerConfig,
+                                minDate: this.checkIn ? new Date(this.checkIn) : new Date(),
+                                selectedDates: this.checkOut ? [new Date(this.checkOut)] : undefined,
+                                onRenderCell: ({date, cellType}) => {
+                                    if (cellType === 'day') {
+                                        const formatted = formatDate(date);
+                                        if (booked.includes(formatted)) {
+                                            return { disabled: true };
+                                        }
+                                    }
+                                },
+                                onSelect: ({date, formattedDate}) => {
+                                    this.checkOut = formattedDate || '';
+                                }
+                            });
+                        })
+                        .catch(err => console.error('Error loading booked dates:', err));
+                };
+                initPickers();
+            }
+        }">
+            <div class="rounded-2xl p-6 border shadow-xl sticky top-28"
+                 :class="{
+                     'bg-white border-gray-200': currentTheme === 'light',
+                     'bg-[#161412] border-amber-900/20': currentTheme !== 'light'
+                 }">
+                <div class="border-b pb-4 mb-6 border-gray-200" :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/10': currentTheme !== 'light' }">
+                    <span class="text-xs uppercase opacity-75 font-semibold text-gray-500">Starting from</span>
+                    <h3 class="font-luxury-title text-2xl font-extrabold mt-1" :class="{ 'text-luxuryGold-800': currentTheme === 'light', 'text-amber-250': currentTheme !== 'light' }">
+                        <span>{{ room.currency.iso_code }} {{ room.current_price }}</span>
+                        {% if room.base_price != room.current_price %}
+                        <span class="line-through text-sm opacity-40 ml-1">{{ room.currency.iso_code }} {{ room.base_price }}</span>
+                        {% endif %}
+                        <span class="text-sm font-normal opacity-75">/night</span>
+                    </h3>
+                    {% if room.discount_price %}
+                    <p class="text-xs line-through opacity-50 mt-1">Was <span>{{ room.currency.iso_code }} {{ room.discount_price }}</span></p>
+                    {% endif %}
+                    {% if room.active_seasonal %}
+                    <div class="mt-3 px-3 py-2 rounded-lg bg-green-500/10 border border-green-500/20 text-xs">
+                        <p class="font-bold text-green-600">🏷 {{ room.active_seasonal.name }}</p>
+                        <p class="opacity-70 mt-0.5">{{ room.active_seasonal.start_date|date:'M d' }} – {{ room.active_seasonal.end_date|date:'M d, Y' }}</p>
+                    </div>
+                    {% endif %}
+                    {% if room.tax_percentage %}
+                    <p class="text-[10px] opacity-75 mt-2">Prices include {{ room.tax_percentage }}% Local Taxes &amp; VAT</p>
+                    {% endif %}
+
+                    <!-- Live Price Summary Widget in Sidebar -->
+                    <div class="mt-4 pt-4 border-t border-gray-200/50" :style="{ borderColor: currentTheme !== 'light' ? '#92400e22' : '#e5e7eb' }" x-show="nights > 0">
+                        <div class="flex justify-between text-xs opacity-75">
+                            <span>Stay Duration:</span>
+                            <span class="font-semibold" x-text="nights + (nights === 1 ? ' night' : ' nights')"></span>
+                        </div>
+                        <div class="flex justify-between text-xs opacity-75 mt-1.5">
+                             <span>Rooms:</span>
+                             <span class="font-semibold" x-text="numRooms + (numRooms === 1 ? ' room' : ' rooms')"></span>
+                        </div>
+                        <div class="flex justify-between text-xs opacity-75 mt-1.5">
+                             <span>Subtotal:</span>
+                             <span class="font-semibold tabular-nums" x-text="roomCurrency + ' ' + subtotal.toFixed(2)"></span>
+                        </div>
+                        <template x-if="taxPercentage > 0">
+                            <div class="flex justify-between text-xs opacity-75 mt-1.5">
+                                 <span>Tax (<span x-text="taxPercentage"></span>%)</span>
+                                 <span class="font-semibold tabular-nums" x-text="roomCurrency + ' ' + tax.toFixed(2)"></span>
+                            </div>
+                        </template>
+                        <div class="flex justify-between text-sm font-bold text-luxuryGold-500 mt-3 pt-2.5 border-t border-dashed" :style="{ borderColor: currentTheme !== 'light' ? '#92400e22' : '#e5e7eb' }">
+                             <span>Est. Total{% if room.tax_percentage %} (incl. tax){% endif %}:</span>
+                             <span class="tabular-nums" x-text="roomCurrency + ' ' + total.toFixed(2)"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Initiate Booking Form -->
+                <form @submit.prevent="submitReservation()" class="space-y-4">
+                    <div>
+                        <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Arrival</label>
+                        <input type="text" name="check_in" id="room_check_in" x-model="checkIn" required placeholder="Select check-in date" class="w-full px-3 py-2.5 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400 cursor-pointer"
+                               :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Departure</label>
+                        <input type="text" name="check_out" id="room_check_out" x-model="checkOut" required placeholder="Select check-out date" class="w-full px-3 py-2.5 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400 cursor-pointer"
+                               :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Adults</label>
+                            <select name="adults" x-model="adults" class="w-full px-2 py-2.5 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                                    :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                                {% for i in room.adults_range %}
+                                <option value="{{ i }}">{{ i }} Adult{{ i|pluralize }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Children</label>
+                            <select name="children" x-model="children" class="w-full px-2 py-2.5 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                                    :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                                {% for i in room.children_range %}
+                                <option value="{{ i }}">{{ i }} Child{{ i|pluralize:"ren" }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Number of Rooms counter -->
+                    <div>
+                        <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">No. of Rooms</label>
+                        <div class="flex items-center gap-3">
+                            <button type="button"
+                                    @click="if(numRooms > 1) numRooms--"
+                                    :disabled="numRooms <= 1"
+                                    :class="numRooms <= 1 ? 'opacity-30 cursor-not-allowed' : 'hover:opacity-70 cursor-pointer'"
+                                    class="w-9 h-9 rounded-lg border flex items-center justify-center text-base font-bold flex-shrink-0 transition"
+                                    :style="{ borderColor: currentTheme !== 'light' ? '#92400e66' : '#d1d5db' }">−</button>
+                            <span class="text-sm font-bold w-5 text-center" x-text="numRooms"></span>
+                            <button type="button"
+                                    @click="if(numRooms < maxRooms) numRooms++"
+                                    :disabled="numRooms >= maxRooms"
+                                    :class="numRooms >= maxRooms ? 'opacity-30 cursor-not-allowed' : 'hover:opacity-70 cursor-pointer'"
+                                    class="w-9 h-9 rounded-lg border flex items-center justify-center text-base font-bold flex-shrink-0 transition"
+                                    :style="{ borderColor: currentTheme !== 'light' ? '#92400e66' : '#d1d5db' }">+</button>
+                            <span class="text-[10px] opacity-50">Available Number of Rooms is <span class="font-bold" x-text="maxRooms"></span></span>
+                        </div>
+                    </div>
+
+                    <div x-show="errorMessage" class="p-3 rounded-lg border border-red-500/20 bg-red-500/10 text-red-500 text-xs mt-2" style="display: none;">
+                        <p x-text="errorMessage"></p>
+                    </div>
+
+                    <button type="submit" :disabled="checkingAvailability" class="w-full py-3.5 mt-4 rounded-lg text-xs font-bold uppercase tracking-wider text-center"
+                            :class="{
+                                'bg-amber-800 text-white': currentTheme === 'light',
+                                'bg-luxuryGold-500 text-black gold-glow': currentTheme !== 'light',
+                                'opacity-50 cursor-wait': checkingAvailability,
+                                'cursor-pointer': !checkingAvailability
+                            }">
+                        <span x-show="!checkingAvailability">Continue to Guest Details</span>
+                        <span x-show="checkingAvailability" style="display: none;">Checking Availability...</span>
+                    </button>
+                </form>
+
+                <!-- Guest Personal Details Modal -->
+                <div x-show="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate__animated animate__fadeIn" style="display: none;">
+                    <div @click.away="showModal = false" class="relative w-full max-w-4xl rounded-2xl p-6 sm:p-8 border shadow-2xl overflow-y-auto max-h-[90vh] animate__animated animate__zoomIn text-left"
+                         :class="{
+                             'bg-white border-gray-200 text-gray-800': currentTheme === 'light',
+                             'bg-[#161412] border-amber-900/30 text-amber-200': currentTheme !== 'light'
+                         }">
+                        
+                        <div class="flex items-center justify-between pb-4 border-b border-amber-900/10 mb-6">
+                            <h3 class="font-luxury-title text-2xl font-bold tracking-wide">Complete Your Draft Booking</h3>
+                            <button @click="showModal = false" type="button" class="p-2 rounded-lg hover:bg-luxuryGold-900/10 transition-colors">
+                                <i class="fa-solid fa-xmark text-lg"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                            <!-- Left: Guest Details Form (2 Cols) -->
+                            <div class="lg:col-span-2 space-y-6">
+                                <div class="rounded-xl border px-4 py-3 text-xs" :class="{ 'bg-amber-500/10 border-amber-500/20 text-amber-900': currentTheme === 'light', 'bg-amber-900/10 border-amber-900/20 text-amber-100': currentTheme !== 'light' }">
+                                    <p class="font-semibold">Draft booking only</p>
+                                    <p>Your room is not reserved yet. It becomes confirmed only after payment succeeds.</p>
+                                </div>
+                                <form method="POST" action="{% url 'booking:create_booking' room.id %}" class="space-y-6">
+                                    {% csrf_token %}
+                                    <!-- Hidden stay inputs -->
+                                    <input type="hidden" name="check_in" :value="checkIn">
+                                    <input type="hidden" name="check_out" :value="checkOut">
+                                    <input type="hidden" name="adults" :value="adults">
+                                    <input type="hidden" name="children" :value="children">
+                                    <input type="hidden" name="num_rooms" :value="numRooms">
+                                    
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                        <div>
+                                            <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Full Name *</label>
+                                            <input type="text" name="name" required placeholder="John Doe"
+                                                   class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Email Address *</label>
+                                            <input type="email" name="email" required placeholder="john.doe@example.com"
+                                                   class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                        <div>
+                                            <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Contact Phone Number *</label>
+                                            <input type="tel" name="phone" required placeholder="+1 555-0199"
+                                                   class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                                        </div>
+                                        <div>
+                                            <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Promo / Coupon Code</label>
+                                            <input type="text" name="promo_code" placeholder="ENTER CODE"
+                                                   class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400 font-mono uppercase"
+                                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Special Requests / Notes</label>
+                                        <textarea name="special_requests" rows="3" placeholder="Airport pickup, dietary restrictions, extra bed requests..."
+                                                  class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                                                  :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }"></textarea>
+                                    </div>
+                                    
+                                    <div class="pt-4 flex gap-4">
+                                        <button type="button" @click="showModal = false" class="flex-1 py-3.5 rounded-lg text-xs font-bold uppercase tracking-wider border hover:bg-luxuryGold-900/10 transition-colors">
+                                            Cancel
+                                        </button>
+                                        <button type="submit" class="flex-1 py-3.5 rounded-lg text-xs font-bold uppercase tracking-widest text-center cursor-pointer"
+                                                :class="{
+                                                    'bg-amber-800 text-white': currentTheme === 'light',
+                                                    'bg-luxuryGold-500 text-black gold-glow': currentTheme !== 'light'
+                                                }">
+                                            Save Draft & Continue
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                            
+                            <!-- Right: Summary (1 Col) -->
+                            <div class="rounded-xl p-4 border space-y-3 text-xs"
+                                 :class="{ 'bg-gray-50 border-gray-200': currentTheme === 'light', 'bg-[#1e1a17] border-amber-900/20': currentTheme !== 'light' }">
+                                <h4 class="font-luxury-title text-base font-semibold border-b pb-2 mb-3"
+                                    :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/20': currentTheme !== 'light' }">Booking Summary</h4>
+
+                                <!-- Room name (truncated if long) -->
+                                <div class="flex items-start justify-between gap-2">
+                                    <span class="opacity-70 shrink-0">Room</span>
+                                    <span class="font-semibold text-right truncate max-w-[120px]" title="{{ room.title }}">{{ room.title }}</span>
+                                </div>
+
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="opacity-70 shrink-0">Arrival</span>
+                                    <span class="font-semibold tabular-nums" x-text="checkIn"></span>
+                                </div>
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="opacity-70 shrink-0">Departure</span>
+                                    <span class="font-semibold tabular-nums" x-text="checkOut"></span>
+                                </div>
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="opacity-70 shrink-0">Nights</span>
+                                    <span class="font-semibold tabular-nums"><span x-text="nights"></span> night<span x-show="nights !== 1">s</span></span>
+                                </div>
+                                <div class="flex items-center justify-between gap-2 border-b pb-2"
+                                     :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/10': currentTheme !== 'light' }">
+                                    <span class="opacity-70 shrink-0">Guests</span>
+                                    <span class="font-semibold tabular-nums">
+                                        <span x-text="adults"></span>A
+                                        <span x-show="children > 0">, <span x-text="children"></span>C</span>
+                                    </span>
+                                </div>
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="opacity-70 shrink-0">Rooms</span>
+                                    <span class="font-semibold tabular-nums" x-text="numRooms + (numRooms === 1 ? ' Room' : ' Rooms')"></span>
+                                </div>
+
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="opacity-70 shrink-0">Rate/night</span>
+                                    <span class="tabular-nums" x-text="roomCurrency + ' ' + basePrice.toFixed(2) + ' / room'"></span>
+                                </div>
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="opacity-70 shrink-0">Subtotal</span>
+                                    <span class="tabular-nums" x-text="roomCurrency + ' ' + subtotal.toFixed(2)"></span>
+                                </div>
+                                <template x-if="taxPercentage > 0">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <span class="opacity-70 shrink-0">Tax (<span x-text="taxPercentage"></span>%)</span>
+                                        <span class="tabular-nums" x-text="roomCurrency + ' ' + tax.toFixed(2)"></span>
+                                    </div>
+                                </template>
+
+                                <div class="flex items-center justify-between gap-2 text-sm font-bold text-luxuryGold-500 border-t pt-2 mt-1"
+                                     :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/10': currentTheme !== 'light' }">
+                                    <span>Total</span>
+                                    <span class="font-luxury-title tabular-nums" x-text="roomCurrency + ' ' + total.toFixed(2)"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+    </div>
+</section>
+{% endblock %}

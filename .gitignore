@@ -1,0 +1,25 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+#Ruff Cache
+.ruff_cache
+
+# Environment files
+.env
+
+# Database backups
+backups/
+
+# User-uploaded media files (local development only)
+media/
+
+# Generated staticfiles (collected static assets)
+staticfiles/

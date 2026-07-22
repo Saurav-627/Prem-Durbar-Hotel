@@ -1,0 +1,60 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block page_title %}Read Contact Message{% endblock %}
+{% block page_subtitle %}Review general guest feedback, inquiries, or room booking notes.{% endblock %}
+
+{% block breadcrumbs %}
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<a href="{% url 'admin_dashboard:contact_dashboard' %}" class="hover:text-luxuryGold-400">Branches & Contact</a>
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<span class="text-neutral-500">Read Message</span>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="custom-card rounded-2xl p-8 bg-white/50 dark:bg-neutral-900/50 shadow-xl space-y-6">
+        
+        <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-neutral-200 dark:border-neutral-800">
+            <div>
+                <h3 class="text-lg font-bold text-neutral-900 dark:text-neutral-100 font-serif">{{ inquiry.subject }}</h3>
+                <p class="text-xs text-neutral-500 mt-0.5">Category: {{ inquiry.get_category_display }}</p>
+            </div>
+            <div class="text-xs text-neutral-400 font-semibold">
+                Received: {{ inquiry.created_at|date:"F d, Y · H:i" }}
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm p-4 rounded-xl bg-neutral-50 dark:bg-neutral-900/30">
+            <div>
+                <span class="text-xs text-neutral-400 uppercase font-semibold block">Sender Name</span>
+                <strong class="text-neutral-800 dark:text-neutral-200 mt-0.5 block">{{ inquiry.name }}</strong>
+            </div>
+            <div>
+                <span class="text-xs text-neutral-400 uppercase font-semibold block">Email address</span>
+                <a href="mailto:{{ inquiry.email }}" class="text-luxuryGold-500 hover:underline mt-0.5 block">{{ inquiry.email }}</a>
+            </div>
+            {% if inquiry.phone %}
+            <div>
+                <span class="text-xs text-neutral-400 uppercase font-semibold block">Contact Phone</span>
+                <strong class="text-neutral-800 dark:text-neutral-200 mt-0.5 block">{{ inquiry.phone }}</strong>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="space-y-2 text-sm leading-relaxed text-neutral-700 dark:text-neutral-300">
+            <span class="text-xs text-neutral-400 uppercase font-semibold block">Inquiry Message Body</span>
+            <div class="p-5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950 font-medium whitespace-pre-wrap">
+                {{ inquiry.message }}
+            </div>
+        </div>
+
+        <div class="pt-6 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-end">
+            <a href="{% url 'admin_dashboard:contact_dashboard' %}?tab=inquiries"
+               class="px-6 py-2.5 bg-neutral-900 hover:bg-neutral-850 dark:bg-neutral-850 dark:hover:bg-neutral-800 text-luxuryGold-400 font-semibold rounded-xl transition text-sm">
+                <i class="fa-solid fa-arrow-left-long mr-2"></i> Back to Inquiries
+            </a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

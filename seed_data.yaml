@@ -1,0 +1,414 @@
+hotel_settings:
+  site_name: Prem Durbar Hotel & Nagarkot Zipline
+  theme: luxury
+  contact_phone: +01-5145351
+  contact_email: info@premdurbar.com
+  address: Changunarayan-7, Zipline Marga-Hawelli, Nagarkot, Nepal
+  about_text: Prem Durbar is a premier adventure and luxury hospitality destination
+    in Nagarkot featuring Nepal's longest zipline, scenic Himalayan views, traditional
+    Newari brick and wood craftsmanship, organic farm-to-table dining, and wellness
+    retreats.
+  copyright_text: '&copy; 2026 PREM DURBAR HOTEL. All Rights Reserved.'
+  facebook_url: https://www.facebook.com/premdurbarhotel/
+  instagram_url: https://www.instagram.com/premdurbarhotel/
+  twitter_url: https://x.com/premdurbarhotel
+about_preview:
+  title: Nepal's Premier Adventure & Luxury Resort in Nagarkot
+  subtitle: Prem Durbar Hotel & Nagarkot Zipline
+  content: Prem Durbar successfully combines adventure tourism with luxury accommodation,
+    featuring Nepal's longest zipline, breathtaking Himalayan views, organic farm-to-table
+    cuisine, and serene wellness surroundings. Inspired by traditional Newari brick
+    and wood craftsmanship, every space is built with authentic art and eco-friendly
+    sustainability.
+  video_url: https://www.youtube.com/embed/demo-zipline
+  stat1_value: '36'
+  stat1_label: Chambers & Suites
+  stat2_value: '1'
+  stat2_label: Longest Zipline in Nepal
+  stat3_value: 100%
+  stat3_label: Organic Farm-to-Table
+  stat4_value: 5k+
+  stat4_label: Happy Adventurers
+hero_slides:
+- title: 'Nagarkot Zipline: Soaring Through The Himalayas'
+  subtitle: "The Superman Zip Line \u2014 Best & Longest Zipline in Nepal"
+  cta_text: Book Zipline Adventure
+  cta_url: /rooms/
+  order: 1
+  overlay_opacity: 0.6
+  is_active: true
+- title: Traditional Newari Comfort & Contemporary Elegance
+  subtitle: Handcrafted Brick & Artisanal Wooden Furniture
+  cta_text: Explore Chambers
+  cta_url: /rooms/
+  order: 2
+  overlay_opacity: 0.6
+  is_active: true
+- title: Organic Farm-to-Table Culinary Experience
+  subtitle: Nepali Khaja Sets, Signature Dishes & Himalayan Views
+  cta_text: View Dining Menu
+  cta_url: /dining/
+  order: 3
+  overlay_opacity: 0.6
+  is_active: true
+- title: Kamal Pokhari Lotus Pond & Sunrise Mountain Views
+  subtitle: Relax & Rejuvenate in Nagarkot's Tranquil Hills
+  cta_text: Contact Us
+  cta_url: /contact/
+  order: 4
+  overlay_opacity: 0.6
+  is_active: true
+room_categories:
+- name: Standard Rooms
+  slug: standard
+  order: 1
+  is_published: true
+- name: Family Rooms
+  slug: family
+  order: 2
+  is_published: true
+- name: Deluxe Rooms
+  slug: deluxe
+  order: 3
+  is_published: true
+room_facilities:
+- name: Air Conditioning
+  icon_class: fa-solid fa-wind
+- name: High-Speed Wi-Fi
+  icon_class: fa-solid fa-wifi
+- name: Hot Water
+  icon_class: fa-solid fa-shower
+- name: Hair Dryer
+  icon_class: fa-solid fa-fan
+- name: Bathroom Robe
+  icon_class: fa-solid fa-vest
+- name: Shampoo & Toiletries
+  icon_class: fa-solid fa-pump-soap
+- name: Artisanal Wooden Furniture
+  icon_class: fa-solid fa-couch
+- name: Handcrafted Bed Linens
+  icon_class: fa-solid fa-bed
+- name: Carved Windows & Lotus Pond View
+  icon_class: fa-solid fa-mountain
+- name: Tea / Coffee Maker
+  icon_class: fa-solid fa-mug-hot
+rooms:
+- title: Standard Room Jungle View
+  slug: standard-room-jungle-view
+  category: standard
+  description: Experience understated elegance with natural brick and wood tones throughout
+    our room. Includes 1 King Bed, handcrafted bed linens showcasing traditional block-printing,
+    locally handcrafted wooden furniture, and luxurious natural stone bathrooms. Enjoy
+    picturesque views of the lush jungle surroundings.
+  highlights: Natural brick & wood architecture, Handcrafted block-printed bed linens,
+    Jungle view
+  bed_type: 1 King Bed
+  max_adults: 2
+  max_children: 1
+  room_size: 28
+  is_featured: true
+  is_published: true
+  facilities:
+  - Air Conditioning
+  - High-Speed Wi-Fi
+  - Hot Water
+  - Hair Dryer
+  - Bathroom Robe
+  - Shampoo & Toiletries
+  - Artisanal Wooden Furniture
+  - Handcrafted Bed Linens
+  - Tea / Coffee Maker
+  prices:
+  - currency: USD
+    base_price: 75.0
+    discount_price: 65.0
+  - currency: NPR
+    base_price: 9500.0
+    discount_price: 8500.0
+  images:
+  - image: images/hotel-logo.png
+    is_primary: true
+    alt_text: Standard Room Jungle View
+  policies:
+  - title: Check-in / Check-out
+    description: Check-in from 14:00 PM, Check-out by 12:00 PM.
+  - title: Cancellation Policy
+    description: Free cancellation up to 48 hours prior to check-in.
+- title: Standard Room City View
+  slug: standard-room-city-view
+  category: standard
+  description: Designed with authentic Newari craftsmanship, natural brickwork, and
+    large carved windows overlooking the valley. Features 1 King Bed, artisanal wooden
+    furniture, and modern amenities.
+  highlights: Panoramic valley view, Authentic Newari craftsmanship, 1 King Bed
+  bed_type: 1 King Bed
+  max_adults: 2
+  max_children: 1
+  room_size: 28
+  is_featured: false
+  is_published: true
+  facilities:
+  - Air Conditioning
+  - High-Speed Wi-Fi
+  - Hot Water
+  - Hair Dryer
+  - Shampoo & Toiletries
+  - Artisanal Wooden Furniture
+  - Handcrafted Bed Linens
+  prices:
+  - currency: USD
+    base_price: 70.0
+    discount_price: 60.0
+  - currency: NPR
+    base_price: 9000.0
+    discount_price: 8000.0
+  images:
+  - image: images/hotel-logo.png
+    is_primary: true
+    alt_text: Standard Room City View
+  policies:
+  - title: Check-in / Check-out
+    description: Check-in from 14:00 PM, Check-out by 12:00 PM.
+- title: Family Room Jungle View
+  slug: family-room-jungle-view
+  category: family
+  description: Spacious family accommodations featuring 1 Queen Bed and 1 Single Bed.
+    Decorated with traditional block-printed linens, handmade wooden scrap furniture,
+    and large windows looking into Nagarkot's pine jungle.
+  highlights: Ideal for families, 1 Queen + 1 Single bed, Serene pine jungle views
+  bed_type: 1 Queen Bed + 1 Single Bed
+  max_adults: 3
+  max_children: 2
+  room_size: 38
+  is_featured: true
+  is_published: true
+  facilities:
+  - Air Conditioning
+  - High-Speed Wi-Fi
+  - Hot Water
+  - Hair Dryer
+  - Bathroom Robe
+  - Shampoo & Toiletries
+  - Artisanal Wooden Furniture
+  - Handcrafted Bed Linens
+  - Tea / Coffee Maker
+  prices:
+  - currency: USD
+    base_price: 110.0
+    discount_price: 95.0
+  - currency: NPR
+    base_price: 14000.0
+    discount_price: 12500.0
+  images:
+  - image: images/hotel-logo.png
+    is_primary: true
+    alt_text: Family Room Jungle View
+  policies:
+  - title: Family Policy
+    description: Children under 6 stay free when using existing bedding.
+- title: Family Room City View
+  slug: family-room-city-view
+  category: family
+  description: Generously sized family room equipped with 1 Queen Bed and 1 Single
+    Bed, premium natural stone bathroom, and sweeping valley vistas.
+  highlights: Spacious family setup, Natural stone bath fixtures, Valley view
+  bed_type: 1 Queen Bed + 1 Single Bed
+  max_adults: 3
+  max_children: 2
+  room_size: 38
+  is_featured: false
+  is_published: true
+  facilities:
+  - Air Conditioning
+  - High-Speed Wi-Fi
+  - Hot Water
+  - Hair Dryer
+  - Bathroom Robe
+  - Shampoo & Toiletries
+  - Artisanal Wooden Furniture
+  prices:
+  - currency: USD
+    base_price: 105.0
+    discount_price: 90.0
+  - currency: NPR
+    base_price: 13500.0
+    discount_price: 12000.0
+  images:
+  - image: images/hotel-logo.png
+    is_primary: true
+    alt_text: Family Room City View
+  policies:
+  - title: Check-in / Check-out
+    description: Check-in from 14:00 PM, Check-out by 12:00 PM.
+- title: Deluxe Room Jungle View
+  slug: deluxe-room-jungle-view
+  category: deluxe
+  description: Our finest Deluxe Room offering 1 Queen Bed, bedside tables, writing
+    desk, and luxurious bathroom adorned with sparkling natural stone and decorative
+    tile-work with spacious shower cubicles.
+  highlights: Luxurious stone bathroom with shower cubicle, Writing desk, Lotus pond
+    view
+  bed_type: 1 Queen Bed
+  max_adults: 2
+  max_children: 1
+  room_size: 42
+  is_featured: true
+  is_published: true
+  facilities:
+  - Air Conditioning
+  - High-Speed Wi-Fi
+  - Hot Water
+  - Hair Dryer
+  - Bathroom Robe
+  - Shampoo & Toiletries
+  - Artisanal Wooden Furniture
+  - Handcrafted Bed Linens
+  - Carved Windows & Lotus Pond View
+  - Tea / Coffee Maker
+  prices:
+  - currency: USD
+    base_price: 140.0
+    discount_price: 120.0
+  - currency: NPR
+    base_price: 17500.0
+    discount_price: 15500.0
+  images:
+  - image: images/hotel-logo.png
+    is_primary: true
+    alt_text: Deluxe Room Jungle View
+  policies:
+  - title: VIP Service
+    description: Includes complimentary welcome beverage and airport transfer options.
+- title: Deluxe Room City View
+  slug: deluxe-room-city-view
+  category: deluxe
+  description: Luxury Deluxe Room with custom carved windows, natural stone bath fixtures,
+    artisanal wooden seating, and sunrise view across Nagarkot valley.
+  highlights: Intricately carved windows, Sunrise mountain view, Premium amenities
+  bed_type: 1 Queen Bed
+  max_adults: 2
+  max_children: 1
+  room_size: 42
+  is_featured: false
+  is_published: true
+  facilities:
+  - Air Conditioning
+  - High-Speed Wi-Fi
+  - Hot Water
+  - Hair Dryer
+  - Bathroom Robe
+  - Shampoo & Toiletries
+  - Artisanal Wooden Furniture
+  - Handcrafted Bed Linens
+  - Tea / Coffee Maker
+  prices:
+  - currency: USD
+    base_price: 135.0
+    discount_price: 115.0
+  - currency: NPR
+    base_price: 17000.0
+    discount_price: 15000.0
+  images:
+  - image: images/hotel-logo.png
+    is_primary: true
+    alt_text: Deluxe Room City View
+  policies:
+  - title: Check-in / Check-out
+    description: Check-in from 14:00 PM, Check-out by 12:00 PM.
+dining_venues:
+- name: Prem Durbar Dining & Terrace Lounge
+  slug: prem-durbar-lounge
+  category: restaurant
+  timings: 07:00 AM - 10:00 PM
+  capacity: 100
+  featured_dishes: Nepali Khaja Set, Mutton Thali, Chicken Thali, Chicken Paparika,
+    Haasko Chhoyela, Kodo Nachos Salsa
+  description: Our restaurant offers a farm-to-table culinary concept prioritizing
+    locally sourced seasonal ingredients. Feast on Signature dishes like Chicken Paparika,
+    Haasko Chhoyela, Kodo Nachos Salsa, fresh Momo platters, and traditional Nepali
+    sets.
+  is_featured: true
+  is_published: true
+testimonials:
+- guest_name: Rohan Sharma
+  rating: 5
+  review_text: The Nagarkot zipline experience was thrilling! Combined with the traditional
+    Newari brick room and hot fresh Nepali thali, Prem Durbar exceeded all expectations.
+  source: tripadvisor
+  is_featured: true
+  is_published: true
+- guest_name: Sarah Jenkins
+  rating: 5
+  review_text: Stunning mountain views, wonderful farm-to-table breakfast, and peaceful
+    room overlooking the jungle. Will definitely return!
+  source: google
+  is_featured: true
+  is_published: true
+- guest_name: Anil & Family
+  rating: 5
+  review_text: Our family room was clean, spacious, and beautifully crafted with wooden
+    furniture. The kids loved the zipline!
+  source: booking
+  is_featured: true
+  is_published: true
+attractions:
+- name: Kamal Pokhari Lotus Pond
+  category: tourist
+  distance: 0.2 km
+  travel_time: 2 minutes walk
+  description: Picturesque lotus pond located right beside Prem Durbar, offering tranquil
+    walking spots.
+  is_active: true
+- name: Nagarkot Sunrise Viewpoint
+  category: tourist
+  distance: 1.5 km
+  travel_time: 15 minutes drive
+  description: Famous viewpoint for breathtaking sunrise over Mount Everest and the
+    Himalayan range.
+  is_active: true
+- name: Changunarayan Temple (UNESCO World Heritage)
+  category: religious
+  distance: 8 km
+  travel_time: 20 minutes drive
+  description: Ancient Hindu temple dedicated to Lord Vishnu, famous for stone carvings
+    and rich history.
+  is_active: true
+branches:
+- name: Prem Durbar Hotel & Nagarkot Zipline
+  address: Changunarayan-7, Zipline Marga-Hawelli, Nagarkot, Nepal
+  phone: +01-5145351 / 9765834225 / 9765834226
+  email: info@premdurbar.com
+  is_main: true
+  is_published: true
+coupons:
+- code: ZIPLINE10
+  discount_type: percentage
+  discount_value: 10
+  min_spend: 0
+  valid_days_from_now: 365
+  is_active: true
+- code: NAGARKOT15
+  discount_type: percentage
+  discount_value: 15
+  min_spend: 2000
+  valid_days_from_now: 365
+  is_active: true
+payment_processors:
+- code: esewa
+  name: eSewa
+  apply_tax: true
+  is_published: true
+  currencies:
+  - NPR
+- code: khalti
+  name: Khalti
+  apply_tax: true
+  is_published: true
+  currencies:
+  - NPR
+- code: stripe
+  name: Stripe
+  apply_tax: true
+  is_published: true
+  currencies:
+  - USD

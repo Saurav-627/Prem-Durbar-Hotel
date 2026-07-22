@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="py-20 border-b border-amber-900/10 text-center relative overflow-hidden bg-cover bg-center"
+         style="background-image: url('{% if seo_raw and seo_raw.header_image %}{{ seo_raw.header_image.url }}{% else %}https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200{% endif %}');">
+    <div class="absolute inset-0 bg-black/75"></div>
+    <div class="relative z-10 space-y-4">
+        <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-300">{{ seo_raw.header_subtitle|default:"Get In Touch" }}</span>
+        <h1 class="font-luxury-title text-4xl sm:text-6xl font-bold text-white leading-tight">{{ seo_raw.header_title|default:"Concierge &amp; Contact" }}</h1>
+        <p class="text-sm text-white/80 max-w-xl mx-auto">{{ seo_raw.header_description|default:"We are here to assist you with room bookings, event planning, or general questions." }}</p>
+    </div>
+</section>
+
+<section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+        
+        <!-- CONTACT INFO & BRANCHES (LEFT) -->
+        <div class="space-y-12">
+            <div class="space-y-4">
+                <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-500">Resort Addresses</span>
+                <h2 class="font-luxury-title text-3xl font-bold">Our Branches & Properties</h2>
+                <p class="text-sm opacity-85">{{ hotel_settings.site_name }} operates primary properties and guest assistance wings across multiple destinations.</p>
+            </div>
+
+            <div class="space-y-6">
+                {% for branch in branches %}
+                <div class="p-6 rounded-2xl border shadow-sm space-y-4"
+                     :class="{
+                         'bg-white border-gray-200': currentTheme === 'light',
+                         'bg-[#161412] border-amber-900/20': currentTheme !== 'light'
+                     }">
+                    <div class="flex items-center justify-between border-b pb-3" :class="{ 'border-gray-100': currentTheme === 'light', 'border-amber-900/10': currentTheme !== 'light' }">
+                        <h3 class="font-semibold text-lg flex items-center gap-2">
+                            <i class="fa-solid fa-hotel text-luxuryGold-500"></i>
+                            {{ branch.name }}
+                        </h3>
+                        {% if branch.is_main %}
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/20 text-luxuryGold-400 uppercase">Headquarters</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs opacity-85">
+                        <p><i class="fa-solid fa-location-dot text-luxuryGold-500 mr-2"></i>{{ branch.address }}</p>
+                        <p><i class="fa-solid fa-phone text-luxuryGold-500 mr-2"></i>{{ branch.phone }}</p>
+                        <p><i class="fa-solid fa-envelope text-luxuryGold-500 mr-2"></i>{{ branch.email }}</p>
+                    </div>
+
+                    {% if branch.maps_iframe %}
+                    <div class="relative overflow-hidden rounded-xl h-80 border border-amber-900/10 mt-4">
+                        {{ branch.maps_iframe|safe }}
+                    </div>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <p class="text-sm opacity-60">No properties registered.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- CONTACT INQUIRY FORM (RIGHT) -->
+        <div class="space-y-8">
+            <div class="rounded-2xl p-6 sm:p-10 border shadow-xl sticky top-28"
+                 :class="{
+                     'bg-white border-gray-200': currentTheme === 'light',
+                     'bg-[#161412] border-amber-900/20': currentTheme !== 'light'
+                 }">
+                
+                <h3 class="font-luxury-title text-2xl font-semibold mb-2">Send an Inquiry</h3>
+                <p class="text-xs opacity-75 mb-6">Have a custom event or dining reservation question? Complete the form below.</p>
+
+                <!-- HTMX Response feedback -->
+                <div id="contact-response" class="mb-6"></div>
+
+                <form hx-post="{% url 'contact:submit_inquiry_ajax' %}" hx-target="#contact-response" hx-swap="innerHTML" class="space-y-5">
+                    {% csrf_token %}
+                    <div>
+                        <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Full Name *</label>
+                        <input type="text" name="name" required class="w-full px-4 py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                               :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Email *</label>
+                            <input type="email" name="email" required class="w-full px-4 py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Phone</label>
+                            <input type="tel" name="phone" class="w-full px-4 py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Inquiry Category</label>
+                        <select name="category" class="w-full px-4 py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                                :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                            <option value="general">General Inquiry</option>
+                            <option value="booking">Room Booking</option>
+                            <option value="dining">Fine Dining Table</option>
+                            <option value="event">Meetings & Events</option>
+                            <option value="feedback">Guest Feedback</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Subject *</label>
+                        <input type="text" name="subject" required class="w-full px-4 py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                               :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Message *</label>
+                        <textarea name="message" rows="4" required class="w-full px-4 py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                                  :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 mt-2 rounded-lg text-xs font-bold uppercase tracking-wider text-center cursor-pointer"
+                            :class="{
+                                'bg-amber-800 text-white': currentTheme === 'light',
+                                'bg-luxuryGold-500 text-black gold-glow': currentTheme !== 'light'
+                            }">
+                        Submit Inquiry Message
+                    </button>
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

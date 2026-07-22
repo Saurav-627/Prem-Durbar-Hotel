@@ -1,0 +1,120 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block page_title %}Transaction Inspection{% endblock %}
+{% block page_subtitle %}Examine the API metadata response payload returned by the gateway payment provider.{% endblock %}
+
+{% block breadcrumbs %}
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<a href="{% url 'admin_dashboard:payment_list' %}" class="hover:text-luxuryGold-400">Payments</a>
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<span class="text-neutral-500">Inspect Log</span>
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- Transaction Metadata details -->
+    <div class="lg:col-span-2 space-y-8">
+        
+        <!-- Details Card -->
+        <div class="custom-card rounded-2xl p-6 relative">
+            <div class="absolute top-6 right-6">
+                <span class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider
+                             {% if payment.status == 'success' %}bg-emerald-500/10 text-emerald-500
+                             {% elif payment.status == 'pending' %}bg-amber-500/10 text-amber-500
+                             {% else %}bg-rose-500/10 text-rose-500{% endif %}">
+                    {{ payment.get_status_display }}
+                </span>
+            </div>
+
+            <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-6 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+                Transaction Core Data
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8 text-sm">
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">Gateway reference ID</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1 font-mono">{{ payment.transaction_id }}</strong>
+                </div>
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">Payment Gateway Provider</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1 uppercase">{{ payment.gateway }}</strong>
+                </div>
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">Base Amount (Excl. Tax)</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1 font-medium">
+                        {{ payment.currency.symbol }} {{ payment.amount_ex_tax|floatformat:2 }}
+                    </strong>
+                </div>
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">Tax Component Collected</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1 font-medium">
+                        {{ payment.currency.symbol }} {{ payment.tax_amount|floatformat:2 }}
+                    </strong>
+                </div>
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">Total Amount Paid</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1 text-base text-luxuryGold-500">
+                        {{ payment.currency.symbol }} {{ payment.amount|floatformat:2 }}
+                    </strong>
+                </div>
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">Captured Date & Time</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1"><i class="fa-regular fa-clock mr-2"></i>{{ payment.created_at|date:"l, F d, Y · H:i:s" }}</strong>
+                </div>
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">Last status update</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1"><i class="fa-regular fa-clock mr-2"></i>{{ payment.updated_at|date:"l, F d, Y · H:i:s" }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Raw channel manager metadata payload -->
+        <div class="custom-card rounded-2xl p-6">
+            <h3 class="text-base font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-4">Channel Raw Metadata Payload</h3>
+            <div class="p-4 rounded-xl bg-neutral-900 border border-neutral-850 font-mono text-xs text-neutral-300 overflow-x-auto leading-relaxed select-all">
+                {% if booking_raw_payload %}
+                    <pre>{{ booking_raw_payload }}</pre>
+                {% else %}
+                    <span class="text-neutral-500 italic">No raw payload returned from gateway checkout response logs.</span>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Booking sidebar link -->
+    <div class="space-y-8">
+        {% if payment.booking %}
+        <!-- Guest Details Card -->
+        <div class="custom-card rounded-2xl p-6">
+            <h3 class="text-base font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-4">Guest Information</h3>
+            <div class="space-y-4 text-sm">
+                <div class="flex items-center gap-3">
+                    <div class="h-10 w-10 bg-luxuryGold-500/10 text-luxuryGold-500 rounded-full flex items-center justify-center font-bold">
+                        {{ payment.booking.guest_name|slice:":2"|upper }}
+                    </div>
+                    <div>
+                        <strong class="text-neutral-800 dark:text-neutral-200">{{ payment.booking.guest_name }}</strong>
+                        <p class="text-xs text-neutral-500">Booking: {{ payment.booking.booking_uid|slice:":8" }}...</p>
+                    </div>
+                </div>
+                <div class="pt-2 border-t border-neutral-200 dark:border-neutral-800 space-y-2">
+                    <p class="text-neutral-600 dark:text-neutral-400">
+                        <i class="fa-solid fa-envelope w-4 text-neutral-400 mr-1.5"></i>{{ payment.booking.guest_email }}
+                    </p>
+                    <p class="text-neutral-600 dark:text-neutral-400">
+                        <i class="fa-solid fa-phone w-4 text-neutral-400 mr-1.5"></i>{{ payment.booking.guest_phone }}
+                    </p>
+                </div>
+                <a href="{% url 'admin_dashboard:booking_detail' payment.booking.id %}" 
+                   class="w-full mt-4 py-2 bg-neutral-900 dark:bg-neutral-850 hover:bg-neutral-800 text-luxuryGold-400 font-semibold border border-luxuryGold-500/20 rounded-lg text-center block transition text-xs">
+                    Inspect Booking Details
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

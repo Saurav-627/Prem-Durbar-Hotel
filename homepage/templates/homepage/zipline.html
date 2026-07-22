@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta_title %}Nagarkot Zipline | The Superman Zip Line Adventure — Prem Durbar{% endblock %}
+{% block meta_description %}Experience Nepal's longest and best zipline adventure in Nagarkot. Superman and tandem zip flights with mountain views and certified international safety.{% endblock %}
+
+{% block content %}
+<!-- Zipline Hero Banner -->
+<div class="relative py-28 md:py-36 bg-[#161412] text-amber-50 overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center opacity-40 scale-105 transition-transform duration-1000"
+         style="background-image: url('https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?q=80&w=1920&auto=format&fit=crop');"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-[#161412] via-[#161412]/60 to-transparent"></div>
+    
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <span class="animate__animated animate__fadeInDown inline-block px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest bg-rose-500/20 text-rose-300 border border-rose-500/30 mb-4 backdrop-blur-sm shadow-md">
+            <i class="fa-solid fa-bolt mr-1 animate__animated animate__flash animate__infinite animate__slower"></i> Nagarkot Adventure Destination
+        </span>
+        <h1 class="animate__animated animate__zoomIn font-luxury-title text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white mb-6">
+            Nagarkot Zipline: The Superman Zip Line
+        </h1>
+        <p class="animate__animated animate__fadeInUp animate__delay-1s max-w-3xl mx-auto text-base sm:text-lg text-amber-100/80 font-light leading-relaxed">
+            Soar through the skies of Nagarkot above lush pine forests with panoramic views of the Himalayan range and Mount Everest.
+        </p>
+    </div>
+</div>
+
+<!-- Main Zipline Content & Specs -->
+<section class="py-20 md:py-28"
+         :class="{ 'bg-stone-50 text-gray-900': currentTheme === 'light', 'bg-[#1a1815] text-amber-50': currentTheme !== 'light' }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            
+            <div class="space-y-6 animate__animated animate__fadeInLeft">
+                <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-luxuryGold-500">
+                    <span class="w-8 h-[2px] bg-luxuryGold-500"></span>
+                    <span>Nepal's Longest Zipline</span>
+                </div>
+                <h2 class="font-luxury-title text-3xl sm:text-4xl font-bold tracking-tight">
+                    Feel the Thrill of High-Altitude Flying
+                </h2>
+                <p class="text-base leading-relaxed opacity-85">
+                    Located along **Zipline Marga-Hawelli, Nagarkot**, the Nagarkot Zipline offers one of the most exhilarating aerial adventure experiences in South Asia.
+                </p>
+                <p class="text-base leading-relaxed opacity-85">
+                    Choose between the classic seated harness flight, a tandem flight with a loved one, or the world-famous **Superman Zipline** flight where you fly head-first through the mountain canopy.
+                </p>
+
+                <!-- Spec List -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 text-center">
+                    <div class="animate__animated animate__fadeInUp p-4 rounded-xl border transition-all duration-300 hover:-translate-y-1 hover:border-luxuryGold-500/80"
+                         :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#221f1a] border-amber-900/30': currentTheme !== 'light' }">
+                        <p class="text-xs uppercase opacity-70 font-semibold">Location</p>
+                        <p class="text-lg font-bold text-luxuryGold-500 mt-1">Nagarkot</p>
+                    </div>
+                    <div class="animate__animated animate__fadeInUp animate__delay-1s p-4 rounded-xl border transition-all duration-300 hover:-translate-y-1 hover:border-luxuryGold-500/80"
+                         :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#221f1a] border-amber-900/30': currentTheme !== 'light' }">
+                        <p class="text-xs uppercase opacity-70 font-semibold">Flight Type</p>
+                        <p class="text-lg font-bold text-luxuryGold-500 mt-1">Superman / Tandem</p>
+                    </div>
+                    <div class="animate__animated animate__fadeInUp animate__delay-1s p-4 rounded-xl border transition-all duration-300 hover:-translate-y-1 hover:border-luxuryGold-500/80"
+                         :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#221f1a] border-amber-900/30': currentTheme !== 'light' }">
+                        <p class="text-xs uppercase opacity-70 font-semibold">Safety Rating</p>
+                        <p class="text-lg font-bold text-luxuryGold-500 mt-1">100% Certified</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Gallery -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 animate__animated animate__fadeInRight">
+                <img src="https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?q=80&w=800&auto=format&fit=crop" 
+                     alt="Nagarkot Zipline Flight" 
+                     class="rounded-2xl shadow-xl w-full h-80 object-cover hover:scale-105 transition-transform duration-500">
+                <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=800&auto=format&fit=crop" 
+                     alt="Mountain Pine View" 
+                     class="rounded-2xl shadow-xl w-full h-80 object-cover hover:scale-105 transition-transform duration-500">
+            </div>
+
+        </div>
+
+        <!-- Safety Certification Block -->
+        <div class="animate__animated animate__fadeInUp mt-20 p-8 sm:p-12 rounded-3xl border text-center space-y-6 shadow-xl"
+             :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#201d18] border-amber-900/30': currentTheme !== 'light' }">
+            <span class="p-4 rounded-full bg-luxuryGold-500/10 text-luxuryGold-500 inline-block animate__animated animate__pulse animate__infinite animate__slower">
+                <i class="fa-solid fa-shield-halved text-3xl"></i>
+            </span>
+            <h3 class="font-luxury-title text-2xl sm:text-3xl font-bold">Uncompromised Safety & Professional Guidance</h3>
+            <p class="max-w-3xl mx-auto text-sm sm:text-base opacity-80 font-light leading-relaxed">
+                Your flight is supported by dual heavy-gauge steel cables, automatic braking systems, UIAA/CE certified climbing harnesses, and certified jump masters who conduct daily safety checks.
+            </p>
+            <div>
+                <a href="{% url 'contact:contact_page' %}" 
+                   class="inline-flex items-center gap-2 px-8 py-4 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-xl text-sm transition transform hover:scale-105 shadow-xl">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span>Inquire / Book Zipline Experience</span>
+                </a>
+            </div>
+        </div>
+
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,420 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth theme-light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Dynamic SEO metadata from seo app context processor -->
+    <title>{{ seo.title }}</title>
+    <meta name="description" content="{{ seo.description }}">
+    <link rel="canonical" href="{{ seo.canonical }}">
+    
+    <!-- OpenGraph Tags -->
+    <meta property="og:title" content="{{ seo.og_title }}">
+    <meta property="og:description" content="{{ seo.og_description }}">
+    {% if seo.og_image %}<meta property="og:image" content="{{ seo.og_image }}">{% endif %}
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ seo.canonical }}">
+    
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="{{ seo.twitter_card }}">
+    <meta name="twitter:title" content="{{ seo.og_title }}">
+    <meta name="twitter:description" content="{{ seo.og_description }}">
+    {% if seo.og_image %}<meta name="twitter:image" content="{{ seo.og_image }}">{% endif %}
+    
+    <!-- Structured Data JSON-LD -->
+    {% if seo.structured_data %}
+    <script type="application/ld+json">
+        {{ seo.structured_data|safe }}
+    </script>
+    {% endif %}
+
+    <!-- Dynamic Favicon -->
+    {% if hotel_settings.favicon %}
+    <link rel="icon" href="{{ hotel_settings.favicon.url }}">
+    {% else %}
+    <link rel="icon" type="image/png" href="{% static 'images/hotel-logo.png' %}">
+    {% endif %}
+
+    <!-- Google Fonts: Outfit & Playfair Display -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <!-- Air Datepicker CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/air-datepicker@3.5.0/air-datepicker.css">
+
+    <!-- Tailwind CSS v4 Browser Compiler -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        luxuryGold: {
+                            50: '#FAF5E9',
+                            100: '#F3E7CA',
+                            200: '#E5CC94',
+                            300: '#D3AA5E',
+                            400: '#C48E37',
+                            500: '#B47825', // Main luxury gold
+                            600: '#99601D',
+                            700: '#784817',
+                            800: '#5D3713',
+                            900: '#4D2E11',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    
+    <!-- Alpine.js -->
+    <script defer src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js"></script>
+
+    <style type="text/css">
+        /* Theme overrides & custom luxury styling */
+        .theme-light {
+            --bg-color: #FAFAFA;
+            --text-color: #1C1A17;
+            --border-color: #E5E5E5;
+            --accent-color: #B47825;
+            --card-bg: #FFFFFF;
+            --navbar-bg: rgba(250, 250, 250, 0.9);
+        }
+        .theme-dark {
+            --bg-color: #121212;
+            --text-color: #E5E5E5;
+            --border-color: #2D2D2D;
+            --accent-color: #D3AA5E;
+            --card-bg: #1E1E1E;
+            --navbar-bg: rgba(18, 18, 18, 0.9);
+        }
+        .theme-luxury {
+            --bg-color: #0A0908;
+            --text-color: #E5CC94;
+            --border-color: rgba(229, 204, 148, 0.2);
+            --accent-color: #D3AA5E;
+            --card-bg: #161412;
+            --navbar-bg: rgba(10, 9, 8, 0.95);
+        }
+        .theme-festival {
+            --bg-color: #3F0C10;
+            --text-color: #F3E7CA;
+            --border-color: rgba(243, 231, 202, 0.25);
+            --accent-color: #F3E7CA;
+            --card-bg: #25060A;
+            --navbar-bg: rgba(63, 12, 16, 0.95);
+        }
+
+        html {
+            background-color: var(--bg-color);
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            border-color: var(--border-color);
+            font-family: 'Outfit', sans-serif;
+            transition: background-color 0.5s ease, color 0.5s ease;
+        }
+
+        .font-luxury-title {
+            font-family: 'Playfair Display', serif;
+        }
+
+        .gold-glow {
+            box-shadow: 0 0 15px rgba(211, 170, 94, 0.2);
+        }
+        .gold-text-glow {
+            text-shadow: 0 0 8px rgba(211, 170, 94, 0.4);
+        }
+
+        /* Suppress browser default click/tap fill on all links & buttons */
+        *, *::before, *::after {
+            -webkit-tap-highlight-color: transparent;
+        }
+        a, button {
+            outline: none;
+        }
+        a:focus-visible, button:focus-visible {
+            outline: 2px solid rgba(211, 170, 94, 0.6);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+        a:active, button:active {
+            background-color: transparent;
+        }
+
+        /* Premium Custom Air Datepicker Theme styling */
+        .air-datepicker {
+            --ad-background-color: var(--card-bg) !important;
+            --ad-text-color: var(--text-color) !important;
+            --ad-border-color: var(--border-color) !important;
+            --ad-selected-background-color: var(--accent-color) !important;
+            --ad-selected-color: #121212 !important;
+            --ad-today-color: var(--accent-color) !important;
+            --ad-font-family: 'Outfit', sans-serif !important;
+            border-radius: 16px !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 0 20px rgba(211, 170, 94, 0.1) !important;
+            border: 1px solid var(--border-color) !important;
+            padding: 8px !important;
+        }
+        .theme-light .air-datepicker {
+            --ad-background-color: #FFFFFF !important;
+            --ad-text-color: #1C1A17 !important;
+            --ad-border-color: #E5E5E5 !important;
+            --ad-selected-color: #000000 !important;
+        }
+        .theme-dark .air-datepicker {
+            --ad-background-color: #1E1E1E !important;
+            --ad-text-color: #E5E5E5 !important;
+            --ad-border-color: #2D2D2D !important;
+            --ad-selected-color: #000000 !important;
+        }
+        .theme-luxury .air-datepicker {
+            --ad-background-color: #161412 !important;
+            --ad-text-color: #E5CC94 !important;
+            --ad-border-color: rgba(229, 204, 148, 0.2) !important;
+            --ad-selected-color: #0A0908 !important;
+        }
+        .theme-festival .air-datepicker {
+            --ad-background-color: #25060A !important;
+            --ad-text-color: #F3E7CA !important;
+            --ad-border-color: rgba(243, 231, 202, 0.25) !important;
+            --ad-selected-color: #3F0C10 !important;
+        }
+        .air-datepicker-cell.-day-.-other-month-, .air-datepicker-cell.-year-.-other-decade- {
+            color: rgba(120, 120, 120, 0.4) !important;
+        }
+        .air-datepicker-cell.-day-.-disabled- {
+            color: rgba(120, 120, 120, 0.3) !important;
+            text-decoration: line-through !important;
+        }
+        .air-datepicker-cell.-today- {
+            font-weight: bold !important;
+            color: var(--accent-color) !important;
+            border: 1px solid var(--accent-color) !important;
+            border-radius: 8px !important;
+        }
+        .air-datepicker-cell.-selected- {
+            background: var(--accent-color) !important;
+            color: var(--bg-color) !important;
+            border-radius: 8px !important;
+        }
+        .air-datepicker-cell.-day- {
+            border-radius: 8px !important;
+        }
+        .air-datepicker-button {
+            color: var(--accent-color) !important;
+            font-weight: 600 !important;
+            border-radius: 8px !important;
+            padding: 4px 8px !important;
+            transition: all 0.2s !important;
+        }
+        .air-datepicker-button:hover {
+            background: rgba(180, 120, 37, 0.15) !important;
+            color: var(--text-color) !important;
+        }
+        .air-datepicker-nav--title, .air-datepicker-nav--title i {
+            color: var(--text-color) !important;
+            font-weight: bold !important;
+        }
+        .air-datepicker-nav--action svg {
+            stroke: var(--text-color) !important;
+        }
+        .air-datepicker-nav--action:hover {
+            background: rgba(180, 120, 37, 0.15) !important;
+            border-radius: 8px !important;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body x-data="{ 
+    currentTheme: '{{ selected_theme }}',
+    mobileMenuOpen: false,
+    bookingWidgetOpen: false,
+    searchOpen: false,
+    currentCurrency: '{{ selected_currency }}',
+    setCurrency(currency) {
+        this.currentCurrency = currency;
+        localStorage.setItem('currency', currency);
+        document.cookie = 'currency=' + currency + '; path=/; max-age=' + (365*24*60*60);
+        window.location.reload();
+    }
+}" class="theme-light min-h-screen flex flex-col">
+
+    <!-- Django Messages / Toast Notification -->
+    {% if messages %}
+    <div class="fixed top-24 right-6 z-50 space-y-4 max-w-sm w-full pointer-events-none" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" style="display: none;">
+        {% for message in messages %}
+        <div class="p-4 rounded-xl shadow-2xl border flex items-start gap-3 pointer-events-auto animate__animated animate__fadeInRight bg-black/90 backdrop-blur-md"
+             :class="{
+                 'border-emerald-500/30 text-emerald-200': '{{ message.tags }}' === 'success',
+                 'border-rose-500/30 text-rose-200': '{{ message.tags }}' === 'error',
+                 'border-amber-500/30 text-amber-200': '{{ message.tags }}' === 'warning' || '{{ message.tags }}' === 'info'
+             }">
+            <div class="text-lg">
+                {% if message.tags == 'success' %}
+                    <i class="fa-solid fa-circle-check text-emerald-400"></i>
+                {% elif message.tags == 'error' %}
+                    <i class="fa-solid fa-circle-exclamation text-rose-400"></i>
+                {% else %}
+                    <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>
+                {% endif %}
+            </div>
+            <div class="flex-1 text-xs font-medium leading-relaxed">
+                {{ message }}
+            </div>
+            <button @click="show = false" class="opacity-60 hover:opacity-100 transition-opacity pointer-events-auto">
+                <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% include 'includes/header.html' %}
+
+    {% include 'includes/mobile_menu.html' %}
+
+    {% include 'includes/search_modal.html' %}
+
+    <!-- MAIN BODY CONTENT -->
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    {% include 'includes/footer.html' %}
+    
+    <!-- Scroll Animation Controller -->
+    <style>
+        [data-animate] {
+            opacity: 0;
+            animation-duration: 0.8s;
+            animation-fill-mode: both;
+        }
+    </style>
+    <script>
+        window.defaultAirDatepickerConfig = {
+            locale: {
+                days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+                daysShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                daysMin: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+                months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+                monthsShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                today: 'Today',
+                clear: 'Clear',
+                dateFormat: 'yyyy-MM-dd',
+                timeFormat: 'hh:ii aa',
+                firstDay: 0
+            },
+            autoClose: true,
+            buttons: ['today', 'clear'],
+            dateFormat: 'yyyy-MM-dd',
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const anim = entry.target.getAttribute('data-animate') || 'fadeInUp';
+                        entry.target.classList.add('animate__animated', `animate__${anim}`);
+                        // Custom style cleanup to let transitions take over post-animation
+                        entry.target.style.opacity = '1';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.05, rootMargin: '0px 0px -50px 0px' });
+
+            document.querySelectorAll('[data-animate]').forEach(el => {
+                observer.observe(el);
+            });
+
+            // Active navigation highlighting
+            const path = window.location.pathname;
+            // Desktop nav
+            document.querySelectorAll('[data-nav]').forEach(a => {
+                const href = a.getAttribute('href');
+                const isHome = href === '/' && path === '/';
+                const isActive = isHome || (href !== '/' && path.startsWith(href));
+                if (isActive) {
+                    a.style.color = '#D3AA5E';
+                    a.style.borderBottom = '2px solid #D3AA5E';
+                }
+            });
+            // Mobile nav
+            document.querySelectorAll('[data-nav-mobile]').forEach(a => {
+                const href = a.getAttribute('href');
+                const isHome = href === '/' && path === '/';
+                const isActive = isHome || (href !== '/' && path.startsWith(href));
+                if (isActive) {
+                    a.style.color = '#D3AA5E';
+                    a.style.borderBottom = '2px solid #D3AA5E';
+                }
+            });
+
+            // Automatically upgrade all input[type="date"] elements to Air Datepicker
+            document.querySelectorAll('input[type="date"]').forEach(el => {
+                if (el.id === 'room_check_in' || el.id === 'room_check_out') {
+                    return;
+                }
+                
+                let checkOutEl = null;
+                if (el.name === 'check_in') {
+                    const form = el.closest('form');
+                    if (form) {
+                        checkOutEl = form.querySelector('input[name="check_out"]');
+                    }
+                }
+
+                // Convert to text so native date picker is disabled
+                el.type = 'text';
+                el.placeholder = 'YYYY-MM-DD';
+                el.classList.add('cursor-pointer');
+
+                const minDateVal = el.getAttribute('min');
+                const maxDateVal = el.getAttribute('max');
+
+                const picker = new AirDatepicker(el, {
+                    ...window.defaultAirDatepickerConfig,
+                    minDate: minDateVal ? new Date(minDateVal) : undefined,
+                    maxDate: maxDateVal ? new Date(maxDateVal) : undefined,
+                    onSelect({date}) {
+                        el.dispatchEvent(new Event('input', { bubbles: true }));
+                        el.dispatchEvent(new Event('change', { bubbles: true }));
+                        
+                        if (checkOutEl && checkOutEl.airDatepicker && date) {
+                            checkOutEl.airDatepicker.update({
+                                minDate: date
+                            });
+                        }
+                    }
+                });
+                
+                el.airDatepicker = picker;
+            });
+        });
+    </script>
+
+    <!-- Air Datepicker JS -->
+    <script src="https://cdn.jsdelivr.net/npm/air-datepicker@3.5.0/air-datepicker.js"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,150 @@
+{% load static %}
+<!-- GLOBAL HEADER / STICKY NAVBAR -->
+<header class="sticky top-0 z-50 border-b shadow-sm backdrop-blur-md transition-colors duration-300"
+        :class="{
+            'bg-white/95 border-gray-200 text-gray-800': currentTheme === 'light',
+            'bg-[#121212]/95 border-[#2D2D2D] text-gray-200': currentTheme === 'dark',
+            'bg-[#0A0908]/95 border-amber-900/20 text-amber-100': currentTheme === 'luxury' || currentTheme === 'festival'
+        }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-20">
+            
+            <!-- Brand Logo -->
+            <div class="flex-shrink-0">
+                <a href="{% url 'homepage:home' %}" class="flex items-center gap-3">
+                    {% if hotel_settings.logo %}
+                    <img src="{{ hotel_settings.logo.url }}" alt="{{ hotel_settings.site_name }}" class="h-20 w-auto object-contain">
+                    {% else %}
+                    <img src="{% static 'images/hotel-logo.png' %}" alt="{{ hotel_settings.site_name }}" class="h-20 w-auto object-contain">
+                    {% endif %}
+                </a>
+            </div>
+
+            <!-- Desktop Mega Menu Navigation -->
+            <nav class="hidden md:flex space-x-8 items-center">
+                <!-- Home -->
+                <a href="{% url 'homepage:home' %}" data-nav class="text-sm font-medium tracking-wide uppercase hover:text-luxuryGold-400 transition-colors pb-1">Home</a>
+                
+                <!-- Dynamic Navigation Items -->
+                {% for item in header_menu %}
+                    {% if item.children.all %}
+                        <!-- Dropdown / Mega Menu -->
+                        <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
+                            <button class="flex items-center gap-1 text-sm font-medium tracking-wide uppercase hover:text-luxuryGold-400 transition-colors focus:outline-none">
+                                {{ item.name }}
+                                <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                            </button>
+                            <div x-show="open" 
+                                 x-transition:enter="transition ease-out duration-150"
+                                 x-transition:enter-start="opacity-0 translate-y-1"
+                                 x-transition:enter-end="opacity-100 translate-y-0"
+                                 x-transition:leave="transition ease-in duration-100"
+                                 x-transition:leave-start="opacity-100 translate-y-0"
+                                 x-transition:leave-end="opacity-0 translate-y-1"
+                                 class="absolute left-0 mt-2 w-56 rounded-md shadow-lg border backdrop-blur-lg focus:outline-none"
+                                 :class="{
+                                     'bg-white border-gray-200': currentTheme === 'light',
+                                     'bg-[#1E1E1E] border-[#2D2D2D]': currentTheme === 'dark',
+                                     'bg-[#161412] border-amber-900/30': currentTheme === 'luxury' || currentTheme === 'festival'
+                                 }">
+                                <div class="py-1">
+                                    {% for child in item.children.all %}
+                                        <a href="{{ child.url }}" class="block px-4 py-3 text-sm tracking-wide hover:bg-luxuryGold-900/20 hover:text-luxuryGold-400 transition-colors">{{ child.name }}</a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                        <a href="{{ item.url }}" data-nav class="text-sm font-medium tracking-wide uppercase hover:text-luxuryGold-400 transition-colors pb-1">{{ item.name }}</a>
+                    {% endif %}
+                {% empty %}
+                    <!-- Fallback menus if database is empty -->
+                    <a href="{% url 'homepage:about' %}" class="text-sm font-medium tracking-wide uppercase hover:text-luxuryGold-400 transition-colors">About Us</a>
+                    <a href="{% url 'rooms:room_list' %}" class="text-sm font-medium tracking-wide uppercase hover:text-luxuryGold-400 transition-colors">Rooms & Suites</a>
+                    <a href="{% url 'dining:dining_list' %}" class="text-sm font-medium tracking-wide uppercase hover:text-luxuryGold-400 transition-colors">Dining</a>
+                    <a href="{% url 'homepage:zipline' %}" class="text-sm font-medium tracking-wide uppercase hover:text-luxuryGold-400 transition-colors">Zipline</a>
+                    <a href="{% url 'homepage:sustainability' %}" class="text-sm font-medium tracking-wide uppercase hover:text-luxuryGold-400 transition-colors">Sustainability</a>
+                    <a href="{% url 'gallery:gallery_list' %}" class="text-sm font-medium tracking-wide uppercase hover:text-luxuryGold-400 transition-colors">Gallery</a>
+                    <a href="{% url 'contact:contact_page' %}" class="text-sm font-medium tracking-wide uppercase hover:text-luxuryGold-400 transition-colors">Contact</a>
+                {% endfor %}
+            </nav>
+
+            <!-- Header Actions (Theme switcher, search, Booking CTA) -->
+            <div class="hidden md:flex items-center space-x-6">
+
+                <!-- Currency Switcher Dropdown -->
+                <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                    <button @click="open = !open" 
+                            class="p-2 rounded-full focus:outline-none transition-colors flex items-center gap-1.5 text-xs font-semibold"
+                            :class="currentTheme === 'light' ? 'hover:bg-gray-100 text-gray-800' : 'hover:bg-luxuryGold-900/10 text-inherit'"
+                            title="Switch Currency">
+                        <i class="fa-solid fa-coins text-base text-luxuryGold-500"></i>
+                        <span x-text="currentCurrency">{{ selected_currency }}</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] opacity-70"></i>
+                    </button>
+                    
+                    <!-- Dropdown Menu -->
+                    <div x-show="open" 
+                         x-transition:enter="transition ease-out duration-150"
+                         x-transition:enter-start="opacity-0 translate-y-1"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-100"
+                         x-transition:leave-start="opacity-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 translate-y-1"
+                         class="absolute right-0 mt-2 w-52 rounded-xl shadow-xl border z-50 focus:outline-none py-1.5"
+                         :class="{
+                             'bg-white border-gray-200 text-gray-800': currentTheme === 'light',
+                             'bg-[#1E1E1E] border-[#2D2D2D] text-gray-200': currentTheme === 'dark',
+                             'bg-[#161412] border-amber-900/30 text-amber-200': currentTheme === 'luxury' || currentTheme === 'festival'
+                         }"
+                         style="display: none;">
+                        {% for c in published_currencies %}
+                        <button @click="setCurrency('{{ c.iso_code }}'); open = false" 
+                                class="flex w-full items-center justify-between px-4 py-2.5 text-left transition-colors text-xs"
+                                :class="currentTheme === 'light' ? 'hover:bg-gray-100' : 'hover:bg-luxuryGold-900/20'">
+                            <div class="flex items-center gap-2">
+                                <span class="font-serif font-bold text-xs opacity-75 w-5 text-center">{{ c.symbol }}</span>
+                                <span>{{ c.name }} ({{ c.iso_code }})</span>
+                            </div>
+                            <span class="text-xs font-bold text-luxuryGold-500" x-show="currentCurrency === '{{ c.iso_code }}'">✓</span>
+                        </button>
+                        {% empty %}
+                        <button @click="setCurrency('USD'); open = false" 
+                                class="flex w-full items-center justify-between px-4 py-2.5 text-left transition-colors text-xs"
+                                :class="currentTheme === 'light' ? 'hover:bg-gray-100' : 'hover:bg-luxuryGold-900/20'">
+                            <div class="flex items-center gap-2">
+                                <span class="font-serif font-bold text-xs opacity-75 w-5 text-center">$</span>
+                                <span>US Dollar (USD)</span>
+                            </div>
+                            <span class="text-xs font-bold text-luxuryGold-500" x-show="currentCurrency === 'USD'">✓</span>
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Search Button -->
+                <button @click="searchOpen = true" class="p-2 rounded-full hover:bg-luxuryGold-900/10 transition-colors">
+                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                </button>
+
+                <!-- Primary Booking CTA -->
+                <a href="{% url 'rooms:room_list' %}" 
+                   class="px-6 py-2.5 text-xs font-semibold uppercase tracking-widest rounded-full transition-all border border-luxuryGold-400 hover:scale-105 duration-300 {% if selected_theme == 'light' %}bg-amber-800 text-white hover:bg-amber-900{% else %}bg-luxuryGold-500 text-[#0A0908] hover:bg-luxuryGold-400 gold-glow{% endif %}"
+                   :class="{
+                       'bg-amber-800 text-white hover:bg-amber-900': currentTheme === 'light',
+                       'bg-luxuryGold-500 text-[#0A0908] hover:bg-luxuryGold-400 gold-glow': currentTheme !== 'light'
+                   }">
+                    Book A Stay
+                </a>
+            </div>
+
+            <!-- Mobile Burger Menu Trigger -->
+            <div class="md:hidden flex items-center space-x-4">
+                <button @click="mobileMenuOpen = true" class="p-2 rounded-lg hover:bg-luxuryGold-900/10 focus:outline-none transition-colors">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+
+        </div>
+    </div>
+</header>

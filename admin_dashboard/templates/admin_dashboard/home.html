@@ -1,0 +1,291 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block page_title %}Dashboard Overview{% endblock %}
+{% block page_subtitle %}Welcome back! Here is what is happening at {{ hotel_settings.site_name }} today.{% endblock %}
+
+{% block content %}
+<!-- Grid of stats cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    
+    <!-- Revenue Today -->
+    <div class="custom-card rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between min-h-[9rem]">
+        <div>
+            <div class="flex items-center justify-between text-neutral-400">
+                <span class="text-xs uppercase font-semibold tracking-wider">Revenue Today</span>
+                <i class="fa-solid fa-money-bill-trend-up text-xl text-emerald-500"></i>
+            </div>
+            {% if revenue_today_by_currency %}
+                {% for currency, amount in revenue_today_by_currency.items %}
+                <p class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 font-serif mt-1">
+                    {{ currency }} {{ amount|floatformat:2 }}
+                </p>
+                {% endfor %}
+            {% else %}
+                <p class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 font-serif mt-2">
+                    NPR 0.00
+                </p>
+            {% endif %}
+        </div>
+        <p class="text-xs text-neutral-500 mt-2">Includes successful gateway payments</p>
+    </div>
+
+    <!-- Occupancy Rate -->
+    <div class="custom-card rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between h-36">
+        <div>
+            <div class="flex items-center justify-between text-neutral-400">
+                <span class="text-xs uppercase font-semibold tracking-wider">Occupancy Rate</span>
+                <i class="fa-solid fa-percent text-xl text-luxuryGold-500"></i>
+            </div>
+            <div class="flex items-end gap-3 mt-2">
+                <p class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 font-serif">
+                    {{ occupancy_rate }}%
+                </p>
+                <span class="text-xs text-neutral-400 mb-1">({{ occupied_rooms_count }}/{{ available_rooms_count|add:occupied_rooms_count }} rooms)</span>
+            </div>
+        </div>
+        <!-- Progress bar -->
+        <div class="w-full bg-neutral-200 dark:bg-neutral-800 rounded-full h-1.5 mt-2">
+            <div class="bg-luxuryGold-500 h-1.5 rounded-full" style="width: {{ occupancy_rate }}%"></div>
+        </div>
+    </div>
+
+    <!-- Today's Check-ins -->
+    <div class="custom-card rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between h-36">
+        <div>
+            <div class="flex items-center justify-between text-neutral-400">
+                <span class="text-xs uppercase font-semibold tracking-wider">Today's Check-ins</span>
+                <i class="fa-solid fa-door-open text-xl text-blue-500"></i>
+            </div>
+            <p class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 font-serif mt-2">
+                {{ today_checkins_count }}
+            </p>
+        </div>
+        <p class="text-xs text-neutral-500">Guests arriving today</p>
+    </div>
+
+    <!-- Today's Check-outs -->
+    <div class="custom-card rounded-2xl p-6 relative overflow-hidden flex flex-col justify-between h-36">
+        <div>
+            <div class="flex items-center justify-between text-neutral-400">
+                <span class="text-xs uppercase font-semibold tracking-wider">Today's Check-outs</span>
+                <i class="fa-solid fa-door-closed text-xl text-amber-500"></i>
+            </div>
+            <p class="text-2xl font-bold text-neutral-900 dark:text-neutral-100 font-serif mt-2">
+                {{ today_checkouts_count }}
+            </p>
+        </div>
+        <p class="text-xs text-neutral-500">Guests leaving today</p>
+    </div>
+
+</div>
+
+<!-- Second grid stats -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <!-- Confirmed Bookings -->
+    <div class="custom-card rounded-2xl p-5 flex items-center justify-between">
+        <div>
+            <p class="text-xs text-neutral-400 uppercase font-semibold">Confirmed Bookings</p>
+            <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">{{ confirmed_bookings_count }}</p>
+        </div>
+        <div class="h-10 w-10 bg-emerald-500/10 text-emerald-500 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-circle-check"></i>
+        </div>
+    </div>
+    
+    <!-- Pending Bookings -->
+    <div class="custom-card rounded-2xl p-5 flex items-center justify-between">
+        <div>
+            <p class="text-xs text-neutral-400 uppercase font-semibold">Pending Bookings</p>
+            <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">{{ pending_bookings_count }}</p>
+        </div>
+        <div class="h-10 w-10 bg-amber-500/10 text-amber-500 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-clock"></i>
+        </div>
+    </div>
+
+    <!-- Dining Bookings -->
+    <div class="custom-card rounded-2xl p-5 flex items-center justify-between">
+        <div>
+            <p class="text-xs text-neutral-400 uppercase font-semibold">Dining Bookings Today</p>
+            <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">{{ dining_reservations_today_count }}</p>
+        </div>
+        <div class="h-10 w-10 bg-pink-500/10 text-pink-500 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-utensils"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Main body grid split -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    
+    <!-- Left column: Analytics chart and Check-ins lists -->
+    <div class="lg:col-span-2 space-y-8">
+        
+        <!-- Interactive Analytics Chart (SVG simulated) -->
+        <div class="custom-card rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 font-serif">Revenue & Analytics Trend</h3>
+                    <p class="text-xs text-neutral-500">Performance logs for the past week</p>
+                </div>
+                <div class="flex items-center gap-4 text-xs font-semibold">
+                    <span class="flex items-center gap-1.5 text-neutral-500">
+                        <span class="h-2 w-2 rounded-full bg-luxuryGold-500"></span>
+                        Revenue
+                    </span>
+                    <span class="flex items-center gap-1.5 text-neutral-500">
+                        <span class="h-2 w-2 rounded-full bg-blue-500"></span>
+                        Bookings
+                    </span>
+                </div>
+            </div>
+            
+            <!-- Simulated SVG Graph -->
+            <div class="h-64 relative flex items-end justify-between px-2 pt-4">
+                
+                <!-- Grid Lines -->
+                <div class="absolute inset-x-0 bottom-8 h-px bg-neutral-200 dark:bg-neutral-800"></div>
+                <div class="absolute inset-x-0 bottom-24 h-px bg-neutral-200 dark:bg-neutral-800/40"></div>
+                <div class="absolute inset-x-0 bottom-40 h-px bg-neutral-200 dark:bg-neutral-800/40"></div>
+                <div class="absolute inset-x-0 bottom-56 h-px bg-neutral-200 dark:bg-neutral-800/40"></div>
+                
+                <!-- Graph Bars / Dots -->
+                {% for item in chart_data %}
+                <div class="flex-1 flex flex-col items-center group z-10 relative">
+                    <!-- Tooltip -->
+                    <div class="absolute bottom-full mb-1 hidden group-hover:block bg-neutral-900 text-white text-[10px] rounded py-1.5 px-2.5 z-20 pointer-events-none whitespace-nowrap shadow-lg">
+                        {% if item.revenue_by_currency %}
+                            {% for curr, amt in item.revenue_by_currency.items %}
+                                Revenue ({{ curr }}): {{ amt|floatformat:2 }}<br>
+                            {% endfor %}
+                        {% else %}
+                            Revenue: NPR 0.00<br>
+                        {% endif %}
+                        Bookings: {{ item.bookings }}
+                    </div>
+                    <div class="w-full flex items-end justify-center gap-1.5 h-48 mb-2">
+                        <!-- Revenue bar -->
+                        <div class="w-6 bg-luxuryGold-500/80 group-hover:bg-luxuryGold-500 rounded-t transition-all duration-300"
+                             style="height: {{ item.rev_height }}%"></div>
+                        <!-- Bookings bar -->
+                        <div class="w-3 bg-blue-500/80 group-hover:bg-blue-500 rounded-t transition-all duration-300"
+                             style="height: {{ item.book_height }}%"></div>
+                    </div>
+                    <span class="text-[10px] font-semibold text-neutral-500">{{ item.label }}</span>
+                </div>
+                {% endfor %}
+                
+            </div>
+        </div>
+
+        <!-- Today's Arriving Guests list -->
+        <div class="custom-card rounded-2xl p-6">
+            <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-4">Arriving Today</h3>
+            {% if today_checkins %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 pb-3">
+                            <th class="py-3 font-semibold">Guest</th>
+                            <th class="py-3 font-semibold">Room Assigned</th>
+                            <th class="py-3 font-semibold">Rooms Count</th>
+                            <th class="py-3 font-semibold">Status</th>
+                            <th class="py-3 font-semibold text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                        {% for b in today_checkins %}
+                        <tr>
+                            <td class="py-4">
+                                <p class="font-semibold text-neutral-900 dark:text-neutral-200">{{ b.guest_name }}</p>
+                                <p class="text-xs text-neutral-500">{{ b.booking_uid }}</p>
+                            </td>
+                            <td class="py-4 text-neutral-600 dark:text-neutral-400">{{ b.room.title }}</td>
+                            <td class="py-4 text-neutral-600 dark:text-neutral-400">{{ b.num_rooms }}</td>
+                            <td class="py-4">
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500">
+                                    {{ b.get_status_display }}
+                                </span>
+                            </td>
+                            <td class="py-4 text-right">
+                                <a href="{% url 'admin_dashboard:booking_detail' b.id %}" 
+                                   class="px-3 py-1.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 rounded-lg text-xs font-bold transition">
+                                    Check In
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-sm text-neutral-500 py-4 text-center">No guests checking in today.</p>
+            {% endif %}
+        </div>
+
+    </div>
+
+    <!-- Right column: Quick actions and Activities feed -->
+    <div class="space-y-8">
+        
+        <!-- Quick Actions Panel -->
+        <div class="custom-card rounded-2xl p-6">
+            <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-4">Quick Operations</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <a href="{% url 'admin_dashboard:room_availability_calendar' %}" 
+                   class="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-luxuryGold-500/40 text-center hover:bg-luxuryGold-500/5 transition">
+                    <i class="fa-solid fa-calendar-days text-xl text-luxuryGold-500 mb-2"></i>
+                    <p class="text-xs font-semibold text-neutral-700 dark:text-neutral-300">View Calendar</p>
+                </a>
+                <a href="{% url 'admin_dashboard:room_create' %}" 
+                   class="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-luxuryGold-500/40 text-center hover:bg-luxuryGold-500/5 transition">
+                    <i class="fa-solid fa-plus text-xl text-blue-500 mb-2"></i>
+                    <p class="text-xs font-semibold text-neutral-700 dark:text-neutral-300">Add Room</p>
+                </a>
+                <a href="{% url 'admin_dashboard:settings_dashboard' %}" 
+                   class="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-luxuryGold-500/40 text-center hover:bg-luxuryGold-500/5 transition">
+                    <i class="fa-solid fa-sliders text-xl text-pink-500 mb-2"></i>
+                    <p class="text-xs font-semibold text-neutral-700 dark:text-neutral-300">Settings</p>
+                </a>
+                <a href="{% url 'admin_dashboard:cms_dashboard' %}" 
+                   class="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 hover:border-luxuryGold-500/40 text-center hover:bg-luxuryGold-500/5 transition">
+                    <i class="fa-solid fa-newspaper text-xl text-purple-500 mb-2"></i>
+                    <p class="text-xs font-semibold text-neutral-700 dark:text-neutral-300">CMS News</p>
+                </a>
+            </div>
+        </div>
+
+        <!-- Recent Activities Feed -->
+        <div class="custom-card rounded-2xl p-6">
+            <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-6">Recent Activity</h3>
+            <div class="relative pl-6 border-l border-neutral-200 dark:border-neutral-800 space-y-6">
+                
+                {% for act in activities %}
+                <div class="relative">
+                    <!-- Dot status icon -->
+                    <span class="absolute -left-[31px] top-1.5 h-4.5 w-4.5 rounded-full border border-neutral-200 dark:border-neutral-950 flex items-center justify-center text-[10px] shadow-sm
+                                 {% if act.type == 'booking' %}bg-blue-500 text-white{% elif act.type == 'payment' %}bg-emerald-500 text-white{% else %}bg-purple-500 text-white{% endif %}">
+                        {% if act.type == 'booking' %}<i class="fa-solid fa-check"></i>
+                        {% elif act.type == 'payment' %}<i class="fa-solid fa-dollar-sign"></i>
+                        {% else %}<i class="fa-solid fa-envelope"></i>{% endif %}
+                    </span>
+                    
+                    <div class="text-sm">
+                        <a href="{{ act.url }}" class="font-semibold text-neutral-800 dark:text-neutral-200 hover:text-luxuryGold-500">
+                            {{ act.title }}
+                        </a>
+                        <p class="text-xs text-neutral-500 mt-0.5">{{ act.desc }}</p>
+                        <span class="text-[10px] text-neutral-400 block mt-1">{{ act.time|timesince }} ago</span>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-sm text-neutral-500 text-center">No recent activities.</p>
+                {% endfor %}
+                
+            </div>
+        </div>
+
+    </div>
+
+</div>
+{% endblock %}

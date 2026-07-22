@@ -1,0 +1,127 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block page_title %}Branches & Contact Inquiries{% endblock %}
+{% block page_subtitle %}Review hotel physical branches locations and general web contact messages.{% endblock %}
+
+{% block breadcrumbs %}
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<span class="text-neutral-500">Branches & Contact</span>
+{% endblock %}
+
+{% block page_actions %}
+<div class="flex items-center gap-3">
+    {% if active_tab == 'branches' %}
+    <a href="{% url 'admin_dashboard:branch_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+        <i class="fa-solid fa-plus mr-1.5"></i> Add Branch
+    </a>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Tabs navigation -->
+<div class="flex items-center gap-2 border-b border-neutral-200 dark:border-neutral-800 mb-8">
+    <a href="?tab=branches" 
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'branches' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+        Hotel Branches
+    </a>
+    <a href="?tab=inquiries" 
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'inquiries' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+        Contact Inquiries
+    </a>
+</div>
+
+<!-- Tab content -->
+<div class="space-y-6">
+
+    {% if active_tab == 'branches' %}
+    <!-- Branches Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for branch in branches %}
+        <div class="custom-card rounded-2xl p-6 flex flex-col justify-between shadow-sm">
+            <div>
+                <div class="flex items-center justify-between gap-3 mb-4">
+                    <h4 class="text-lg font-bold text-neutral-900 dark:text-neutral-100 font-serif">{{ branch.name }}</h4>
+                    {% if branch.is_main %}
+                    <span class="px-2 py-0.5 rounded bg-luxuryGold-500/10 text-luxuryGold-500 font-bold text-[10px] uppercase">Main Headquarter</span>
+                    {% endif %}
+                </div>
+                <div class="space-y-2 text-sm text-neutral-600 dark:text-neutral-400">
+                    <p><i class="fa-solid fa-location-dot text-neutral-400 w-4 mr-1.5"></i>Address: {{ branch.address }}</p>
+                    <p><i class="fa-solid fa-phone text-neutral-400 w-4 mr-1.5"></i>Phone: {{ branch.phone }}</p>
+                    <p><i class="fa-solid fa-envelope text-neutral-400 w-4 mr-1.5"></i>Email: {{ branch.email }}</p>
+                </div>
+            </div>
+            <div class="pt-6 mt-6 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
+                <div>
+                    {% if branch.is_published %}
+                    <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-semibold text-[11px]">Visible</span>
+                    {% else %}
+                    <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 font-semibold text-[11px]">Draft</span>
+                    {% endif %}
+                </div>
+                <div class="flex items-center gap-3 text-sm">
+                    <a href="{% url 'admin_dashboard:branch_edit' branch.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </a>
+                    <a href="{% url 'admin_dashboard:branch_delete' branch.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-2 text-center text-sm text-neutral-500 py-12">
+            No hotel branch locations created yet. Click "Add Branch" to initialize.
+        </div>
+        {% endfor %}
+    </div>
+
+    {% elif active_tab == 'inquiries' %}
+    <!-- Inquiries List table -->
+    <div class="custom-card rounded-2xl overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+                    <th class="px-6 py-4 font-semibold">Sender Name</th>
+                    <th class="px-6 py-4 font-semibold">Category Type</th>
+                    <th class="px-6 py-4 font-semibold">Subject Title</th>
+                    <th class="px-6 py-4 font-semibold">Message snippet</th>
+                    <th class="px-6 py-4 font-semibold">Received Date</th>
+                    <th class="px-6 py-4 text-right font-semibold">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                {% for inq in inquiries %}
+                <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10 transition duration-150">
+                    <td class="px-6 py-4">
+                        <strong class="text-neutral-900 dark:text-neutral-200 block">{{ inq.name }}</strong>
+                        <span class="text-xs text-neutral-500 block">{{ inq.email }} · {{ inq.phone }}</span>
+                    </td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-medium uppercase text-xs">
+                        {{ inq.get_category_display }}
+                    </td>
+                    <td class="px-6 py-4 text-neutral-850 dark:text-neutral-300 font-semibold">{{ inq.subject }}</td>
+                    <td class="px-6 py-4 text-neutral-500 italic max-w-xs truncate" title="{{ inq.message }}">{{ inq.message }}</td>
+                    <td class="px-6 py-4 text-neutral-500 text-xs font-semibold">{{ inq.created_at|date:"M d, Y · H:i" }}</td>
+                    <td class="px-6 py-4 text-right">
+                        <a href="{% url 'admin_dashboard:contact_inquiry_detail' inq.id %}" 
+                           class="text-xs font-bold text-luxuryGold-500 hover:text-luxuryGold-400">
+                            Read Message <i class="fa-solid fa-angle-right"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-sm text-neutral-500">
+                        No general contact inquiries received yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

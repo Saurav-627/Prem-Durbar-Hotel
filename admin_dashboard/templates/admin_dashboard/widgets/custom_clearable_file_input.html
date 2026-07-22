@@ -1,0 +1,32 @@
+<div class="space-y-3 font-sans">
+    {% if widget.is_initial %}
+    <div class="flex items-center gap-4 p-3.5 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/80 dark:bg-neutral-900/60 shadow-sm backdrop-blur-sm">
+        <div class="w-14 h-14 rounded-lg overflow-hidden border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 flex items-center justify-center shrink-0 shadow-inner">
+            {% if widget.value and widget.value.url %}
+            <img src="{{ widget.value.url }}" alt="Preview" class="w-full h-full object-contain p-1">
+            {% else %}
+            <i class="fa-solid fa-file text-neutral-400 text-xl"></i>
+            {% endif %}
+        </div>
+        <div class="flex-1 min-w-0">
+            <span class="text-[10px] font-bold text-neutral-400 uppercase tracking-widest block mb-0.5">Currently Uploaded</span>
+            <a href="{% if widget.value and widget.value.url %}{{ widget.value.url }}{% else %}#{% endif %}" target="_blank" class="text-xs font-semibold text-luxuryGold-600 dark:text-luxuryGold-400 hover:underline truncate block" title="{{ widget.value }}">
+                {{ widget.value }}
+            </a>
+        </div>
+        {% if not widget.required %}
+        <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-rose-500/20 bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20 text-xs font-semibold transition cursor-pointer select-none shrink-0">
+            <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}" class="rounded border-rose-400 text-rose-500 focus:ring-rose-500 bg-white dark:bg-neutral-900 cursor-pointer">
+            <span><i class="fa-solid fa-trash-can"></i> Remove</span>
+        </label>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div>
+        {% if widget.is_initial %}
+        <span class="block text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-1.5">Replace File</span>
+        {% endif %}
+        <input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>
+    </div>
+</div>

@@ -1,0 +1,141 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block page_title %}Dining & Table Reservations{% endblock %}
+{% block page_subtitle %}Manage dining venues, timings, menus and guest table reservations.{% endblock %}
+
+{% block breadcrumbs %}
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<span class="text-neutral-500">Dining & F&B</span>
+{% endblock %}
+
+{% block page_actions %}
+<div class="flex items-center gap-3">
+    {% if active_tab == 'venues' %}
+    <a href="{% url 'admin_dashboard:dining_venue_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+        <i class="fa-solid fa-plus mr-1.5"></i> Add Dining Venue
+    </a>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Tabs navigation -->
+<div class="flex items-center gap-2 border-b border-neutral-200 dark:border-neutral-800 mb-8">
+    <a href="?tab=venues" 
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'venues' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+        Dining Venues
+    </a>
+    <a href="?tab=reservations" 
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'reservations' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+        Table Reservations
+    </a>
+</div>
+
+<!-- Tab content -->
+<div class="space-y-6">
+
+    {% if active_tab == 'venues' %}
+    <!-- Venues Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for venue in venues %}
+        <div class="custom-card rounded-2xl overflow-hidden shadow-sm flex flex-col justify-between">
+            <div class="h-48 w-full bg-neutral-200 dark:bg-neutral-800 relative">
+                {% if venue.image %}
+                <img src="{{ venue.image.url }}" alt="{{ venue.name }}" class="h-full w-full object-cover">
+                {% else %}
+                <div class="h-full w-full flex items-center justify-center text-neutral-500">No Image Uploaded</div>
+                {% endif %}
+                <span class="absolute top-4 left-4 px-2.5 py-1 rounded bg-black/60 backdrop-blur-sm text-xs font-semibold text-luxuryGold-400 uppercase">
+                    {{ venue.get_category_display }}
+                </span>
+            </div>
+            <div class="p-6 flex-grow">
+                <h4 class="text-lg font-bold text-neutral-900 dark:text-neutral-100 font-serif mb-2">{{ venue.name }}</h4>
+                <p class="text-xs text-neutral-500 mb-3"><i class="fa-regular fa-clock mr-1.5"></i>Timings: {{ venue.timings }} · Cap: {{ venue.capacity }} pax</p>
+                <p class="text-sm text-neutral-600 dark:text-neutral-400 line-clamp-3 leading-relaxed mb-4">
+                    {{ venue.description }}
+                </p>
+            </div>
+            <div class="px-6 py-4 border-t border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/10 flex items-center justify-between">
+                <div>
+                    {% if venue.is_published %}
+                    <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-semibold text-[11px]">Visible</span>
+                    {% else %}
+                    <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 font-semibold text-[11px]">Draft</span>
+                    {% endif %}
+                </div>
+                <div class="flex items-center gap-3 text-sm">
+                    <a href="{% url 'admin_dashboard:dining_venue_edit' venue.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </a>
+                    <a href="{% url 'admin_dashboard:dining_venue_delete' venue.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-2 text-center text-sm text-neutral-500 py-12">
+            No dining venues configured. Click "Add Dining Venue" to initialize.
+        </div>
+        {% endfor %}
+    </div>
+
+    {% elif active_tab == 'reservations' %}
+    <!-- Reservations list -->
+    <div class="custom-card rounded-2xl overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+                    <th class="px-6 py-4 font-semibold">Guest</th>
+                    <th class="px-6 py-4 font-semibold">Venue Assigned</th>
+                    <th class="px-6 py-4 font-semibold">Date & Time</th>
+                    <th class="px-6 py-4 font-semibold">Guests Count</th>
+                    <th class="px-6 py-4 font-semibold">Status</th>
+                    <th class="px-6 py-4 text-right font-semibold">Toggle Status</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                {% for res in reservations %}
+                <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10 transition duration-150">
+                    <td class="px-6 py-4">
+                        <strong class="text-neutral-900 dark:text-neutral-200 block">{{ res.name }}</strong>
+                        <span class="text-xs text-neutral-500 block">{{ res.email }} · {{ res.phone }}</span>
+                    </td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-medium">{{ res.venue.name }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-medium">{{ res.date }} at {{ res.time }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-semibold">{{ res.guests }} pax</td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-0.5 rounded-full text-xs font-bold uppercase
+                                     {% if res.status == 'confirmed' %}bg-emerald-500/10 text-emerald-500
+                                     {% elif res.status == 'pending' %}bg-amber-500/10 text-amber-500
+                                     {% else %}bg-rose-500/10 text-rose-500{% endif %}">
+                            {{ res.get_status_display }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <form action="{% url 'admin_dashboard:dining_reservation_update_status' res.id %}" method="post" class="m-0 flex items-center justify-end gap-1.5">
+                            {% csrf_token %}
+                            <select name="status" onchange="this.form.submit()" 
+                                    class="px-2 py-1 rounded border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-xs cursor-pointer">
+                                <option value="pending" {% if res.status == 'pending' %}selected{% endif %}>Pending</option>
+                                <option value="confirmed" {% if res.status == 'confirmed' %}selected{% endif %}>Confirm</option>
+                                <option value="cancelled" {% if res.status == 'cancelled' %}selected{% endif %}>Cancel</option>
+                            </select>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-sm text-neutral-500">
+                        No dining table reservations registered yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}

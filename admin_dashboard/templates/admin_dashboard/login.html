@@ -1,0 +1,130 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="theme-luxury">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Login - {{ hotel_settings.site_name }}</title>
+    
+    <!-- Dynamic Favicon -->
+    {% if hotel_settings.favicon %}
+    <link rel="icon" href="{{ hotel_settings.favicon.url }}">
+    {% else %}
+    <link rel="icon" type="image/png" href="{% static 'images/hotel-logo.png' %}">
+    {% endif %}
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        luxuryGold: {
+                            50: '#FAF5E9',
+                            100: '#F3E7CA',
+                            200: '#E5CC94',
+                            300: '#D3AA5E',
+                            400: '#C48E37',
+                            500: '#B47825',
+                            600: '#99601D',
+                            700: '#784817',
+                            800: '#5D3713',
+                            900: '#4D2E11',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-[#0A0908] min-h-screen flex items-center justify-center p-6 text-[#E5CC94]">
+    
+    <!-- Background overlay gradients -->
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-neutral-900 via-neutral-950 to-black -z-10"></div>
+    <div class="absolute top-1/4 left-1/4 h-72 w-72 bg-luxuryGold-500/10 rounded-full blur-3xl -z-10"></div>
+    <div class="absolute bottom-1/4 right-1/4 h-72 w-72 bg-luxuryGold-300/10 rounded-full blur-3xl -z-10"></div>
+
+    <div class="w-full max-w-md bg-[#151310] border border-luxuryGold-500/20 rounded-2xl p-8 shadow-2xl relative overflow-hidden backdrop-blur-md">
+        
+        <!-- Top gold strip glow -->
+        <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-luxuryGold-700 via-luxuryGold-400 to-luxuryGold-700"></div>
+        
+        <!-- Header -->
+        <div class="text-center mb-8">
+            {% if hotel_settings.admin_logo %}
+            <img src="{{ hotel_settings.admin_logo.url }}" alt="Logo" class="h-16 w-auto mx-auto mb-4 rounded-lg shadow-lg object-contain">
+            {% elif hotel_settings.logo %}
+            <img src="{{ hotel_settings.logo.url }}" alt="Logo" class="h-16 w-auto mx-auto mb-4 rounded-lg shadow-lg object-contain">
+            {% else %}
+            <img src="{% static 'images/hotel-logo.png' %}" alt="Logo" class="h-16 w-auto mx-auto mb-4 rounded-lg shadow-lg object-contain">
+            {% endif %}
+            <h1 class="font-serif text-2xl font-bold tracking-wide text-luxuryGold-400">{{ hotel_settings.site_name }}</h1>
+            <p class="text-xs text-neutral-500 mt-1 uppercase tracking-widest font-semibold">{{ hotel_settings.admin_label|default:"CMS Admin Portal Login" }}</p>
+        </div>
+
+        <!-- Messages list -->
+        {% if messages %}
+        <div class="mb-6">
+            {% for message in messages %}
+            <div class="p-3.5 rounded-lg border text-sm text-center font-medium bg-rose-500/10 border-rose-500/30 text-rose-300">
+                <i class="fa-solid fa-triangle-exclamation mr-2"></i> {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Form -->
+        <form method="post" action="{% url 'admin_dashboard:login' %}" class="space-y-5">
+            {% csrf_token %}
+            
+            <div>
+                <label for="id_username" class="block text-xs font-semibold text-luxuryGold-300/80 uppercase tracking-wider mb-2">Username</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-neutral-500">
+                        <i class="fa-regular fa-user"></i>
+                    </span>
+                    <input type="text" name="username" id="id_username" required autofocus
+                           class="w-full pl-10 pr-4 py-3 bg-neutral-900/60 border border-neutral-800 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:border-luxuryGold-500 transition duration-200"
+                           placeholder="Enter admin username">
+                </div>
+            </div>
+
+            <div>
+                <label for="id_password" class="block text-xs font-semibold text-luxuryGold-300/80 uppercase tracking-wider mb-2">Password</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-neutral-500">
+                        <i class="fa-solid fa-lock"></i>
+                    </span>
+                    <input type="password" name="password" id="id_password" required
+                           class="w-full pl-10 pr-4 py-3 bg-neutral-900/60 border border-neutral-800 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:border-luxuryGold-500 transition duration-200"
+                           placeholder="Enter your security password">
+                </div>
+            </div>
+
+            <button type="submit"
+                    class="w-full py-3.5 mt-2 bg-gradient-to-r from-luxuryGold-600 to-luxuryGold-500 text-neutral-950 font-bold rounded-xl hover:from-luxuryGold-500 hover:to-luxuryGold-400 transition duration-200 shadow-lg shadow-luxuryGold-500/20 active:translate-y-px">
+                Sign In to Dashboard
+            </button>
+            
+        </form>
+
+        <!-- Footer link back -->
+        <div class="mt-8 pt-6 border-t border-neutral-900 text-center">
+            <a href="/" class="text-xs text-neutral-500 hover:text-luxuryGold-400 transition">
+                <i class="fa-solid fa-arrow-left-long mr-2"></i> Back to Homepage
+            </a>
+        </div>
+
+    </div>
+
+</body>
+</html>

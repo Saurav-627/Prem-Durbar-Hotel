@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="py-24 max-w-xl mx-auto px-4 text-center space-y-8" 
+         x-data="{ submitting: false }" 
+         x-init="submitting = true; $nextTick(() => { $refs.paymentForm.submit(); })">
+    
+    <div class="relative w-24 h-24 mx-auto">
+        <!-- Spinner animation -->
+        <div class="absolute inset-0 rounded-full border-4 border-luxuryGold-900/20 border-t-luxuryGold-500 animate-spin"></div>
+        <div class="absolute inset-0 flex items-center justify-center text-luxuryGold-500 text-2xl">
+            <i class="fa-solid fa-credit-card animate__animated animate__pulse animate__infinite"></i>
+        </div>
+    </div>
+
+    <div class="space-y-3">
+        <h2 class="font-luxury-title text-2xl font-bold tracking-wide">Connecting to {{ gateway|upper }}</h2>
+        <p class="text-sm opacity-85">Please do not refresh or close this window. We are establishing a secure transaction pipeline.</p>
+        <p class="text-xs font-mono opacity-65">Invoice ref: {{ payment.transaction_id }}</p>
+    </div>
+
+    <div class="text-xs opacity-75 pt-6 border-t border-amber-900/10">
+        Redirecting to {{ gateway|upper }} secure checkout portal...
+    </div>
+
+    <!-- Secure Redirection Form -->
+    <form x-ref="paymentForm" action="{{ api_url }}" method="{{ form_method }}" class="hidden">
+        {% for key, val in form_data.items %}
+            <input type="hidden" name="{{ key }}" value="{{ val }}">
+        {% endfor %}
+    </form>
+
+</section>
+{% endblock %}
+

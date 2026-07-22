@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="py-20 border-b border-amber-900/10 text-center relative overflow-hidden bg-cover bg-center"
+         style="background-image: url('{% if seo_raw and seo_raw.header_image %}{{ seo_raw.header_image.url }}{% else %}https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=1200{% endif %}');">
+    <div class="absolute inset-0 bg-black/75"></div>
+    <div class="relative z-10 space-y-4">
+        <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-300">{{ seo_raw.header_subtitle|default:"Culinary Experiences" }}</span>
+        <h1 class="font-luxury-title text-4xl sm:text-6xl font-bold text-white leading-tight">{{ seo_raw.header_title|default:"Gastronomy &amp; Lounge" }}</h1>
+        <p class="text-sm text-white/80 max-w-xl mx-auto">{{ seo_raw.header_description|default:"Discover the finest culinary venues, featuring award-winning chefs and cocktails." }}</p>
+    </div>
+</section>
+
+<section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {% for venue in venues %}
+        <div class="rounded-2xl overflow-hidden border shadow-lg group hover:translate-y-[-4px] duration-500 flex flex-col animate__animated animate__fadeInUp"
+             :class="{
+                 'bg-white border-gray-200': currentTheme === 'light',
+                 'bg-[#161412] border-amber-900/20': currentTheme !== 'light'
+             }">
+            <div class="relative h-64 overflow-hidden">
+                <img src="{% if venue.image %}{{ venue.image.url }}{% else %}https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=600{% endif %}" 
+                     alt="{{ venue.name }}" class="w-full h-full object-cover group-hover:scale-105 duration-700">
+                <span class="absolute top-4 right-4 px-4 py-1 text-xs font-semibold bg-black/70 text-luxuryGold-300 rounded-full">
+                    {{ venue.get_category_display }}
+                </span>
+            </div>
+            
+            <div class="p-6 flex-grow flex flex-col justify-between">
+                <div class="space-y-4">
+                    <h3 class="font-luxury-title text-xl font-bold tracking-wide">{{ venue.name }}</h3>
+                    <p class="text-sm opacity-85 line-clamp-3 leading-relaxed">{{ venue.description }}</p>
+                    
+                    <div class="space-y-2 text-xs opacity-75 pt-2">
+                        <p><i class="fa-solid fa-clock text-luxuryGold-500 mr-2"></i>Hours: {{ venue.timings }}</p>
+                        <p><i class="fa-solid fa-chair text-luxuryGold-500 mr-2"></i>Capacity: {{ venue.capacity }} Seats</p>
+                        {% if venue.chef_specialty %}
+                        <p><i class="fa-solid fa-cookie-bite text-luxuryGold-500 mr-2"></i>Chef specialty: {{ venue.chef_specialty }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="pt-6 mt-6 border-t border-amber-900/10 flex items-center justify-between">
+                    <a href="{% url 'dining:dining_detail' venue.slug %}" class="text-xs font-semibold uppercase tracking-wider hover:text-luxuryGold-400 transition-colors">Menus & Details</a>
+                    <a href="{% url 'dining:dining_detail' venue.slug %}" 
+                       class="px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider border hover:bg-luxuryGold-900/10 transition-colors"
+                       :class="{ 'border-amber-800 text-amber-800': currentTheme === 'light', 'border-luxuryGold-500 text-luxuryGold-500': currentTheme !== 'light' }">
+                        Reserve Table
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-3 text-center py-16">
+            <p class="text-sm opacity-60">No dining venues registered yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

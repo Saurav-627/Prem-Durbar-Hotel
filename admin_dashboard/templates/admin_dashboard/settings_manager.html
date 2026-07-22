@@ -1,0 +1,335 @@
+{% extends 'admin_dashboard/base.html' %}
+{% load dashboard_tags %}
+
+{% block page_title %}Settings Management{% endblock %}
+{% block page_subtitle %}Manage site settings, navigation items ordering, and active currencies.{% endblock %}
+
+{% block breadcrumbs %}
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<span class="text-neutral-500">Settings</span>
+{% endblock %}
+
+{% block page_actions %}
+<div class="flex items-center gap-3">
+    {% if active_tab == 'currencies' %}
+    <a href="{% url 'admin_dashboard:currency_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+        <i class="fa-solid fa-plus mr-1.5"></i> Add Currency
+    </a>
+    {% elif active_tab == 'navigation' %}
+    <a href="{% url 'admin_dashboard:menu_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+        <i class="fa-solid fa-plus mr-1.5"></i> Add Menu Item
+    </a>
+    {% elif active_tab == 'processors' %}
+    <a href="{% url 'admin_dashboard:processor_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+        <i class="fa-solid fa-plus mr-1.5"></i> Add Payment Processor
+    </a>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Module Tabs navigation -->
+<div class="flex items-center gap-2 border-b border-neutral-200 dark:border-neutral-800 mb-8">
+    <a href="?tab=general" 
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'general' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+        Hotel Site Settings
+    </a>
+    <a href="?tab=currencies" 
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'currencies' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+        Currencies visibility
+    </a>
+    <a href="?tab=navigation" 
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'navigation' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+        Navigation Menus
+    </a>
+    <a href="?tab=processors" 
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'processors' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+        Payment Processors
+    </a>
+</div>
+
+<!-- Tab content -->
+<div class="space-y-6">
+
+    {% if active_tab == 'general' %}
+    <!-- Hotel settings form -->
+    <div class="max-w-4xl">
+        <div class="custom-card rounded-2xl p-8 bg-white/50 dark:bg-neutral-900/50">
+            <form method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                
+                <h4 class="text-base font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-4 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+                    General Site Information
+                </h4>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Site Name</label>
+                        {{ settings_form.site_name }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Active Theme Selection</label>
+                        {{ settings_form.theme }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Contact Phone</label>
+                        {{ settings_form.contact_phone }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Contact Email</label>
+                        {{ settings_form.contact_email }}
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Physical Location Address</label>
+                        {{ settings_form.address }}
+                    </div>
+                </div>
+
+                <h4 class="text-base font-semibold text-neutral-900 dark:text-neutral-100 font-serif mt-8 mb-4 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+                    Branding & Media Assets
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white/40 dark:bg-neutral-900/30">
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Default Logo (Light Mode)</label>
+                        {{ settings_form.logo }}
+                    </div>
+                    <div class="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white/40 dark:bg-neutral-900/30">
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Dark Mode Logo Version</label>
+                        {{ settings_form.logo_dark }}
+                    </div>
+                    <div class="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white/40 dark:bg-neutral-900/30">
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Browser Favicon (.png, .ico, .svg)</label>
+                        {{ settings_form.favicon }}
+                    </div>
+                    <div class="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white/40 dark:bg-neutral-900/30">
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Admin Dashboard Logo</label>
+                        {{ settings_form.admin_logo }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Admin Browser Tab Title</label>
+                        {{ settings_form.admin_title }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Admin Sidebar Brand Label</label>
+                        {{ settings_form.admin_label }}
+                    </div>
+                </div>
+
+                <h4 class="text-base font-semibold text-neutral-900 dark:text-neutral-100 font-serif mt-8 mb-4 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+                    Social Media & Map Links
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Facebook URL</label>
+                        {{ settings_form.facebook_url }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Instagram URL</label>
+                        {{ settings_form.instagram_url }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Twitter URL</label>
+                        {{ settings_form.twitter_url }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Youtube URL</label>
+                        {{ settings_form.youtube_url }}
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Google Map embed iframe (HTML code)</label>
+                        {{ settings_form.google_maps_iframe }}
+                    </div>
+                </div>
+
+                <h4 class="text-base font-semibold text-neutral-900 dark:text-neutral-100 font-serif mt-8 mb-4 pb-2 border-b border-neutral-200 dark:border-neutral-800">
+                    Footer & Descriptions Info
+                </h4>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">About Section footer content</label>
+                        {{ settings_form.about_text }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Copyright text</label>
+                        {{ settings_form.copyright_text }}
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-end">
+                    <button type="submit" 
+                            class="px-6 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-xl shadow-lg transition">
+                        Update Global settings
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% elif active_tab == 'currencies' %}
+    <!-- Currencies list -->
+    <div class="custom-card rounded-2xl overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+                    <th class="px-6 py-4 font-semibold">ISO Code</th>
+                    <th class="px-6 py-4 font-semibold">Currency name</th>
+                    <th class="px-6 py-4 font-semibold">Symbol</th>
+                    <th class="px-6 py-4 font-semibold">Sequence order</th>
+                    <th class="px-6 py-4 font-semibold">Visibility</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                {% for curr in currencies %}
+                <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10 transition duration-150">
+                    <td class="px-6 py-4 font-bold text-neutral-900 dark:text-neutral-200">{{ curr.iso_code }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400">{{ curr.name }}</td>
+                    <td class="px-6 py-4 text-neutral-900 dark:text-neutral-100 font-semibold">{{ curr.symbol }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400">{{ curr.sequence }}</td>
+                    <td class="px-6 py-4">
+                        {% if curr.is_published %}
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-semibold text-xs">Visible</span>
+                        {% else %}
+                        <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 font-semibold text-xs">Hidden</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-3 text-sm">
+                            <a href="{% url 'admin_dashboard:currency_edit' curr.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="{% url 'admin_dashboard:currency_delete' curr.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-sm text-neutral-500">
+                        No currencies defined. Click "Add Currency" to initialize.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% elif active_tab == 'navigation' %}
+    <!-- Navigation menu items list -->
+    <div class="custom-card rounded-2xl overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+                    <th class="px-6 py-4 font-semibold">Item Name</th>
+                    <th class="px-6 py-4 font-semibold">URL Path</th>
+                    <th class="px-6 py-4 font-semibold">Menu Position</th>
+                    <th class="px-6 py-4 font-semibold">Order</th>
+                    <th class="px-6 py-4 font-semibold">Parent item</th>
+                    <th class="px-6 py-4 font-semibold">Status</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                {% for item in menus %}
+                <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10 transition duration-150">
+                    <td class="px-6 py-4 font-bold text-neutral-900 dark:text-neutral-200">{{ item.name }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-mono text-xs">{{ item.url }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 uppercase text-xs">{{ item.position|replace:"_" }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-semibold">{{ item.order }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400">{{ item.parent.name|default:"-" }}</td>
+                    <td class="px-6 py-4">
+                        {% if item.is_published %}
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-semibold text-xs">Visible</span>
+                        {% else %}
+                        <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 font-semibold text-xs">Hidden</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-3 text-sm">
+                            <a href="{% url 'admin_dashboard:menu_edit' item.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="{% url 'admin_dashboard:menu_delete' item.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="px-6 py-12 text-center text-sm text-neutral-500">
+                        No menu navigation items configured yet.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% elif active_tab == 'processors' %}
+    <!-- Payment Processors list -->
+    <div class="custom-card rounded-2xl overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+                    <th class="px-6 py-4 font-semibold">Name</th>
+                    <th class="px-6 py-4 font-semibold">Code / Slug</th>
+                    <th class="px-6 py-4 font-semibold">Supported Currencies</th>
+                    <th class="px-6 py-4 font-semibold">Apply Tax</th>
+                    <th class="px-6 py-4 font-semibold">Status</th>
+                    <th class="px-6 py-4 text-right">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                {% for proc in processors %}
+                <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10 transition duration-150">
+                    <td class="px-6 py-4 font-bold text-neutral-900 dark:text-neutral-200">{{ proc.name }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-mono text-xs">{{ proc.code }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400">
+                        {% for curr in proc.payment_currencies.all %}
+                        <span class="inline-block px-2 py-0.5 rounded bg-neutral-200 dark:bg-neutral-800 text-neutral-850 dark:text-neutral-300 text-xs font-semibold mr-1 mb-1">{{ curr.iso_code }}</span>
+                        {% empty %}
+                        <span class="italic text-neutral-400">None</span>
+                        {% endfor %}
+                    </td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-medium">
+                        {% if proc.apply_tax %}
+                        <span class="text-emerald-500"><i class="fa-solid fa-check mr-1"></i> Yes</span>
+                        {% else %}
+                        <span class="text-neutral-400"><i class="fa-solid fa-xmark mr-1"></i> No</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        {% if proc.is_published %}
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-semibold text-xs">Published</span>
+                        {% else %}
+                        <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 font-semibold text-xs">Draft</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-3 text-sm">
+                            <a href="{% url 'admin_dashboard:processor_edit' proc.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="{% url 'admin_dashboard:processor_delete' proc.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="px-6 py-12 text-center text-sm text-neutral-500">
+                        No payment processors configured yet. Click "Add Payment Processor" to initialize.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% endif %}
+
+</div>
+{% endblock %}

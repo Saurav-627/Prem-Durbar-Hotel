@@ -1,0 +1,32 @@
+<!-- GLOBAL SEARCH MODAL -->
+<div x-show="searchOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4" style="display: none;">
+    <div x-show="searchOpen" @click="searchOpen = false" class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+    <div x-show="searchOpen" 
+         x-transition:enter="transition ease-out duration-300 transform"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-200 transform"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95"
+         class="relative w-full max-w-2xl rounded-2xl p-6 border shadow-2xl animate__animated animate__zoomIn"
+         :class="{
+             'bg-white border-gray-200 text-gray-800': currentTheme === 'light',
+             'bg-[#161412] border-amber-900/30 text-amber-200': currentTheme !== 'light'
+         }">
+        <div class="flex items-center justify-between pb-4 border-b border-amber-900/10">
+            <h3 class="font-luxury-title text-xl font-medium tracking-wide">Search Resort</h3>
+            <button @click="searchOpen = false" class="p-2 rounded-lg hover:bg-luxuryGold-900/10">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        <form action="{% url 'rooms:room_list' %}" method="GET" class="mt-6 flex gap-3">
+            <input type="text" name="category" placeholder="Search room categories, dining, amenities..." 
+                   class="flex-1 px-4 py-3 rounded-lg border focus:outline-none focus:ring-1 focus:ring-luxuryGold-400 bg-transparent text-inherit"
+                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+            <button type="submit" class="px-6 py-3 rounded-lg font-semibold text-sm uppercase tracking-wider transition-colors"
+                    :class="{ 'bg-amber-800 text-white': currentTheme === 'light', 'bg-luxuryGold-500 text-black': currentTheme !== 'light' }">
+                Search
+            </button>
+        </form>
+    </div>
+</div>
