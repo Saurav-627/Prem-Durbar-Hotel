@@ -11,7 +11,7 @@
 {% block page_actions %}
 <div class="flex items-center gap-3">
     {% if active_tab == 'branches' %}
-    <a href="{% url 'admin_dashboard:branch_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+    <a href="{% url 'admin_dashboard:branch_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
         <i class="fa-solid fa-plus mr-1.5"></i> Add Branch
     </a>
     {% endif %}
@@ -22,7 +22,7 @@
 <!-- Tabs navigation -->
 <div class="flex items-center gap-2 border-b border-neutral-200 dark:border-neutral-800 mb-8">
     <a href="?tab=branches" 
-       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'branches' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'branches' %}border-brand-primary text-brand-primary dark:text-brand-secondary{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
         Hotel Branches
     </a>
     <a href="?tab=inquiries" 

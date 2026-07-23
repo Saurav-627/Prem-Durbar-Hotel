@@ -12,6 +12,7 @@ hotel_settings:
   facebook_url: https://www.facebook.com/premdurbarhotel/
   instagram_url: https://www.instagram.com/premdurbarhotel/
   twitter_url: https://x.com/premdurbarhotel
+
 about_preview:
   title: Nepal's Premier Adventure & Luxury Resort in Nagarkot
   subtitle: Prem Durbar Hotel & Nagarkot Zipline
@@ -315,19 +316,65 @@ rooms:
   policies:
   - title: Check-in / Check-out
     description: Check-in from 14:00 PM, Check-out by 12:00 PM.
-dining_venues:
-- name: Prem Durbar Dining & Terrace Lounge
-  slug: prem-durbar-lounge
-  category: restaurant
-  timings: 07:00 AM - 10:00 PM
-  capacity: 100
-  featured_dishes: Nepali Khaja Set, Mutton Thali, Chicken Thali, Chicken Paparika,
-    Haasko Chhoyela, Kodo Nachos Salsa
-  description: Our restaurant offers a farm-to-table culinary concept prioritizing
-    locally sourced seasonal ingredients. Feast on Signature dishes like Chicken Paparika,
-    Haasko Chhoyela, Kodo Nachos Salsa, fresh Momo platters, and traditional Nepali
-    sets.
-  is_featured: true
+about_cms:
+  hero_subtitle: Heritage & Mountain Hospitality
+  hero_title: Our Story & Legacy
+  hero_description: Nestled in Changunarayan-7, Nagarkot, Prem Durbar blends authentic Newari brick & wood craftsmanship with mountain tranquility, organic gastronomy, and high-altitude adventure.
+  story_subtitle: Kathmandu Valley Artistry
+  story_title: Traditional Newari Architecture Meets Mountain Luxury
+  story_content: Prem Durbar was envisioned as a living tribute to Nepal's rich architectural heritage. Every brick, handcrafted stone masonry, and carved wooden window echoes centuries of Kathmandu valley royalty. Overlooking the peaceful Kamal Pokhari pond and pine forest ridge, our resort offers guests an immersive journey into Nepalese royal durbar elegance combined with modern five-star comfort.
+  video_url: https://www.youtube.com/embed/demo-zipline
+
+zipline_cms:
+  hero_subtitle: Nagarkot Adventure Destination
+  hero_title: 'Nagarkot Zipline: The Superman Zip Line'
+  hero_description: Soar through the skies of Nagarkot above lush pine forests with panoramic views of the Himalayan range and Mount Everest.
+  video_url: https://www.youtube.com/embed/demo-zipline
+  spec_length: 1,200 Meters / 1.2 KM
+  spec_speed: 95 KM/H Top Speed
+  spec_elevation: 2,175m Altitude
+  spec_safety: 100% International Certified
+  overview_subtitle: High-Altitude Thrill
+  overview_title: Nepal's Longest Superman Flight Zipline
+  overview_content: Located just 32 kilometers from Kathmandu at Changunarayan-7, Nagarkot, Nagarkot Zipline offers one of South Asia's most thrilling high-altitude zipline experiences. Choose between Superman Flight position, Tandem dual flight, or Classic harness zip as you glide above pine forests facing snow-capped peaks.
+
+sustainability_cms:
+  hero_subtitle: Responsible Hospitality
+  hero_title: Eco-Sustainability & Local Empowerment
+  hero_description: Preserving Nagarkot’s natural pine beauty and supporting local mountain communities while providing luxurious guest comfort.
+  intro_subtitle: Pillars of Action
+  intro_title: Our Environmental & Community Commitments
+
+sustainability_pillars:
+- icon_class: fa-solid fa-solar-panel
+  title: Solar & Renewable Energy
+  description: 100% solar water heating system across all luxury guest suites and kitchen facilities, reducing carbon footprint.
+  order: 1
+  is_published: true
+- icon_class: fa-solid fa-seedling
+  title: Organic Farm-to-Table
+  description: Sourcing organic fresh produce, mountain honey, and dairy directly from local Changunarayan farm cooperatives.
+  order: 2
+  is_published: true
+- icon_class: fa-solid fa-droplet-slash
+  title: Water Conservation & Harvesting
+  description: Rainwater harvesting and low-flow smart plumbing fixtures preserving Nagarkot’s natural mountain water tables.
+  order: 3
+  is_published: true
+- icon_class: fa-solid fa-users-gear
+  title: Local Mountain Community Employment
+  description: Over 85% of our hospitality, culinary, and zipline safety staff are recruited and trained locally from Nagarkot.
+  order: 4
+  is_published: true
+- icon_class: fa-solid fa-shield-cat
+  title: Zero-Tolerance Child Protection
+  description: Strict commitment to international child safety, ethical tourism standards, and safe mountain adventure protocols.
+  order: 5
+  is_published: true
+- icon_class: fa-solid fa-recycle
+  title: Single-Use Plastic Ban
+  description: Elimination of plastic bottles and straw packaging in favor of refillable glass carafes and biodegradable amenities.
+  order: 6
   is_published: true
 testimonials:
 - guest_name: Rohan Sharma
@@ -351,28 +398,6 @@ testimonials:
   source: booking
   is_featured: true
   is_published: true
-attractions:
-- name: Kamal Pokhari Lotus Pond
-  category: tourist
-  distance: 0.2 km
-  travel_time: 2 minutes walk
-  description: Picturesque lotus pond located right beside Prem Durbar, offering tranquil
-    walking spots.
-  is_active: true
-- name: Nagarkot Sunrise Viewpoint
-  category: tourist
-  distance: 1.5 km
-  travel_time: 15 minutes drive
-  description: Famous viewpoint for breathtaking sunrise over Mount Everest and the
-    Himalayan range.
-  is_active: true
-- name: Changunarayan Temple (UNESCO World Heritage)
-  category: religious
-  distance: 8 km
-  travel_time: 20 minutes drive
-  description: Ancient Hindu temple dedicated to Lord Vishnu, famous for stone carvings
-    and rich history.
-  is_active: true
 branches:
 - name: Prem Durbar Hotel & Nagarkot Zipline
   address: Changunarayan-7, Zipline Marga-Hawelli, Nagarkot, Nepal

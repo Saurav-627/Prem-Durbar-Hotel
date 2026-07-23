@@ -45,10 +45,9 @@ urlpatterns = [
     
     # Dining
     path('dining/', dining.DiningDashboardView.as_view(), name='dining_dashboard'),
-    path('dining/venue/add/', dining.DiningVenueCreateView.as_view(), name='dining_venue_create'),
-    path('dining/venue/<int:pk>/edit/', dining.DiningVenueUpdateView.as_view(), name='dining_venue_edit'),
-    path('dining/venue/<int:pk>/delete/', dining.DiningVenueDeleteView.as_view(), name='dining_venue_delete'),
-    path('dining/reservation/<int:pk>/update-status/', dining.DiningReservationUpdateStatusView.as_view(), name='dining_reservation_update_status'),
+    path('dining/item/add/', dining.DiningItemCreateView.as_view(), name='dining_item_create'),
+    path('dining/item/<int:pk>/edit/', dining.DiningItemUpdateView.as_view(), name='dining_item_edit'),
+    path('dining/item/<int:pk>/delete/', dining.DiningItemDeleteView.as_view(), name='dining_item_delete'),
     
     # Contact
     path('contact/', contact.ContactDashboardView.as_view(), name='contact_dashboard'),
@@ -63,14 +62,16 @@ urlpatterns = [
     path('cms/hero/<int:pk>/edit/', cms.HeroSlideUpdateView.as_view(), name='hero_edit'),
     path('cms/hero/<int:pk>/delete/', cms.HeroSlideDeleteView.as_view(), name='hero_delete'),
     path('cms/about/', cms.AboutPreviewUpdateView.as_view(), name='about_update'),
+    path('cms/about-cms/', cms.AboutCMSUpdateView.as_view(), name='about_cms_update'),
+    path('cms/zipline-cms/', cms.ZiplineCMSUpdateView.as_view(), name='zipline_cms_update'),
+    path('cms/sustainability-cms/', cms.SustainabilityCMSUpdateView.as_view(), name='sustainability_cms_update'),
+    path('cms/sustainability-pillar/add/', cms.SustainabilityPillarCreateView.as_view(), name='sustainability_pillar_create'),
+    path('cms/sustainability-pillar/<int:pk>/edit/', cms.SustainabilityPillarUpdateView.as_view(), name='sustainability_pillar_edit'),
+    path('cms/sustainability-pillar/<int:pk>/delete/', cms.SustainabilityPillarDeleteView.as_view(), name='sustainability_pillar_delete'),
     
     path('cms/testimonial/add/', cms.TestimonialCreateView.as_view(), name='testimonial_create'),
     path('cms/testimonial/<int:pk>/edit/', cms.TestimonialUpdateView.as_view(), name='testimonial_edit'),
     path('cms/testimonial/<int:pk>/delete/', cms.TestimonialDeleteView.as_view(), name='testimonial_delete'),
-    
-    path('cms/attraction/add/', cms.AttractionCreateView.as_view(), name='attraction_create'),
-    path('cms/attraction/<int:pk>/edit/', cms.AttractionUpdateView.as_view(), name='attraction_edit'),
-    path('cms/attraction/<int:pk>/delete/', cms.AttractionDeleteView.as_view(), name='attraction_delete'),
     
     path('cms/gallery/category/add/', cms.GalleryCategoryCreateView.as_view(), name='gallery_category_create'),
     path('cms/gallery/category/<int:pk>/edit/', cms.GalleryCategoryUpdateView.as_view(), name='gallery_category_edit'),

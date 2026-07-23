@@ -24,60 +24,201 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
+            darkMode: "class",
+
             theme: {
                 extend: {
-                    fontFamily: {
-                        sans: ['Outfit', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
-                    },
+
                     colors: {
+
+                        brand: {
+
+                            /* Primary */
+                            primary: "#2D5A4A",
+                            primaryDark: "#1A3A32",
+                            primaryLight: "#4F8A73",
+
+                            /* Secondary */
+                            secondary: "#A8D5BA",
+                            mint: "#DDF3E4",
+
+                            /* Accent */
+                            accent: "#7A9E7E",
+                            accentDark: "#5C7C61",
+
+                            /* Backgrounds */
+                            light: "#F8FBF8",
+                            soft: "#EEF5F0",
+                            card: "#FFFFFF",
+
+                            /* Nature */
+                            moss: "#6D9773",
+                            sage: "#B7C9B2",
+                            olive: "#738A5E",
+
+                            /* Earth */
+                            sand: "#F1ECE4",
+                            wood: "#9A7B5F",
+
+                            /* Text */
+                            dark: "#24332A",
+                            gray: "#68736B",
+                            lightText: "#97A39B",
+
+                            /* Action */
+                            success: "#3FA34D",
+                            warning: "#D8A25E",
+                            danger: "#C84B31",
+
+                            /* Compatibility Aliases */
+                            forest: "#2D5A4A",
+                            forestLight: "#4F8A73",
+                            forestDark: "#1A3A32",
+                            gold: "#2D5A4A",
+                            golddark: "#1A3A32",
+                            goldDark: "#1A3A32",
+                            goldlight: "#A8D5BA",
+                            champagne: "#DDF3E4",
+                            adventure: "#4F8A73",
+                            sunrise: "#D8A25E",
+                            lightgray: "#EEF5F0",
+                            stone: "#F1ECE4",
+                            darkgray: "#1A3A32",
+                            darkCard: "#24332A",
+                            darkBorder: "#2D5A4A",
+                        },
+
                         luxuryGold: {
-                            50: '#FAF5E9',
-                            100: '#F3E7CA',
-                            200: '#E5CC94',
-                            300: '#D3AA5E',
-                            400: '#C48E37',
-                            500: '#B47825',
-                            600: '#99601D',
-                            700: '#784817',
-                            800: '#5D3713',
-                            900: '#4D2E11',
+                            50: '#F8FBF8',
+                            100: '#DDF3E4',
+                            200: '#A8D5BA',
+                            300: '#7A9E7E',
+                            400: '#4F8A73',
+                            500: '#2D5A4A',
+                            600: '#1A3A32',
+                            700: '#5C7C61',
+                            800: '#24332A',
+                            900: '#1A3A32',
                         }
+
+                    },
+
+                    backgroundImage: {
+
+                        forest:
+                            "linear-gradient(135deg,#1A3A32,#2D5A4A)",
+
+                        forestGradient:
+                            "linear-gradient(135deg,#1A3A32,#2D5A4A)",
+
+                        nature:
+                            "linear-gradient(135deg,#4F8A73,#A8D5BA)",
+
+                        morning:
+                            "linear-gradient(180deg,#F8FBF8,#EEF5F0)",
+
+                        hero:
+                            "linear-gradient(to right,rgba(26,58,50,.85),rgba(26,58,50,.35))",
+
+                        heroGradient:
+                            "linear-gradient(to right,rgba(26,58,50,.85),rgba(26,58,50,.35))",
+
+                        adventureGradient:
+                            "linear-gradient(135deg,#2D5A4A,#4F8A73)",
+
+                        sunriseGradient:
+                            "linear-gradient(135deg,#4F8A73,#A8D5BA)"
+
+                    },
+
+                    boxShadow: {
+
+                        soft:
+                            "0 8px 25px rgba(45,90,74,.10)",
+
+                        hover:
+                            "0 20px 45px rgba(45,90,74,.18)",
+
+                        glow:
+                            "0 0 30px rgba(79,138,115,.18)",
+
+                        luxury:
+                            "0 20px 45px rgba(26,58,50,.20)",
+
+                        card:
+                            "0 8px 25px rgba(45,90,74,.10)"
+
+                    },
+
+                    borderRadius: {
+
+                        xl: "16px",
+                        "2xl": "22px",
+                        "3xl": "30px"
+
+                    },
+
+                    fontFamily: {
+
+                        heading: ['"Playfair Display"', "serif"],
+                        playfair: ['"Playfair Display"', "serif"],
+                        serif: ['"Playfair Display"', "serif"],
+                        sans: ["Outfit", "sans-serif"],
+                        body: ["Outfit", "sans-serif"],
+
                     }
+
                 }
             }
-        }
+        };
     </script>
     
     <!-- Alpine.js -->
     <script defer src="https://unpkg.com/alpinejs@3.13.5/dist/cdn.min.js"></script>
 
     <style type="text/css">
+        .glassmorphism {
+            background: rgba(26, 58, 50, 0.90);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(168, 213, 186, 0.2);
+        }
+        .btn-gold-gradient {
+            background: linear-gradient(135deg, #2D5A4A 0%, #4F8A73 100%);
+            color: #FFFFFF !important;
+            transition: all 0.3s ease;
+        }
+        .btn-gold-gradient:hover {
+            background: linear-gradient(135deg, #1A3A32 0%, #2D5A4A 100%);
+            color: #FFFFFF !important;
+            box-shadow: 0 10px 25px -3px rgba(45, 90, 74, 0.35);
+            transform: translateY(-2px);
+        }
+
         /* Styling overrides mirroring primary theme settings */
         .theme-light {
-            --bg-color: #F8F9FA;
-            --text-color: #1A1A1A;
-            --border-color: #E2E8F0;
-            --accent-color: #B47825;
+            --bg-color: #F8FBF8;
+            --text-color: #24332A;
+            --border-color: #EEF5F0;
+            --accent-color: #2D5A4A;
             --card-bg: #FFFFFF;
             --sidebar-bg: #FFFFFF;
         }
         .theme-dark {
-            --bg-color: #0F172A;
-            --text-color: #F1F5F9;
-            --border-color: #334155;
-            --accent-color: #D3AA5E;
-            --card-bg: #1E293B;
-            --sidebar-bg: #1E293B;
+            --bg-color: #0A2017;
+            --text-color: #FFFFFF;
+            --border-color: #2D5A4A;
+            --accent-color: #A8D5BA;
+            --card-bg: #1A3A32;
+            --sidebar-bg: #1A3A32;
         }
         .theme-luxury {
-            --bg-color: #0A0908;
-            --text-color: #E5CC94;
-            --border-color: rgba(229, 204, 148, 0.15);
-            --accent-color: #D3AA5E;
-            --card-bg: #151310;
-            --sidebar-bg: #110F0D;
+            --bg-color: #0A2017;
+            --text-color: #FFFFFF;
+            --border-color: rgba(168, 213, 186, 0.25);
+            --accent-color: #4F8A73;
+            --card-bg: #1A3A32;
+            --sidebar-bg: #1A3A32;
         }
         
         body {
@@ -288,8 +429,8 @@
 
                 <!-- Dining -->
                 <a href="{% url 'admin_dashboard:dining_dashboard' %}" class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-luxuryGold-500/10 hover:text-luxuryGold-600 transition group {% if 'dining' in request.path %}bg-luxuryGold-500/10 text-luxuryGold-600 font-semibold{% else %}text-neutral-600{% endif %}">
-                    <div class="w-5 text-center"><i class="fa-solid fa-utensils text-lg"></i></div>
-                    <span x-show="sidebarOpen">Dining Venue</span>
+                    <i class="fa-solid fa-utensils text-lg w-5 text-center"></i>
+                    <span x-show="sidebarOpen">Dining Items</span>
                 </a>
 
 

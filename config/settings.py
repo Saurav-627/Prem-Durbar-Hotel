@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'dining.apps.DiningConfig',
     'gallery.apps.GalleryConfig',
     'testimonials.apps.TestimonialsConfig',
-    'nearby_places.apps.NearbyPlacesConfig',
     'booking.apps.BookingConfig',
     'payments.apps.PaymentsConfig',
     'contact.apps.ContactConfig',

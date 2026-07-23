@@ -3,9 +3,8 @@ from homepage.models.hero_slide import HeroSlide
 from homepage.models.about_preview import AboutPreview
 from rooms.models.room import Room
 from rooms.models.room_facility import RoomFacility
-from dining.models.venue import DiningVenue
+from dining.models.item import DiningItem
 from testimonials.models.testimonial import Testimonial
-from nearby_places.models.attraction import Attraction
 
 
 class HomeView(TemplateView):
@@ -50,18 +49,25 @@ class HomeView(TemplateView):
             room.set_active_currency(selected_currency)
             
         context['featured_rooms'] = rooms
-        context['featured_dining'] = DiningVenue.objects.filter(is_featured=True, is_published=True)[:3]
+        context['featured_dining'] = DiningItem.objects.filter(is_chef_special=True, is_published=True)[:3]
         context['facilities'] = RoomFacility.objects.filter(is_featured=True)
         context['testimonials'] = Testimonial.objects.filter(is_featured=True, is_published=True)[:5]
-        context['attractions'] = Attraction.objects.filter(is_active=True).order_by('order')[:6]
         return context
 
+
+from homepage.models import HeroSlide, AboutPreview, AboutCMS, ZiplineCMS, SustainabilityCMS, SustainabilityPillar
+
+# (keep HomeView...)
 
 class AboutView(TemplateView):
     template_name = 'homepage/about.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        about_cms = AboutCMS.objects.first()
+        if not about_cms:
+            about_cms = AboutCMS.objects.create()
+        context['about_cms'] = about_cms
         context['about_preview'] = AboutPreview.objects.first()
         context['testimonials'] = Testimonial.objects.filter(is_featured=True, is_published=True)[:4]
         context['team_members'] = [
@@ -92,7 +98,10 @@ class ZiplineView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['attractions'] = Attraction.objects.filter(is_active=True)[:4]
+        zipline_cms = ZiplineCMS.objects.first()
+        if not zipline_cms:
+            zipline_cms = ZiplineCMS.objects.create()
+        context['zipline_cms'] = zipline_cms
         return context
 
 
@@ -101,12 +110,9 @@ class SustainabilityView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['policies'] = [
-            {'title': 'Environmental Stewardship', 'icon': 'fa-leaf', 'desc': 'Energy-efficient LED lighting, solar water heating systems, and eco-conscious waste segregation.'},
-            {'title': 'Responsible Water Management', 'icon': 'fa-droplet', 'desc': 'Water-saving shower fixtures, towel and bedsheet reuse request policies to reduce chemical detergent consumption.'},
-            {'title': 'Local Organic Sourcing', 'icon': 'fa-wheat-awn', 'desc': 'Farm-to-table dining using fresh ingredients sourced directly from Nagarkot mountain farmers.'},
-            {'title': 'Child & Community Protection', 'icon': 'fa-hand-holding-heart', 'desc': 'Zero tolerance for child labor, fair wages, employee health insurance, and local employment empowerment.'},
-            {'title': 'Sustainable Architecture', 'icon': 'fa-building-columns', 'desc': 'Constructed with natural Newari bricks, handcrafted stone, and scrap wood furniture art.'},
-            {'title': 'Quality & Safety Assurance', 'icon': 'fa-shield-halved', 'desc': 'Rigorous health & safety protocols across hotel rooms, kitchen gastronomy, and zipline operations.'}
-        ]
+        sustainability_cms = SustainabilityCMS.objects.first()
+        if not sustainability_cms:
+            sustainability_cms = SustainabilityCMS.objects.create()
+        context['sustainability_cms'] = sustainability_cms
+        context['pillars'] = SustainabilityPillar.objects.filter(is_published=True)
         return context

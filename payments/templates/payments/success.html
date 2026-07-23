@@ -5,7 +5,7 @@
     <div class="rounded-2xl p-6 sm:p-10 border shadow-xl text-center space-y-8 animate__animated animate__zoomIn"
          :class="{
              'bg-white border-gray-200': currentTheme === 'light',
-             'bg-[#161412] border-amber-900/20 text-amber-100': currentTheme !== 'light'
+             'bg-[#1A3A32] border-brand-primary/30 text-white': currentTheme !== 'light'
          }">
         
         {% if payment.status == 'success' %}
@@ -57,8 +57,8 @@
         </div>
 
         <!-- Receipt Table -->
-        <div class="border rounded-xl overflow-hidden text-sm" :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/10': currentTheme !== 'light' }">
-            <div class="grid grid-cols-2 p-4 border-b opacity-85" :class="{ 'border-gray-100 bg-gray-50': currentTheme === 'light', 'border-amber-900/5 bg-[#0A0908]': currentTheme !== 'light' }">
+        <div class="border rounded-xl overflow-hidden text-sm" :class="{ 'border-gray-200': currentTheme === 'light', 'border-brand-primary/10': currentTheme !== 'light' }">
+            <div class="grid grid-cols-2 p-4 border-b opacity-85" :class="{ 'border-gray-100 bg-[#EEF5F0]': currentTheme === 'light', 'border-brand-primary/10 bg-[#0A2017] text-white': currentTheme !== 'light' }">
                 <span class="text-left font-semibold">Detail</span>
                 <span class="text-right font-semibold">Value</span>
             </div>
@@ -114,11 +114,7 @@
             </a>
             {% endif %}
             <a href="{% url 'homepage:home' %}" 
-               class="px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wider text-center cursor-pointer border"
-               :class="{
-                   'bg-amber-800 border-amber-800 text-white': currentTheme === 'light',
-                   'bg-luxuryGold-500 border-luxuryGold-500 text-black': currentTheme !== 'light'
-               }">
+               class="btn-gold-gradient px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wider text-center cursor-pointer text-white shadow-md">
                 Back To Homepage
             </a>
         </div>

@@ -1,7 +1,7 @@
-from .venue import DiningVenue
-from .reservation import DiningReservation
+from .item import DiningCategory, DiningItem, DiningItemBasePrice
 
 __all__ = [
-    'DiningVenue',
-    'DiningReservation',
+    'DiningCategory',
+    'DiningItem',
+    'DiningItemBasePrice',
 ]

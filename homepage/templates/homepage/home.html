@@ -35,12 +35,10 @@
                 </h1>
                 
                 <div class="flex items-center justify-center gap-4 pt-6 animate__animated animate__zoomIn">
-                    {% if slide.cta_text %}
                     <a href="{{ slide.cta_url }}" 
-                       class="px-8 py-3.5 text-xs font-semibold uppercase tracking-wider rounded-full border border-luxuryGold-400 bg-luxuryGold-500 text-black hover:bg-luxuryGold-400 transition-all duration-300 shadow-lg gold-glow">
+                       class="btn-gold-gradient px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-brand-forestDark rounded-full shadow-glow transition-all">
                         {{ slide.cta_text }}
                     </a>
-                    {% endif %}
                     {% if slide.cta2_text %}
                     <a href="{{ slide.cta2_url }}" 
                        class="px-8 py-3.5 text-xs font-semibold uppercase tracking-wider rounded-full border border-white text-white hover:bg-white hover:text-black transition-all duration-300">
@@ -61,7 +59,7 @@
                 <h1 class="font-luxury-title text-5xl sm:text-7xl font-bold text-white">Experience Elite Sanctuary</h1>
                 <p class="text-lg text-white/80 max-w-xl mx-auto">Unparalleled luxury and state-of-the-art service in Bara, Nepal.</p>
                 <div class="pt-6">
-                    <a href="{% url 'rooms:room_list' %}" class="px-8 py-3.5 text-xs font-semibold uppercase tracking-wider rounded-full bg-luxuryGold-500 text-black hover:bg-luxuryGold-400 gold-glow transition-all">Explore Rooms</a>
+                    <a href="{% url 'rooms:room_list' %}" class="btn-gold-gradient inline-block px-8 py-3.5 text-xs font-bold uppercase tracking-wider rounded-full text-white shadow-md">Explore Rooms</a>
                 </div>
             </div>
         </div>
@@ -84,7 +82,7 @@
     <div class="rounded-2xl p-6 sm:p-8 border shadow-2xl backdrop-blur-xl"
          :class="{
              'bg-white border-gray-200': currentTheme === 'light',
-             'bg-[#161412] border-amber-900/30 text-amber-100': currentTheme !== 'light'
+             'bg-[#1A3A32] border-brand-primary/30 text-white': currentTheme !== 'light'
          }">
         <form action="{% url 'rooms:room_list' %}" method="GET" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 items-end">
             <!-- Check In -->
@@ -128,11 +126,7 @@
             </div>
             <!-- Submit Search -->
             <div>
-                <button type="submit" class="w-full py-3.5 rounded-lg text-xs font-bold uppercase tracking-widest hover:scale-[1.02] duration-300 cursor-pointer text-center"
-                        :class="{
-                            'bg-amber-800 text-white hover:bg-amber-900': currentTheme === 'light',
-                            'bg-luxuryGold-500 text-black hover:bg-luxuryGold-400 gold-glow': currentTheme !== 'light'
-                        }">
+                <button type="submit" class="btn-gold-gradient w-full py-3.5 rounded-lg text-xs font-bold uppercase tracking-widest hover:scale-[1.02] duration-300 cursor-pointer text-center text-white shadow-md">
                     Search Rooms
                 </button>
             </div>
@@ -152,7 +146,7 @@
             </div>
             {% if about_preview.video_url %}
             <a href="{{ about_preview.video_url }}" target="_blank"
-               class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-luxuryGold-500 text-black flex items-center justify-center text-xl shadow-2xl gold-glow hover:scale-110 duration-300">
+               class="btn-gold-gradient absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full text-white flex items-center justify-center text-xl shadow-2xl hover:scale-110 duration-300">
                 <i class="fa-solid fa-play"></i>
             </a>
             {% endif %}
@@ -195,12 +189,12 @@
 {% endif %}
 
 <!-- FEATURED ROOMS SHOWCASE -->
-<section class="py-24 border-t border-amber-900/10"
-         :class="{ 'bg-gray-50': currentTheme === 'light', 'bg-[#12100E]': currentTheme !== 'light' }">
+<section class="py-24 border-t border-brand-primary/10"
+         :class="{ 'bg-[#EEF5F0]': currentTheme === 'light', 'bg-[#0A2017]': currentTheme !== 'light' }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div class="text-center max-w-2xl mx-auto space-y-4 mb-16" data-animate="fadeInUp">
-            <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-500">Premium Sanctuary</span>
+            <span class="text-xs font-semibold tracking-widest uppercase text-brand-primaryLight">Premium Sanctuary</span>
             <h2 class="font-luxury-title text-4xl sm:text-5xl font-bold">Rooms & Suites</h2>
             <p class="text-sm opacity-80">Explore our signature guest chambers designed for ultimate relaxation and comfort.</p>
         </div>
@@ -211,7 +205,7 @@
                  data-animate="fadeInUp"
                  :class="{
                      'bg-white border-gray-200': currentTheme === 'light',
-                     'bg-[#161412] border-amber-900/20': currentTheme !== 'light'
+                     'bg-[#1A3A32] border-brand-primary/20 text-white': currentTheme !== 'light'
                  }">
                 <!-- Room Image cover -->
                 <div class="relative h-64 overflow-hidden">
@@ -247,11 +241,7 @@
                     <div class="pt-6 mt-6 border-t border-amber-900/10 flex items-center justify-between gap-4">
                         <a href="{% url 'rooms:room_detail' room.slug %}" class="text-xs font-semibold uppercase tracking-wider hover:text-luxuryGold-400 transition-colors">Details & Specs</a>
                         <a href="{% url 'rooms:room_detail' room.slug %}" 
-                           class="px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors border"
-                           :class="{
-                               'bg-amber-800 text-white border-amber-800': currentTheme === 'light',
-                               'bg-luxuryGold-500 border-luxuryGold-500 text-black': currentTheme !== 'light'
-                           }">
+                           class="btn-gold-gradient px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-white shadow-md">
                             Reserve Chamber
                         </a>
                     </div>
@@ -281,7 +271,7 @@
              data-animate="fadeInUp"
              :class="{
                  'bg-white border-gray-200': currentTheme === 'light',
-                 'bg-[#161412] border-amber-900/20': currentTheme !== 'light'
+                 'bg-[#1A3A32] border-brand-primary/20 text-white': currentTheme !== 'light'
              }">
             <div class="text-3xl text-luxuryGold-500">
                 {% if fac.icon_class %}
@@ -324,50 +314,6 @@
         {% endfor %}
     </div>
 </section>
-
-<!-- FINE DINING PREVIEW -->
-{% if featured_dining %}
-<section class="py-24 border-t border-amber-900/10 overflow-hidden"
-         :class="{ 'bg-gray-50': currentTheme === 'light', 'bg-[#12100E]': currentTheme !== 'light' }">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            
-            <div class="space-y-6" data-animate="fadeInLeft">
-                <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-500">Fine Culinary</span>
-                <h2 class="font-luxury-title text-4xl sm:text-5xl font-bold">Gastronomy & Lounge</h2>
-                <p class="text-sm opacity-80 leading-relaxed">
-                    Savor international delicacies, authentic Nepalese cuisine, and masterfully mixed cocktails curated by globally acclaimed chefs.
-                </p>
-                <div class="space-y-4">
-                    {% for venue in featured_dining %}
-                    <div class="flex items-start gap-4">
-                        <span class="w-2.5 h-2.5 rounded-full bg-luxuryGold-500 mt-2"></span>
-                        <div>
-                            <h4 class="font-semibold text-base">{{ venue.name }}</h4>
-                            <p class="text-xs opacity-75">Hours: {{ venue.timings }} | Capacity: {{ venue.capacity }} seats</p>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                <div class="pt-6">
-                    <a href="{% url 'dining:dining_list' %}" 
-                       class="px-8 py-3.5 text-xs font-semibold uppercase tracking-wider rounded-full border border-luxuryGold-400"
-                       :class="{ 'bg-amber-800 text-white': currentTheme === 'light', 'hover:bg-luxuryGold-500 hover:text-black': currentTheme !== 'light' }">
-                        Explore Venues
-                    </a>
-                </div>
-            </div>
-
-            <!-- Media Carousel -->
-            <div class="relative overflow-hidden rounded-2xl h-[450px]" data-animate="fadeInRight">
-                <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?q=80&w=800" 
-                     alt="Dining layout" class="w-full h-full object-cover">
-            </div>
-
-        </div>
-    </div>
-</section>
-{% endif %}
 
 <section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden" x-data="{ 
     activeIndex: 0, 
@@ -440,47 +386,7 @@
     {% endif %}
 </section>
 
-<!-- NEARBY ATTRACTIONS APP SECTION -->
-{% if attractions %}
-<section class="py-24 border-t border-amber-900/10 overflow-hidden"
-         :class="{ 'bg-gray-50': currentTheme === 'light', 'bg-[#12100E]': currentTheme !== 'light' }">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div class="text-center max-w-2xl mx-auto space-y-4 mb-16" data-animate="fadeInUp">
-            <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-500">Explore Nearby</span>
-            <h2 class="font-luxury-title text-4xl sm:text-5xl font-bold">Local Sights & Attractions</h2>
-        </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {% for item in attractions %}
-            <div class="rounded-xl overflow-hidden border shadow-sm group hover:scale-[1.01] duration-300"
-                 data-animate="fadeInUp"
-                 :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#161412] border-amber-900/20': currentTheme !== 'light' }">
-                <div class="relative h-56 overflow-hidden">
-                    <img src="{% if item.image %}{{ item.image.url }}{% else %}https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=600{% endif %}" alt="{{ item.name }}" class="w-full h-full object-cover group-hover:scale-105 duration-700">
-                    <span class="absolute top-4 left-4 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider bg-black/70 text-luxuryGold-300 rounded-full">
-                        {{ item.get_category_display }}
-                    </span>
-                </div>
-                <div class="p-6 space-y-4">
-                    <div class="flex items-center justify-between">
-                        <h3 class="font-semibold text-lg">{{ item.name }}</h3>
-                        <span class="text-xs opacity-75 font-mono"><i class="fa-solid fa-car text-luxuryGold-500 mr-1.5"></i>{{ item.distance }}</span>
-                    </div>
-                    <p class="text-xs opacity-80 leading-relaxed">{{ item.description }}</p>
-                    <div class="flex items-center justify-between pt-2">
-                        <span class="text-[11px] opacity-75"><i class="fa-regular fa-clock mr-1.5"></i>{{ item.travel_time }}</span>
-                        {% if item.maps_url %}
-                        <a href="{{ item.maps_url }}" target="_blank" class="text-xs text-luxuryGold-500 hover:underline">Get Directions <i class="fa-solid fa-arrow-up-right-from-square ml-1"></i></a>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</section>
-{% endif %}
 
 <!-- NEWSLETTER / CTA APP MODULE -->
 <section class="py-24 border-t border-amber-900/10 text-center relative overflow-hidden bg-cover bg-center"
@@ -498,7 +404,7 @@
             <input type="email" placeholder="Your Email Address" required
                    class="flex-grow px-4 py-3.5 rounded-full border border-white/20 bg-black/40 text-sm text-white focus:outline-none focus:ring-1 focus:ring-luxuryGold-400">
             <button type="submit" 
-                    class="px-8 py-3.5 rounded-full text-xs font-bold uppercase tracking-widest bg-luxuryGold-500 text-black hover:bg-luxuryGold-400 gold-glow transition-all">
+                    class="btn-gold-gradient px-8 py-3.5 rounded-full text-xs font-bold uppercase tracking-widest text-white shadow-md transition-all">
                 Subscribe
             </button>
         </form>

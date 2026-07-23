@@ -9,44 +9,37 @@
 {% endblock %}
 
 {% block page_actions %}
-<a href="{% url 'admin_dashboard:user_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
-    <i class="fa-solid fa-user-plus mr-1.5"></i> Add User Account
+<a href="{% url 'admin_dashboard:user_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
+    <i class="fa-solid fa-user-plus mr-1.5"></i> Create New Staff User
 </a>
 {% endblock %}
 
 {% block content %}
-<!-- Search & filters -->
+<!-- Search & Filter Card -->
 <div class="custom-card rounded-2xl p-6 mb-8 bg-white/50 dark:bg-neutral-900/50">
-    <form method="get" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <!-- Search query -->
-        <div>
-            <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Search User</label>
-            <div class="relative">
-                <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-neutral-500">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </span>
-                <input type="text" name="search" value="{{ search_query }}"
-                       class="w-full pl-9 pr-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 outline-none focus:border-luxuryGold-500 text-sm"
-                       placeholder="Username, email, phone...">
-            </div>
+    <form method="GET" class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <!-- Search bar -->
+        <div class="md:col-span-2 relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-neutral-400 text-sm"></i>
+            <input type="text" name="search" value="{{ search_query }}" placeholder="Search by username, full name, or email..."
+                   class="w-full pl-9 pr-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 outline-none focus:border-brand-primary text-sm">
         </div>
 
-        <!-- Filter by role -->
+        <!-- Role Select -->
         <div>
-            <label class="block text-xs font-semibold text-neutral-400 uppercase tracking-wider mb-2">Role Type</label>
-            <select name="role"
-                    class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 outline-none focus:border-luxuryGold-500 text-sm cursor-pointer">
-                <option value="">All Accounts</option>
-                <option value="staff" {% if selected_role == 'staff' %}selected{% endif %}>Staff & Admins</option>
-                <option value="guest" {% if selected_role == 'guest' %}selected{% endif %}>Registered Guests</option>
+            <select name="role" 
+                    class="w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 outline-none focus:border-brand-primary text-sm cursor-pointer">
+                <option value="">All Staff Roles</option>
+                <option value="superuser" {% if role_filter == "superuser" %}selected{% endif %}>Superuser / Admin</option>
+                <option value="staff" {% if role_filter == "staff" %}selected{% endif %}>Staff / Manager</option>
             </select>
         </div>
 
-        <!-- Apply / Reset -->
-        <div class="flex items-end gap-2">
+        <!-- Buttons -->
+        <div class="flex gap-2">
             <button type="submit" 
-                    class="flex-1 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
-                Filter Accounts
+                    class="btn-gold-gradient flex-1 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
+                Filter Users
             </button>
             <a href="{% url 'admin_dashboard:user_list' %}" 
                class="px-4 py-2.5 border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400 rounded-lg text-sm text-center transition">

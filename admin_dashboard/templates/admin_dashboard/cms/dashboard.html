@@ -12,19 +12,19 @@
 {% block page_actions %}
 <div class="flex items-center gap-3">
     {% if active_tab == 'hero' %}
-    <a href="{% url 'admin_dashboard:hero_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+    <a href="{% url 'admin_dashboard:hero_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
         <i class="fa-solid fa-plus mr-1.5"></i> Add Hero Slide
     </a>
     {% elif active_tab == 'testimonials' %}
-    <a href="{% url 'admin_dashboard:testimonial_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+    <a href="{% url 'admin_dashboard:testimonial_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
         <i class="fa-solid fa-plus mr-1.5"></i> Add Testimonial
     </a>
-    {% elif active_tab == 'nearby' %}
-    <a href="{% url 'admin_dashboard:attraction_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
-        <i class="fa-solid fa-plus mr-1.5"></i> Add Attraction
+    {% elif active_tab == 'sustainability_cms' %}
+    <a href="{% url 'admin_dashboard:sustainability_pillar_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
+        <i class="fa-solid fa-plus mr-1.5"></i> Add Sustainability Pillar
     </a>
     {% elif active_tab == 'seo' %}
-    <a href="{% url 'admin_dashboard:seo_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+    <a href="{% url 'admin_dashboard:seo_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
         <i class="fa-solid fa-plus mr-1.5"></i> Add SEO Rule
     </a>
     {% endif %}
@@ -34,12 +34,14 @@
 {% block content %}
 <!-- Tabs navigation -->
 <div class="flex items-center gap-2 border-b border-neutral-200 dark:border-neutral-800 mb-8 overflow-x-auto no-scrollbar">
-    <a href="?tab=hero" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'hero' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">Hero slides</a>
-    <a href="?tab=about" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'about' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">About Preview</a>
-    <a href="?tab=testimonials" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'testimonials' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">Testimonials</a>
-    <a href="?tab=nearby" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'nearby' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">Nearby Attractions</a>
-    <a href="?tab=gallery" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'gallery' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">Gallery bulk</a>
-    <a href="?tab=seo" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'seo' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">SEO Meta tags</a>
+    <a href="?tab=hero" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'hero' %}border-brand-primary text-brand-primary dark:text-brand-secondary{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">Hero slides</a>
+    <a href="?tab=about" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'about' %}border-brand-primary text-brand-primary dark:text-brand-secondary{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">About Preview (Homepage)</a>
+    <a href="?tab=about_cms" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'about_cms' %}border-brand-primary text-brand-primary dark:text-brand-secondary{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">About Us Page CMS</a>
+    <a href="?tab=zipline_cms" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'zipline_cms' %}border-brand-primary text-brand-primary dark:text-brand-secondary{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">Zipline CMS & Video</a>
+    <a href="?tab=sustainability_cms" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'sustainability_cms' %}border-brand-primary text-brand-primary dark:text-brand-secondary{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">Sustainability CMS</a>
+    <a href="?tab=testimonials" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'testimonials' %}border-brand-primary text-brand-primary dark:text-brand-secondary{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">Testimonials</a>
+    <a href="?tab=gallery" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'gallery' %}border-brand-primary text-brand-primary dark:text-brand-secondary{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">Gallery bulk</a>
+    <a href="?tab=seo" class="px-5 py-3 border-b-2 font-semibold text-sm transition shrink-0 {% if active_tab == 'seo' %}border-brand-primary text-brand-primary dark:text-brand-secondary{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">SEO Meta tags</a>
 </div>
 
 <!-- Tab content -->
@@ -91,6 +93,236 @@
             No hero slides created.
         </div>
         {% endfor %}
+    </div>
+
+    {% elif active_tab == 'about_cms' %}
+    <!-- About Page CMS Settings Form -->
+    <div class="max-w-4xl">
+        <div class="custom-card rounded-2xl p-8 bg-white/50 dark:bg-neutral-900/50">
+            <form action="{% url 'admin_dashboard:about_cms_update' %}" method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                <h4 class="text-base font-bold text-neutral-900 dark:text-neutral-100 font-serif pb-2 border-b border-neutral-200 dark:border-neutral-800">
+                    <i class="fa-solid fa-hotel text-brand-gold mr-2"></i> About Us Page Content CMS
+                </h4>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Hero Banner Subtitle</label>
+                        {{ about_cms_form.hero_subtitle }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Hero Banner Title</label>
+                        {{ about_cms_form.hero_title }}
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Hero Banner Description</label>
+                        {{ about_cms_form.hero_description }}
+                    </div>
+                    
+                    <div class="sm:col-span-2 pt-4 border-t border-neutral-200 dark:border-neutral-800">
+                        <h5 class="font-bold text-sm text-brand-primaryDark dark:text-brand-secondary mb-3">Our Story Section</h5>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Story Subtitle</label>
+                        {{ about_cms_form.story_subtitle }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Story Main Title</label>
+                        {{ about_cms_form.story_title }}
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Story Content Body</label>
+                        {{ about_cms_form.story_content }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Promo Video URL (Optional)</label>
+                        {{ about_cms_form.video_url }}
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-neutral-200 dark:border-neutral-800 flex justify-end">
+                    <button type="submit" class="btn-gold-gradient px-8 py-3 text-brand-forestDark font-bold rounded-xl text-sm transition shadow-glow">
+                        <i class="fa-solid fa-floppy-disk mr-2"></i> Save About Page Content
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% elif active_tab == 'zipline_cms' %}
+    <!-- Zipline Page CMS & Video Form -->
+    <div class="max-w-4xl">
+        <div class="custom-card rounded-2xl p-8 bg-white/50 dark:bg-neutral-900/50">
+            <form action="{% url 'admin_dashboard:zipline_cms_update' %}" method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                <h4 class="text-base font-bold text-neutral-900 dark:text-neutral-100 font-serif pb-2 border-b border-neutral-200 dark:border-neutral-800">
+                    <i class="fa-solid fa-bolt text-brand-gold mr-2"></i> Zipline Adventure Content & Video Preview CMS
+                </h4>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Hero Banner Subtitle</label>
+                        {{ zipline_cms_form.hero_subtitle }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Hero Banner Title</label>
+                        {{ zipline_cms_form.hero_title }}
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Hero Banner Description</label>
+                        {{ zipline_cms_form.hero_description }}
+                    </div>
+
+                    <!-- VIDEO PREVIEW SECTION -->
+                    <div class="sm:col-span-2 p-5 rounded-xl bg-neutral-100 dark:bg-neutral-800/60 border border-brand-gold/30 space-y-4">
+                        <div class="flex items-center gap-2 text-brand-gold font-bold text-sm">
+                            <i class="fa-solid fa-video text-lg"></i>
+                            <span>Zipline Video Preview Player Settings (Runs Directly on Website)</span>
+                        </div>
+                        <p class="text-xs text-neutral-500">Upload an MP4 video file or provide an embedded YouTube/Vimeo link to play a live video preview on the Zipline page.</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-1">Upload Video File (MP4)</label>
+                                {{ zipline_cms_form.video_file }}
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-1">OR External Video URL (YouTube/Vimeo)</label>
+                                {{ zipline_cms_form.video_url }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sm:col-span-2 pt-4 border-t border-neutral-200 dark:border-neutral-800">
+                        <h5 class="font-bold text-sm text-brand-primaryDark dark:text-brand-secondary mb-3">Zipline Specifications & Badges</h5>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Flight Length</label>
+                        {{ zipline_cms_form.spec_length }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Top Speed</label>
+                        {{ zipline_cms_form.spec_speed }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Altitude Elevation</label>
+                        {{ zipline_cms_form.spec_elevation }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Safety Certification</label>
+                        {{ zipline_cms_form.spec_safety }}
+                    </div>
+
+                    <div class="sm:col-span-2 pt-4 border-t border-neutral-200 dark:border-neutral-800">
+                        <h5 class="font-bold text-sm text-brand-primaryDark dark:text-brand-secondary mb-3">Overview Body Content</h5>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Overview Subtitle</label>
+                        {{ zipline_cms_form.overview_subtitle }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Overview Title</label>
+                        {{ zipline_cms_form.overview_title }}
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Overview Description</label>
+                        {{ zipline_cms_form.overview_content }}
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-neutral-200 dark:border-neutral-800 flex justify-end">
+                    <button type="submit" class="btn-gold-gradient px-8 py-3 text-brand-forestDark font-bold rounded-xl text-sm transition shadow-glow">
+                        <i class="fa-solid fa-floppy-disk mr-2"></i> Save Zipline CMS & Video
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% elif active_tab == 'sustainability_cms' %}
+    <!-- Sustainability Page CMS Form & Pillars Table -->
+    <div class="space-y-8 max-w-5xl">
+        <div class="custom-card rounded-2xl p-8 bg-white/50 dark:bg-neutral-900/50">
+            <form action="{% url 'admin_dashboard:sustainability_cms_update' %}" method="post" enctype="multipart/form-data" class="space-y-6">
+                {% csrf_token %}
+                <h4 class="text-base font-bold text-neutral-900 dark:text-neutral-100 font-serif pb-2 border-b border-neutral-200 dark:border-neutral-800">
+                    <i class="fa-solid fa-leaf text-brand-gold mr-2"></i> Sustainability Page Banner & Intro CMS
+                </h4>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Hero Banner Subtitle</label>
+                        {{ sustainability_cms_form.hero_subtitle }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Hero Banner Title</label>
+                        {{ sustainability_cms_form.hero_title }}
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Hero Banner Description</label>
+                        {{ sustainability_cms_form.hero_description }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Pillars Intro Subtitle</label>
+                        {{ sustainability_cms_form.intro_subtitle }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Pillars Intro Title</label>
+                        {{ sustainability_cms_form.intro_title }}
+                    </div>
+                </div>
+
+                <div class="pt-4 border-t border-neutral-200 dark:border-neutral-800 flex justify-end">
+                    <button type="submit" class="btn-gold-gradient px-8 py-3 text-brand-forestDark font-bold rounded-xl text-sm transition shadow-glow">
+                        <i class="fa-solid fa-floppy-disk mr-2"></i> Save Sustainability Banner CMS
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Sustainability Pillars Table -->
+        <div class="custom-card rounded-2xl overflow-hidden shadow-sm">
+            <div class="p-6 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
+                <h4 class="font-bold text-base text-neutral-900 dark:text-neutral-100 font-serif">Sustainability Pillars List</h4>
+                <a href="{% url 'admin_dashboard:sustainability_pillar_create' %}" class="btn-gold-gradient px-4 py-2 text-white font-bold rounded-lg text-xs transition shadow-md">
+                    <i class="fa-solid fa-plus mr-1"></i> Add Pillar
+                </a>
+            </div>
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+                        <th class="px-6 py-4 font-semibold">Icon</th>
+                        <th class="px-6 py-4 font-semibold">Pillar Title</th>
+                        <th class="px-6 py-4 font-semibold">Description</th>
+                        <th class="px-6 py-4 font-semibold">Order</th>
+                        <th class="px-6 py-4 text-right font-semibold">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                    {% for pillar in sustainability_pillars %}
+                    <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10 transition duration-150">
+                        <td class="px-6 py-4 text-brand-gold text-lg"><i class="{{ pillar.icon_class }}"></i></td>
+                        <td class="px-6 py-4 font-bold text-neutral-900 dark:text-neutral-200">{{ pillar.title }}</td>
+                        <td class="px-6 py-4 text-neutral-500 max-w-xs truncate">{{ pillar.description }}</td>
+                        <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-bold">{{ pillar.order }}</td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex items-center justify-end gap-3 text-sm">
+                                <a href="{% url 'admin_dashboard:sustainability_pillar_edit' pillar.id %}" class="text-neutral-400 hover:text-brand-primaryLight" title="Edit">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <a href="{% url 'admin_dashboard:sustainability_pillar_delete' pillar.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-6 py-12 text-center text-sm text-neutral-500">No sustainability pillars created yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
     {% elif active_tab == 'about' %}
@@ -158,7 +390,7 @@
 
                 <div class="pt-6 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-end">
                     <button type="submit" 
-                            class="px-6 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-xl shadow-lg transition">
+                            class="btn-gold-gradient px-6 py-2.5 text-white font-bold rounded-xl shadow-lg transition">
                         Update CMS Section
                     </button>
                 </div>
@@ -202,7 +434,7 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-3 text-sm">
-                            <a href="{% url 'admin_dashboard:testimonial_edit' test.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
+                            <a href="{% url 'admin_dashboard:testimonial_edit' test.id %}" class="text-neutral-400 hover:text-brand-primaryLight" title="Edit">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
                             <a href="{% url 'admin_dashboard:testimonial_delete' test.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
@@ -214,56 +446,6 @@
                 {% empty %}
                 <tr>
                     <td colspan="7" class="px-6 py-12 text-center text-sm text-neutral-500">No guest reviews registered.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-
-    {% elif active_tab == 'nearby' %}
-    <!-- Nearby Attractions list -->
-    <div class="custom-card rounded-2xl overflow-hidden shadow-sm">
-        <table class="w-full text-left border-collapse">
-            <thead>
-                <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
-                    <th class="px-6 py-4 font-semibold">Place name</th>
-                    <th class="px-6 py-4 font-semibold">Category</th>
-                    <th class="px-6 py-4 font-semibold">Distance</th>
-                    <th class="px-6 py-4 font-semibold">Travel Time</th>
-                    <th class="px-6 py-4 font-semibold">Order</th>
-                    <th class="px-6 py-4 font-semibold">Status</th>
-                    <th class="px-6 py-4 text-right font-semibold">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
-                {% for place in attractions %}
-                <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10 transition duration-150">
-                    <td class="px-6 py-4 font-bold text-neutral-900 dark:text-neutral-200">{{ place.name }}</td>
-                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 uppercase text-xs">{{ place.category }}</td>
-                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-semibold">{{ place.distance }}</td>
-                    <td class="px-6 py-4 text-neutral-650 dark:text-neutral-400">{{ place.travel_time }}</td>
-                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-semibold">{{ place.order }}</td>
-                    <td class="px-6 py-4">
-                        {% if place.is_active %}
-                        <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-semibold text-xs">Active</span>
-                        {% else %}
-                        <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 font-semibold text-xs">Disabled</span>
-                        {% endif %}
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <div class="flex items-center justify-end gap-3 text-sm">
-                            <a href="{% url 'admin_dashboard:attraction_edit' place.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </a>
-                            <a href="{% url 'admin_dashboard:attraction_delete' place.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="7" class="px-6 py-12 text-center text-sm text-neutral-500">No attractions configured yet.</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -296,10 +478,10 @@
                     <div>
                         <label class="block text-xs font-semibold text-neutral-700 uppercase mb-2">Select Images (Multiple Uploads)</label>
                         <input type="file" name="images" multiple required
-                               class="block w-full text-sm text-neutral-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-luxuryGold-50/50 file:text-luxuryGold-700 hover:file:bg-luxuryGold-100/50 cursor-pointer bg-white dark:bg-neutral-800 rounded-lg border border-neutral-300 dark:border-neutral-700 px-4 py-2">
+                               class="block w-full text-sm text-neutral-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20 cursor-pointer bg-white dark:bg-neutral-800 rounded-lg border border-neutral-300 dark:border-neutral-700 px-4 py-2">
                     </div>
                     <button type="submit" 
-                            class="w-full py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-xl shadow-lg transition">
+                            class="btn-gold-gradient w-full py-2.5 text-white font-bold rounded-xl shadow-lg transition">
                         Upload Images
                     </button>
                 </form>
@@ -311,7 +493,7 @@
                     <h4 class="text-base font-bold text-neutral-900 dark:text-neutral-100 font-serif">
                         Gallery Categories
                     </h4>
-                    <a href="{% url 'admin_dashboard:gallery_category_create' %}" class="text-xs font-bold text-luxuryGold-500 hover:text-luxuryGold-400">
+                    <a href="{% url 'admin_dashboard:gallery_category_create' %}" class="text-xs font-bold text-brand-primary hover:text-brand-primaryLight">
                         <i class="fa-solid fa-plus mr-1"></i> Add Category
                     </a>
                 </div>

@@ -4,18 +4,18 @@
 <section class="py-16 max-w-4xl mx-auto px-4 sm:px-6" x-data="{ showModal: false, gatewayName: '', redirectUrl: '', statusText: 'Initializing secure handshake...' }">
     <div class="rounded-2xl p-6 sm:p-10 border shadow-xl text-center space-y-8 animate__animated animate__fadeIn"
          :class="{
-             'bg-white border-gray-200': currentTheme === 'light',
-             'bg-[#161412] border-amber-900/20 text-amber-100': currentTheme !== 'light'
-         }">
+            'bg-white border-gray-200': currentTheme === 'light',
+            'bg-[#1A3A32] border-brand-primary/30 text-white': currentTheme !== 'light'
+        }">
         
         <div class="space-y-3">
-            <div class="w-16 h-16 rounded-full bg-amber-900/20 text-luxuryGold-500 flex items-center justify-center text-2xl mx-auto border border-amber-900/30">
+            <div class="w-16 h-16 rounded-full bg-brand-primary/20 text-brand-primaryLight flex items-center justify-center text-2xl mx-auto border border-brand-primary/30">
                 <i class="fa-solid fa-lock animate__animated animate__pulse animate__infinite"></i>
             </div>
             <h1 class="font-luxury-title text-3xl font-bold tracking-wide animate__animated animate__fadeInDown">Secure Check-out</h1>
             <p class="text-xs opacity-75">Booking Reference: <span class="font-mono font-semibold">{{ booking.booking_uid }}</span></p>
             {% if booking.status == 'draft' %}
-            <div class="mt-4 max-w-md mx-auto rounded-xl border border-amber-500/20 bg-amber-500/10 px-4 py-3 text-left text-xs" :class="{ 'border-amber-200 bg-amber-50 text-amber-900': currentTheme === 'light', 'border-amber-900/20 bg-amber-900/10 text-amber-100': currentTheme !== 'light' }">
+            <div class="mt-4 max-w-md mx-auto rounded-xl border border-brand-primary/20 bg-brand-primary/10 px-4 py-3 text-left text-xs" :class="{ 'border-brand-primary/20 bg-[#EEF5F0] text-brand-primaryDark': currentTheme === 'light', 'border-brand-primary/30 bg-brand-primary/20 text-white': currentTheme !== 'light' }">
                 <p class="font-semibold mb-1">Draft booking</p>
                 <p>This stay is not reserved yet. It becomes confirmed only after payment succeeds.</p>
             </div>
@@ -24,7 +24,7 @@
 
         <!-- Price block -->
         <div class="p-6 rounded-xl border max-w-md mx-auto animate__animated animate__zoomIn" 
-             :class="{ 'bg-gray-50 border-gray-200': currentTheme === 'light', 'bg-[#0A0908] border-amber-900/10': currentTheme !== 'light' }">
+             :class="{ 'bg-[#EEF5F0] border-gray-200': currentTheme === 'light', 'bg-[#0A2017] border-brand-primary/20 text-white': currentTheme !== 'light' }">
             <span class="text-xs uppercase opacity-75">Payable Amount</span>
             <h2 class="font-luxury-title text-4xl font-bold text-luxuryGold-500 mt-1">{{ booking.room.currency.iso_code }} {{ booking.total|floatformat:2 }}</h2>
             {% if booking.discount > 0 %}
@@ -276,7 +276,7 @@
         <div class="w-full max-w-md p-8 rounded-2xl border text-center space-y-6 animate__animated"
              :class="{
                  'bg-white border-gray-200 text-gray-800 animate__zoomIn': currentTheme === 'light',
-                 'bg-[#161412] border-amber-900/30 text-amber-100 animate__zoomIn': currentTheme !== 'light'
+                 'bg-[#1A3A32] border-brand-primary/30 text-white animate__zoomIn': currentTheme !== 'light'
              }">
             
             <!-- Animated Loader Icon -->

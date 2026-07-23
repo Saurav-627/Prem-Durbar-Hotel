@@ -9,7 +9,6 @@ from admin_dashboard.mixins import StaffRequiredMixin
 from booking.models.booking import Booking
 from rooms.models.room_category import RoomCategory
 from payments.models.payment import Payment
-from dining.models.reservation import DiningReservation
 from contact.models.inquiry import ContactInquiry
 
 User = get_user_model()
@@ -90,9 +89,8 @@ class DashboardHomeView(StaffRequiredMixin, TemplateView):
         # pyrefly: ignore [missing-attribute]
         pending_payments_count = Booking.objects.filter(status='pending').count()
         
-        # 6. Service / Dining Reservations
-        # pyrefly: ignore [missing-attribute]
-        dining_reservations_today = DiningReservation.objects.filter(date=today)
+        # 6. Service / Dining
+        dining_reservations_today = []
         
         # 7. Contact inquiries
         # pyrefly: ignore [missing-attribute]
@@ -207,7 +205,7 @@ class DashboardHomeView(StaffRequiredMixin, TemplateView):
             'revenue_month_by_currency': revenue_month_by_currency,
             'pending_payments_count': pending_payments_count,
             
-            'dining_reservations_today_count': dining_reservations_today.count(),
+            'dining_reservations_today_count': len(dining_reservations_today),
             'dining_reservations_today': dining_reservations_today[:5],
             
             'contact_messages_today_count': contact_messages_today.count(),

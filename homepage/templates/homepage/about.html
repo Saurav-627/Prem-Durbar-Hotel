@@ -1,46 +1,46 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block meta_title %}Our Story & Team | Prem Durbar Hotel & Nagarkot Zipline{% endblock %}
-{% block meta_description %}Discover the story of Prem Durbar in Nagarkot: authentic Newari brick and wood architecture, Kamal Pokhari views, organic farm-to-table dining, and Nepal's longest Superman Zipline.{% endblock %}
+{% block meta_title %}{{ seo_raw.meta_title|default:"Our Story & Team | Prem Durbar Hotel & Nagarkot Zipline" }}{% endblock %}
+{% block meta_description %}{{ seo_raw.meta_description|default:"Discover the story of Prem Durbar in Nagarkot: authentic Newari brick and wood architecture, Kamal Pokhari views, organic farm-to-table dining, and Nepal's longest Superman Zipline." }}{% endblock %}
 
 {% block content %}
-<!-- Page Header / Hero Banner with Animate.css -->
-<div class="relative py-28 md:py-36 bg-[#161412] text-amber-50 overflow-hidden">
-    <div class="absolute inset-0 bg-cover bg-center opacity-30 scale-105 transition-transform duration-1000"
-         style="background-image: url('https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1920&auto=format&fit=crop');"></div>
-    <div class="absolute inset-0 bg-gradient-to-t from-[#161412] via-[#161412]/60 to-transparent"></div>
+<!-- Page Header / Hero Banner with Forest Gradient -->
+<div class="relative py-28 md:py-36 bg-forestGradient text-brand-champagne overflow-hidden">
+    <div class="absolute inset-0 bg-cover bg-center opacity-25 scale-105 transition-transform duration-1000"
+         style="background-image: url('{% if seo_raw and seo_raw.header_image %}{{ seo_raw.header_image.url }}{% else %}https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=1920&auto=format&fit=crop{% endif %}');"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-brand-forestDark via-brand-forest/60 to-transparent"></div>
     
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <span class="animate__animated animate__fadeInDown inline-block px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest bg-luxuryGold-500/20 text-luxuryGold-400 border border-luxuryGold-500/30 mb-4 backdrop-blur-sm shadow-md">
-            Heritage & Modern Hospitality
+        <span class="animate__animated animate__fadeInDown inline-block px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest bg-brand-gold/20 border border-brand-gold/40 mb-4 backdrop-blur-md shadow-glow">
+            {{ seo_raw.header_subtitle|default:about_cms.hero_subtitle }}
         </span>
-        <h1 class="animate__animated animate__zoomIn font-luxury-title text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white mb-6">
-            Our Story & Legacy
+        <h1 class="animate__animated animate__zoomIn font-heading text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white mb-6">
+            {{ seo_raw.header_title|default:about_cms.hero_title }}
         </h1>
-        <p class="animate__animated animate__fadeInUp animate__delay-1s max-w-3xl mx-auto text-base sm:text-lg text-amber-100/80 font-light leading-relaxed">
-            Nestled in Changunarayan-7, Nagarkot, Prem Durbar blends authentic Newari brick & wood craftsmanship with mountain tranquility, organic gastronomy, and high-altitude adventure.
+        <p class="animate__animated animate__fadeInUp animate__delay-1s max-w-3xl mx-auto text-base sm:text-lg text-brand-champagne/90 font-light leading-relaxed">
+            {{ seo_raw.header_description|default:about_cms.hero_description }}
         </p>
     </div>
 </div>
 
 <!-- Our Story Section -->
 <section class="py-20 md:py-28 relative overflow-hidden"
-         :class="{ 'bg-stone-50 text-gray-900': currentTheme === 'light', 'bg-[#1a1815] text-amber-50': currentTheme !== 'light' }">
+         :class="{ 'bg-brand-light text-brand-text': currentTheme === 'light', 'bg-brand-forestDark text-brand-champagne': currentTheme !== 'light' }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             
             <!-- Left: Text content -->
             <div class="space-y-6 animate__animated animate__fadeInLeft">
-                <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-luxuryGold-500">
-                    <span class="w-8 h-[2px] bg-luxuryGold-500"></span>
-                    <span> Kathmandu Valley Artistry</span>
+                <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-brand-gold">
+                    <span class="w-8 h-[2px] bg-brand-gold"></span>
+                    <span>{{ about_cms.story_subtitle }}</span>
                 </div>
-                <h2 class="font-luxury-title text-3xl sm:text-4xl font-bold tracking-tight">
-                    Traditional Newari Architecture Meets Mountain Luxury
+                <h2 class="font-heading text-3xl sm:text-4xl font-bold tracking-tight">
+                    {{ about_cms.story_title }}
                 </h2>
-                <p class="text-base leading-relaxed opacity-85">
-                    Prem Durbar was envisioned as a living tribute to Nepal’s rich architectural heritage. Every wall is constructed using traditional Newari red bricks, handcrafted stone masonry, and intricately carved wooden windows that echo centuries of Kathmandu valley royalty.
+                <p class="text-base leading-relaxed opacity-85 whitespace-pre-line">
+                    {{ about_cms.story_content }}
                 </p>
                 <p class="text-base leading-relaxed opacity-85">
                     Overlooking the peaceful **Kamal Pokhari (Lotus Pond)** and surrounded by Nagarkot’s lush pine forests, our resort offers guests a tranquil retreat from urban life while keeping you connected to organic nature and panoramic Himalayan vistas.
@@ -48,15 +48,15 @@
 
                 <!-- Key Highlight Badges with Subtle Zoom -->
                 <div class="grid grid-cols-2 gap-4 pt-4">
-                    <div class="animate__animated animate__fadeInUp animate__delay-1s p-4 rounded-xl border backdrop-blur-sm transition-all duration-300 hover:border-luxuryGold-500/80 hover:shadow-lg hover:-translate-y-1"
-                         :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#221f1a] border-amber-900/30': currentTheme !== 'light' }">
-                        <i class="fa-solid fa-hotel text-2xl text-luxuryGold-500 mb-2"></i>
+                    <div class="animate__animated animate__fadeInUp animate__delay-1s p-4 rounded-xl border backdrop-blur-sm transition-all duration-300 hover:border-brand-gold hover:shadow-card"
+                         :class="{ 'bg-white border-brand-lightgray': currentTheme === 'light', 'bg-brand-forest border-brand-gold/20': currentTheme !== 'light' }">
+                        <i class="fa-solid fa-hotel text-2xl text-brand-gold mb-2"></i>
                         <h4 class="font-bold text-sm">Handcrafted Decor</h4>
                         <p class="text-xs opacity-75 mt-1">Reclaimed wood beds & carved Newari window art.</p>
                     </div>
-                    <div class="animate__animated animate__fadeInUp animate__delay-1s p-4 rounded-xl border backdrop-blur-sm transition-all duration-300 hover:border-luxuryGold-500/80 hover:shadow-lg hover:-translate-y-1"
-                         :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#221f1a] border-amber-900/30': currentTheme !== 'light' }">
-                        <i class="fa-solid fa-mountain-sun text-2xl text-luxuryGold-500 mb-2"></i>
+                    <div class="animate__animated animate__fadeInUp animate__delay-1s p-4 rounded-xl border backdrop-blur-sm transition-all duration-300 hover:border-brand-gold hover:shadow-card"
+                         :class="{ 'bg-white border-brand-lightgray': currentTheme === 'light', 'bg-brand-forest border-brand-gold/20': currentTheme !== 'light' }">
+                        <i class="fa-solid fa-mountain-sun text-2xl text-brand-gold mb-2"></i>
                         <h4 class="font-bold text-sm">Himalayan Panorama</h4>
                         <p class="text-xs opacity-75 mt-1">Unobstructed sunrise & sunset mountain views.</p>
                     </div>
@@ -68,18 +68,18 @@
                 <div class="space-y-4">
                     <img src="https://images.unsplash.com/photo-1544735716-392fe2489ffa?q=80&w=800&auto=format&fit=crop" 
                          alt="Prem Durbar Heritage Architecture" 
-                         class="rounded-2xl shadow-xl w-full h-64 object-cover hover:scale-105 transition-transform duration-500">
+                         class="rounded-2xl shadow-luxury w-full h-64 object-cover hover:scale-105 transition-transform duration-500">
                     <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=800&auto=format&fit=crop" 
                          alt="Prem Durbar Interior Detail" 
-                         class="rounded-2xl shadow-xl w-full h-48 object-cover hover:scale-105 transition-transform duration-500">
+                         class="rounded-2xl shadow-luxury w-full h-48 object-cover hover:scale-105 transition-transform duration-500">
                 </div>
                 <div class="space-y-4 pt-8">
                     <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=800&auto=format&fit=crop" 
                          alt="Nagarkot Valley View" 
-                         class="rounded-2xl shadow-xl w-full h-48 object-cover hover:scale-105 transition-transform duration-500">
+                         class="rounded-2xl shadow-luxury w-full h-48 object-cover hover:scale-105 transition-transform duration-500">
                     <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?q=80&w=800&auto=format&fit=crop" 
                          alt="Prem Durbar Lounge" 
-                         class="rounded-2xl shadow-xl w-full h-64 object-cover hover:scale-105 transition-transform duration-500">
+                         class="rounded-2xl shadow-luxury w-full h-64 object-cover hover:scale-105 transition-transform duration-500">
                 </div>
             </div>
 
@@ -87,38 +87,38 @@
     </div>
 </section>
 
-<!-- Nagarkot Zipline Banner Feature with Pulse & FadeIn -->
-<section class="py-20 bg-gradient-to-r from-amber-950 via-[#1c1813] to-amber-950 text-white relative overflow-hidden">
+<!-- Nagarkot Zipline Feature with Adventure Gradient -->
+<section class="py-20 bg-adventureGradient text-white relative overflow-hidden shadow-luxury">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div class="lg:col-span-8 space-y-4 animate__animated animate__fadeInUp">
-                <span class="inline-block px-3 py-1 rounded text-xs font-bold uppercase tracking-widest bg-rose-500/20 text-rose-300 border border-rose-500/30">
+                <span class="inline-block px-3 py-1 rounded text-xs font-bold uppercase tracking-widest bg-white/20 text-amber-100 border border-white/30 backdrop-blur-md">
                     <i class="fa-solid fa-bolt mr-1 animate__animated animate__flash animate__infinite animate__slower"></i> High Altitude Adventure
                 </span>
-                <h3 class="font-luxury-title text-3xl sm:text-4xl font-bold">
+                <h3 class="font-heading text-3xl sm:text-4xl font-bold">
                     Nagarkot Zipline — The Superman Zip Line
                 </h3>
-                <p class="text-amber-100/80 text-sm sm:text-base leading-relaxed">
+                <p class="text-amber-100/90 text-sm sm:text-base leading-relaxed">
                     Prem Durbar is proud home to Nepal’s longest, safest, and most thrill-inducing Superman Zipline. Soar through Nagarkot’s pine-clad hills with breathtaking views of Mount Everest and the Himalayan range.
                 </p>
-                <div class="flex flex-wrap gap-6 pt-2 text-xs sm:text-sm font-medium text-amber-200">
+                <div class="flex flex-wrap gap-6 pt-2 text-xs sm:text-sm font-medium text-amber-100">
                     <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-shield-halved text-luxuryGold-400"></i>
+                        <i class="fa-solid fa-shield-halved text-brand-champagne"></i>
                         <span>UIAA / CE Certified Safety Gear</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-wind text-luxuryGold-400"></i>
+                        <i class="fa-solid fa-wind text-brand-champagne"></i>
                         <span>Nepal's Longest Zipline Flight</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-user-check text-luxuryGold-400"></i>
+                        <i class="fa-solid fa-user-check text-brand-champagne"></i>
                         <span>Tandem & Superman Flying Options</span>
                     </div>
                 </div>
             </div>
             <div class="lg:col-span-4 text-center lg:text-right animate__animated animate__fadeInRight animate__delay-1s">
                 <a href="{% url 'homepage:zipline' %}" 
-                   class="inline-flex items-center gap-2 px-8 py-4 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-xl text-sm transition transform hover:-translate-y-1 hover:shadow-2xl">
+                   class="btn-gold-gradient inline-flex items-center gap-2 px-8 py-4 text-brand-forestDark font-bold rounded-xl text-sm transition transform hover:-translate-y-1 shadow-glow">
                     <span>Explore Zipline Flight</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
@@ -127,13 +127,13 @@
     </div>
 </section>
 
-<!-- Our Team Section with Animated Cards -->
+<!-- Our Team Section -->
 <section class="py-20 md:py-28"
-         :class="{ 'bg-white text-gray-900': currentTheme === 'light', 'bg-[#161412] text-amber-50': currentTheme !== 'light' }">
+         :class="{ 'bg-white text-brand-text': currentTheme === 'light', 'bg-brand-dark text-brand-champagne': currentTheme !== 'light' }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-3xl mx-auto mb-16 space-y-4 animate__animated animate__fadeInDown">
-            <span class="text-xs font-semibold uppercase tracking-widest text-luxuryGold-500">Dedicated Professionals</span>
-            <h2 class="font-luxury-title text-3xl sm:text-4xl font-bold tracking-tight">Meet Our Hospitality & Adventure Team</h2>
+            <span class="text-xs font-semibold uppercase tracking-widest text-brand-gold">Dedicated Professionals</span>
+            <h2 class="font-heading text-3xl sm:text-4xl font-bold tracking-tight">Meet Our Hospitality & Adventure Team</h2>
             <p class="text-base opacity-75 font-light">
                 Our passionate team ensures your stay in Nagarkot is comfortable, memorable, and safe—from your luxury room to your zipline flight.
             </p>
@@ -141,15 +141,15 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             {% for member in team_members %}
-            <div class="animate__animated animate__fadeInUp rounded-2xl overflow-hidden border transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl"
+            <div class="animate__animated animate__fadeInUp rounded-2xl overflow-hidden border transition-all duration-500 hover:-translate-y-2 hover:shadow-card"
                  style="animation-delay: {% if forloop.counter == 1 %}0.2s{% elif forloop.counter == 2 %}0.4s{% else %}0.6s{% endif %};"
-                 :class="{ 'bg-stone-50 border-gray-200': currentTheme === 'light', 'bg-[#201d18] border-amber-900/30': currentTheme !== 'light' }">
+                 :class="{ 'bg-brand-light border-brand-lightgray': currentTheme === 'light', 'bg-brand-darkCard border-brand-darkBorder': currentTheme !== 'light' }">
                 <div class="h-64 overflow-hidden relative">
                     <img src="{{ member.image }}" alt="{{ member.name }}" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
                     <div class="absolute bottom-4 left-4 right-4 text-white">
-                        <h3 class="font-luxury-title text-lg font-bold">{{ member.name }}</h3>
-                        <p class="text-xs text-luxuryGold-400 font-medium">{{ member.role }}</p>
+                        <h3 class="font-heading text-lg font-bold">{{ member.name }}</h3>
+                        <p class="text-xs text-brand-gold font-medium">{{ member.role }}</p>
                     </div>
                 </div>
                 <div class="p-6 space-y-3">
@@ -163,18 +163,18 @@
 
 <!-- Sustainability & Values Callout -->
 <section class="py-20 border-t"
-         :class="{ 'bg-stone-100 border-gray-200 text-gray-900': currentTheme === 'light', 'bg-[#1d1a16] border-amber-900/20 text-amber-50': currentTheme !== 'light' }">
+         :class="{ 'bg-brand-light border-brand-lightgray text-brand-text': currentTheme === 'light', 'bg-brand-forestDark border-brand-gold/20 text-brand-champagne': currentTheme !== 'light' }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6 animate__animated animate__fadeInUp">
-        <span class="inline-block p-3 rounded-full bg-emerald-500/10 text-emerald-500 mb-2 animate__animated animate__pulse animate__infinite animate__slower">
+        <span class="inline-block p-3 rounded-full bg-brand-forestLight/20 text-brand-pine mb-2 animate__animated animate__pulse animate__infinite animate__slower">
             <i class="fa-solid fa-leaf text-2xl"></i>
         </span>
-        <h2 class="font-luxury-title text-3xl font-bold">Committed to Sustainable Nagarkot Tourism</h2>
+        <h2 class="font-heading text-3xl font-bold">Committed to Sustainable Nagarkot Tourism</h2>
         <p class="max-w-2xl mx-auto text-sm sm:text-base opacity-80 font-light">
             We prioritize environmental conservation, solar energy water heating, water savings without bathtubs, local farm ingredient sourcing, and empowering Nagarkot's local workforce.
         </p>
         <div>
             <a href="{% url 'homepage:sustainability' %}" 
-               class="inline-flex items-center gap-2 px-6 py-3 border border-luxuryGold-500/50 hover:border-luxuryGold-500 text-luxuryGold-400 font-semibold rounded-xl text-sm transition transform hover:scale-105 shadow-md">
+               class="inline-flex items-center gap-2 px-6 py-3 border border-brand-gold hover:border-brand-goldDark text-brand-gold font-semibold rounded-xl text-sm transition transform hover:scale-105 shadow-md">
                 <span>View Sustainability Policies & Reports</span>
                 <i class="fa-solid fa-chevron-right text-xs"></i>
             </a>

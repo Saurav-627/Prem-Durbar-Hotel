@@ -59,33 +59,6 @@ class Command(BaseCommand):
         else:
             self.stdout.write(self.style.WARNING("Superuser 'admin' already exists. Skipping."))
 
-        # -- 2. Currencies
-        from settings_manager.models.currency import Currency
-        for c in data.get("currencies", []):
-            iso = c.get("iso_code")
-            if not iso:
-                continue
-            qs = Currency.objects.get_queryset().set_active_test(enabled=False)
-            existing = qs.filter(iso_code=iso).first()
-            if existing:
-                if do_update:
-                    for k, v in c.items():
-                        setattr(existing, k, v)
-                    existing.save()
-                    self.stdout.write(self.style.SUCCESS(f"Updated currency: {iso}"))
-                else:
-                    self.stdout.write(self.style.WARNING(f"Currency '{iso}' already exists. Skipping."))
-            else:
-                Currency.objects.create(
-                    iso_code=iso,
-                    name=c.get("name"),
-                    symbol=c.get("symbol"),
-                    sequence=c.get("sequence"),
-                    is_published=c.get("is_published", True),
-                    is_custom=c.get("is_custom", False),
-                )
-                self.stdout.write(self.style.SUCCESS(f"Created currency: {iso}"))
-
         # -- 3. Hotel Settings (singleton)
         from settings_manager.models.hotel_settings import HotelSettings
         s = data.get("hotel_settings")
@@ -215,31 +188,60 @@ class Command(BaseCommand):
 
             self.stdout.write(self.style.SUCCESS(f"Processed room: {room_obj.title}"))
 
-        # -- 9. Dining Venues
-        from dining.models.venue import DiningVenue
-        if do_update:
-            DiningVenue.objects.all().delete()
-        for venue in data.get("dining_venues", []):
-            slug = venue.get("slug")
-            if not slug:
-                continue
-            DiningVenue.objects.get_or_create(
-                slug=slug,
-                defaults={k: v for k, v in venue.items() if k != "slug"}
-            )
-            self.stdout.write(self.style.SUCCESS(f"Processed dining venue: {slug}"))
+        # -- 9. About CMS (singleton)
+        from homepage.models.about_cms import AboutCMS
+        acms = data.get("about_cms")
+        if acms:
+            existing = AboutCMS.objects.first()
+            if existing:
+                if do_update:
+                    for k, v in acms.items():
+                        setattr(existing, k, v)
+                    existing.save()
+                    self.stdout.write(self.style.SUCCESS("Updated AboutCMS."))
+            else:
+                AboutCMS.objects.create(**acms)
+                self.stdout.write(self.style.SUCCESS("Created AboutCMS."))
 
-        # -- 10. Nearby Attractions
-        from nearby_places.models.attraction import Attraction
+        # -- 10. Zipline CMS (singleton)
+        from homepage.models.zipline_cms import ZiplineCMS
+        zcms = data.get("zipline_cms")
+        if zcms:
+            existing = ZiplineCMS.objects.first()
+            if existing:
+                if do_update:
+                    for k, v in zcms.items():
+                        setattr(existing, k, v)
+                    existing.save()
+                    self.stdout.write(self.style.SUCCESS("Updated ZiplineCMS."))
+            else:
+                ZiplineCMS.objects.create(**zcms)
+                self.stdout.write(self.style.SUCCESS("Created ZiplineCMS."))
+
+        # -- 11. Sustainability CMS & Pillars
+        from homepage.models.sustainability_cms import SustainabilityCMS, SustainabilityPillar
+        scms = data.get("sustainability_cms")
+        if scms:
+            existing = SustainabilityCMS.objects.first()
+            if existing:
+                if do_update:
+                    for k, v in scms.items():
+                        setattr(existing, k, v)
+                    existing.save()
+                    self.stdout.write(self.style.SUCCESS("Updated SustainabilityCMS."))
+            else:
+                SustainabilityCMS.objects.create(**scms)
+                self.stdout.write(self.style.SUCCESS("Created SustainabilityCMS."))
+
         if do_update:
-            Attraction.objects.all().delete()
-        for attr in data.get("attractions", []):
-            name = attr.get("name")
-            if not name:
+            SustainabilityPillar.objects.all().delete()
+        for pillar in data.get("sustainability_pillars", []):
+            title = pillar.get("title")
+            if not title:
                 continue
-            Attraction.objects.get_or_create(
-                name=name,
-                defaults={k: v for k, v in attr.items() if k != "name"}
+            SustainabilityPillar.objects.get_or_create(
+                title=title,
+                defaults={k: v for k, v in pillar.items() if k != "title"}
             )
 
         # -- 12. Testimonials

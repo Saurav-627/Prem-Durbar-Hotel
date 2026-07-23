@@ -21,7 +21,7 @@
             <div class="rounded-2xl p-6 border shadow-sm"
                  :class="{
                      'bg-white border-gray-200': currentTheme === 'light',
-                     'bg-[#161412] border-amber-900/20': currentTheme !== 'light'
+                     'bg-[#1A3A32] border-brand-primary/20 text-white': currentTheme !== 'light'
                  }">
                 <h3 class="font-luxury-title text-lg font-semibold tracking-wide border-b pb-4 mb-6"
                     :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/10': currentTheme !== 'light' }">
@@ -72,11 +72,10 @@
 
                     <!-- Actions -->
                     <div class="pt-4 space-y-2">
-                        <button type="submit" class="w-full py-3 rounded-lg text-xs font-bold uppercase tracking-wider text-center cursor-pointer"
-                                :class="{ 'bg-amber-800 text-white': currentTheme === 'light', 'bg-luxuryGold-500 text-black': currentTheme !== 'light' }">
+                        <button type="submit" class="btn-gold-gradient w-full py-3 rounded-lg text-xs font-bold uppercase tracking-wider text-center cursor-pointer text-white shadow-md">
                             Apply Filters
                         </button>
-                        <a href="{% url 'rooms:room_list' %}" class="block text-center w-full py-3 rounded-lg text-xs font-semibold uppercase tracking-wider border hover:bg-luxuryGold-900/10 transition-colors">
+                        <a href="{% url 'rooms:room_list' %}" class="block text-center w-full py-3 rounded-lg text-xs font-semibold uppercase tracking-wider border hover:bg-brand-primary/10 transition-colors">
                             Clear Filters
                         </a>
                     </div>
@@ -93,13 +92,13 @@
                 <div class="rounded-2xl overflow-hidden border shadow-lg group hover:translate-y-[-4px] duration-500 flex flex-col animate__animated animate__fadeInUp"
                      :class="{
                          'bg-white border-gray-200': currentTheme === 'light',
-                         'bg-[#161412] border-amber-900/20': currentTheme !== 'light'
+                         'bg-[#1A3A32] border-brand-primary/20 text-white': currentTheme !== 'light'
                      }">
                     <!-- Room Cover Image -->
                     <div class="relative h-64 overflow-hidden">
                         <img src="{% if room.images.first and room.images.first.image %}{{ room.images.first.image.url }}{% else %}https://images.unsplash.com/photo-1618773928121-c32242e63f39?q=80&w=600{% endif %}" 
                              alt="{{ room.title }}" class="w-full h-full object-cover group-hover:scale-105 duration-700">
-                        <span class="absolute top-4 right-4 px-4 py-1 text-xs font-semibold bg-black/70 text-luxuryGold-300 rounded-full">
+                        <span class="absolute top-4 right-4 px-4 py-1 text-xs font-semibold bg-black/70 text-white rounded-full">
                             {{ room.category.name|default:"Luxury Suite" }}
                         </span>
                     </div>
@@ -111,7 +110,7 @@
                                 <h3 class="font-luxury-title text-xl font-bold tracking-wide">{{ room.title }}</h3>
                                 <div class="text-right flex-shrink-0 whitespace-nowrap">
                                     <span class="text-xs uppercase opacity-75 font-semibold text-gray-500">From</span>
-                                    <p class="text-2xl font-extrabold text-luxuryGold-800 font-luxury-title whitespace-nowrap">{{ room.currency.iso_code }} {{ room.current_price }}</p>
+                                    <p class="text-2xl font-extrabold text-brand-primaryDark font-luxury-title whitespace-nowrap" :class="{ 'text-brand-primary': currentTheme === 'light', 'text-white': currentTheme !== 'light' }">{{ room.currency.iso_code }} {{ room.current_price }}</p>
                                     {% if room.active_seasonal %}
                                     <span class="text-[10px] text-green-600 font-semibold uppercase tracking-wide block mt-0.5">🏷 {{ room.active_seasonal.name }}</span>
                                     {% endif %}
@@ -121,21 +120,17 @@
                             
                             <!-- Specifications -->
                             <div class="flex items-center gap-6 text-xs opacity-75 pt-2">
-                                <span><i class="fa-solid fa-maximize text-luxuryGold-400 mr-1.5"></i>{{ room.room_size }} sq.ft.</span>
-                                <span><i class="fa-solid fa-user-group text-luxuryGold-400 mr-1.5"></i>Max {{ room.max_adults }} Guest(s)</span>
-                                <span><i class="fa-solid fa-bed text-luxuryGold-400 mr-1.5"></i>{{ room.bed_type }}</span>
+                                <span><i class="fa-solid fa-maximize text-brand-primaryLight mr-1.5"></i>{{ room.room_size }} sq.ft.</span>
+                                <span><i class="fa-solid fa-user-group text-brand-primaryLight mr-1.5"></i>Max {{ room.max_adults }} Guest(s)</span>
+                                <span><i class="fa-solid fa-bed text-brand-primaryLight mr-1.5"></i>{{ room.bed_type }}</span>
                             </div>
                         </div>
 
                         <!-- Card CTA -->
-                        <div class="pt-6 mt-6 border-t border-amber-900/10 flex items-center justify-between gap-4">
-                            <a href="{% url 'rooms:room_detail' room.slug %}" class="text-xs font-semibold uppercase tracking-wider hover:text-luxuryGold-400 transition-colors">Details & Specs</a>
+                        <div class="pt-6 mt-6 border-t border-brand-primary/10 flex items-center justify-between gap-4">
+                            <a href="{% url 'rooms:room_detail' room.slug %}" class="text-xs font-semibold uppercase tracking-wider hover:text-brand-primaryLight transition-colors">Details & Specs</a>
                             <a href="{% url 'rooms:room_detail' room.slug %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" 
-                               class="px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-colors border"
-                               :class="{
-                                   'bg-amber-800 text-white border-amber-800': currentTheme === 'light',
-                                   'bg-luxuryGold-500 border-luxuryGold-500 text-black': currentTheme !== 'light'
-                               }">
+                               class="btn-gold-gradient px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-white shadow-md">
                                 Reserve Suite
                             </a>
                         </div>

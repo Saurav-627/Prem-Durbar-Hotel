@@ -29,13 +29,13 @@
     <div class="flex flex-wrap justify-center gap-3 mb-12">
         <button @click="activeCategory = 'all'" 
                 class="px-5 py-2 text-xs font-semibold uppercase tracking-wider rounded-full border transition-all cursor-pointer"
-                :class="activeCategory === 'all' ? 'bg-luxuryGold-500 text-black border-luxuryGold-500' : 'border-amber-900/20 hover:bg-luxuryGold-900/10'">
+                :class="activeCategory === 'all' ? 'btn-gold-gradient text-white border-[#2D5A4A]' : 'border-brand-primary/20 hover:bg-brand-primary/10'">
             All Media
         </button>
         {% for cat in categories %}
         <button @click="activeCategory = '{{ cat.slug }}'" 
                 class="px-5 py-2 text-xs font-semibold uppercase tracking-wider rounded-full border transition-all cursor-pointer"
-                :class="activeCategory === '{{ cat.slug }}' ? 'bg-luxuryGold-500 text-black border-luxuryGold-500' : 'border-amber-900/20 hover:bg-luxuryGold-900/10'">
+                :class="activeCategory === '{{ cat.slug }}' ? 'btn-gold-gradient text-white border-[#2D5A4A]' : 'border-brand-primary/20 hover:bg-brand-primary/10'">
             {{ cat.name }}
         </button>
         {% endfor %}

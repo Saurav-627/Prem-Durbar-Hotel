@@ -5,6 +5,9 @@ from settings_manager.models.navigation import NavigationMenu
 from settings_manager.models.currency import Currency
 from homepage.models.hero_slide import HeroSlide
 from homepage.models.about_preview import AboutPreview
+from homepage.models.about_cms import AboutCMS
+from homepage.models.zipline_cms import ZiplineCMS
+from homepage.models.sustainability_cms import SustainabilityCMS, SustainabilityPillar
 from rooms.models.room_category import RoomCategory
 from rooms.models.room import Room
 from rooms.models.room_image import RoomImage
@@ -13,13 +16,11 @@ from rooms.models.room_policy import RoomPolicy
 from rooms.models.room_seasonal_price import RoomSeasonalPrice
 from booking.models.booking import Booking
 from booking.models.coupon import Coupon
-from dining.models.venue import DiningVenue
-from dining.models.reservation import DiningReservation
+from dining.models.item import DiningCategory, DiningItem, DiningItemBasePrice
 from gallery.models.category import GalleryCategory
 from gallery.models.item import GalleryItem
 from contact.models.branch import Branch
 from contact.models.inquiry import ContactInquiry
-from nearby_places.models.attraction import Attraction
 from testimonials.models.testimonial import Testimonial
 from seo.models.seo_data import SEOData
 from django.contrib.auth import get_user_model
@@ -40,26 +41,26 @@ class TailwindFormMixin:
             # Checkbox
             elif isinstance(widget, forms.CheckboxInput):
                 if field_name == 'DELETE':
-                    css_classes = "rounded border-neutral-300 dark:border-neutral-700 text-luxuryGold-500 focus:ring-luxuryGold-500 bg-white dark:bg-neutral-800 transition duration-150 ease-in-out cursor-pointer"
+                    css_classes = "rounded border-neutral-300 dark:border-neutral-700 text-brand-primary focus:ring-brand-primary bg-white dark:bg-neutral-800 transition duration-150 ease-in-out cursor-pointer"
                 else:
                     css_classes = "sr-only peer"
             # Textarea
             elif isinstance(widget, forms.Textarea):
-                css_classes = "w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-luxuryGold-500/20 focus:border-luxuryGold-500 outline-none transition-all duration-200 h-28"
+                css_classes = "w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all duration-200 h-28"
             # Date/Time input
             elif isinstance(widget, (forms.DateInput, forms.DateTimeInput, forms.TimeInput)):
-                css_classes = "w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-luxuryGold-500/20 focus:border-luxuryGold-500 outline-none transition-all duration-200 cursor-pointer"
+                css_classes = "w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all duration-200 cursor-pointer"
             # Standard Select or SelectMultiple
             elif isinstance(widget, (forms.Select, forms.SelectMultiple)):
-                css_classes = "w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-luxuryGold-500/20 focus:border-luxuryGold-500 outline-none transition-all duration-200 cursor-pointer"
+                css_classes = "w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all duration-200 cursor-pointer"
             # File Uploads
             elif isinstance(widget, forms.FileInput):
                 if isinstance(widget, forms.ClearableFileInput):
                     widget.template_name = 'admin_dashboard/widgets/custom_clearable_file_input.html'
-                css_classes = "block w-full text-sm text-neutral-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-luxuryGold-500/10 file:text-luxuryGold-700 dark:file:text-luxuryGold-400 hover:file:bg-luxuryGold-500/20 file:cursor-pointer bg-white dark:bg-neutral-800 rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-2 transition"
+                css_classes = "block w-full text-sm text-neutral-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-brand-primary/10 file:text-brand-primary dark:file:text-brand-primaryLight hover:file:bg-brand-primary/20 file:cursor-pointer bg-white dark:bg-neutral-800 rounded-lg border border-neutral-300 dark:border-neutral-700 px-3 py-2 transition"
             # Standard Text Inputs
             else:
-                css_classes = "w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-luxuryGold-500/20 focus:border-luxuryGold-500 outline-none transition-all duration-200"
+                css_classes = "w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all duration-200"
             
             # Apply styling
             existing_class = widget.attrs.get('class', '')
@@ -195,16 +196,6 @@ class CouponForm(TailwindFormMixin, forms.ModelForm):
         model = Coupon
         fields = '__all__'
 
-class DiningVenueForm(TailwindFormMixin, forms.ModelForm):
-    class Meta:
-        model = DiningVenue
-        fields = '__all__'
-
-class DiningReservationForm(TailwindFormMixin, forms.ModelForm):
-    class Meta:
-        model = DiningReservation
-        fields = '__all__'
-
 class GalleryCategoryForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = GalleryCategory
@@ -215,6 +206,82 @@ class GalleryItemForm(TailwindFormMixin, forms.ModelForm):
         model = GalleryItem
         fields = '__all__'
 
+class DiningCategoryForm(TailwindFormMixin, forms.ModelForm):
+    class Meta:
+        model = DiningCategory
+        fields = '__all__'
+
+class DiningItemForm(TailwindFormMixin, forms.ModelForm):
+    class Meta:
+        model = DiningItem
+        fields = ['category', 'title', 'slug', 'description', 'image', 'image_url', 'is_vegetarian', 'is_vegan', 'is_spicy', 'is_chef_special', 'is_published', 'order']
+
+
+class DiningItemBasePriceForm(TailwindFormMixin, forms.ModelForm):
+    class Meta:
+        model = DiningItemBasePrice
+        fields = ['currency', 'base_price']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['currency'].required = False
+        self.fields['base_price'].required = False
+        self.fields['currency'].queryset = Currency.objects.filter(is_published=True)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        currency = cleaned_data.get('currency')
+        base_price = cleaned_data.get('base_price')
+
+        if currency and base_price is None:
+            self.add_error('base_price', 'Base price is required when currency is selected.')
+        elif base_price is not None and not currency:
+            self.add_error('currency', 'Currency is required when base price is entered.')
+
+        return cleaned_data
+
+    def has_changed(self):
+        prefix = self.prefix
+        curr_key = f"{prefix}-currency" if prefix else "currency"
+        price_key = f"{prefix}-base_price" if prefix else "base_price"
+
+        curr_val = self.data.get(curr_key)
+        price_val = self.data.get(price_key)
+
+        if not curr_val and not price_val:
+            return False
+        return super().has_changed()
+
+
+class BaseDiningItemBasePriceFormSet(forms.BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        if any(self.errors):
+            return
+
+        has_at_least_one_price = False
+        for form in self.forms:
+            if not form.cleaned_data or form.cleaned_data.get('DELETE'):
+                continue
+            curr = form.cleaned_data.get('currency')
+            price = form.cleaned_data.get('base_price')
+            if curr and price is not None:
+                has_at_least_one_price = True
+                break
+
+        if not has_at_least_one_price:
+            raise forms.ValidationError("At least one currency price is required for this menu item (e.g. NPR or USD).")
+
+
+DiningItemBasePriceFormSet = forms.inlineformset_factory(
+    DiningItem,
+    DiningItemBasePrice,
+    form=DiningItemBasePriceForm,
+    formset=BaseDiningItemBasePriceFormSet,
+    extra=2,
+    can_delete=True
+)
+
 class BranchForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = Branch
@@ -223,11 +290,6 @@ class BranchForm(TailwindFormMixin, forms.ModelForm):
 class ContactInquiryForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = ContactInquiry
-        fields = '__all__'
-
-class AttractionForm(TailwindFormMixin, forms.ModelForm):
-    class Meta:
-        model = Attraction
         fields = '__all__'
 
 class TestimonialForm(TailwindFormMixin, forms.ModelForm):
@@ -285,3 +347,31 @@ class PaymentProcessorForm(TailwindFormMixin, forms.ModelForm):
                 payment_processor=processor,
                 currency=currency
             )
+
+
+class AboutCMSForm(TailwindFormMixin, forms.ModelForm):
+    class Meta:
+        model = AboutCMS
+        fields = '__all__'
+
+
+class ZiplineCMSForm(TailwindFormMixin, forms.ModelForm):
+    class Meta:
+        model = ZiplineCMS
+        fields = '__all__'
+        widgets = {
+            'video_file': forms.ClearableFileInput(attrs={'accept': 'video/*'}),
+        }
+
+
+class SustainabilityCMSForm(TailwindFormMixin, forms.ModelForm):
+    class Meta:
+        model = SustainabilityCMS
+        fields = '__all__'
+
+
+class SustainabilityPillarForm(TailwindFormMixin, forms.ModelForm):
+    class Meta:
+        model = SustainabilityPillar
+        fields = '__all__'
+

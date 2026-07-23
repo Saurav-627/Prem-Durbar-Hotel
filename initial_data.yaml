@@ -12,29 +12,35 @@ hotel_settings:
   instagram_url: https://www.instagram.com/premdurbarhotel/
   twitter_url: https://x.com/premdurbarhotel
 currencies:
-- iso_code: USD
-  name: US Dollar
-  symbol: $
+- iso_code: NPR
+  name: Nepalese Rupee
+  symbol: Rs.
   is_published: true
   sequence: 1
   is_custom: false
-- iso_code: NPR
-  name: Nepalese Rupee
-  symbol: "\u20A8"
+- iso_code: USD
+  name: US Dollar
+  symbol: $
   is_published: true
   sequence: 2
   is_custom: false
 - iso_code: EUR
   name: Euro
-  symbol: "\u20AC"
+  symbol: €
   is_published: true
   sequence: 3
   is_custom: false
 - iso_code: GBP
   name: British Pound
-  symbol: "\xA3"
+  symbol: £
   is_published: true
   sequence: 4
+  is_custom: false
+- iso_code: INR
+  name: Indian Rupee
+  symbol: ₹
+  is_published: true
+  sequence: 5
   is_custom: false
 navigation_menus:
 - name: About Us
@@ -42,17 +48,17 @@ navigation_menus:
   position: header
   order: 1
   is_published: true
-- name: Rooms & Suites
+- name: Rooms
   url: /rooms/
   position: header
   order: 2
   is_published: true
-- name: Dining
+- name: Dining Items
   url: /dining/
   position: header
   order: 3
   is_published: true
-- name: Nagarkot Zipline
+- name: Zipline
   url: /zipline/
   position: header
   order: 4
@@ -82,7 +88,7 @@ navigation_menus:
   position: footer_links
   order: 2
   is_published: true
-- name: Fine Gastronomy
+- name: Food & Dining Menu
   url: /dining/
   position: footer_links
   order: 3
@@ -92,7 +98,7 @@ navigation_menus:
   position: footer_links
   order: 4
   is_published: true
-- name: Sustainability
+- name: Eco Sustainability
   url: /sustainability/
   position: footer_links
   order: 5

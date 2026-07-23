@@ -1,17 +1,22 @@
 from django.contrib import admin
-from .models.venue import DiningVenue
-from .models.reservation import DiningReservation
+from .models.item import DiningCategory, DiningItem, DiningItemBasePrice
 
-@admin.register(DiningVenue)
-class DiningVenueAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category', 'timings', 'capacity', 'is_featured', 'is_published')
-    list_filter = ('category', 'is_featured', 'is_published')
-    list_editable = ('is_featured', 'is_published')
+class DiningItemBasePriceInline(admin.TabularInline):
+    model = DiningItemBasePrice
+    extra = 1
+
+@admin.register(DiningCategory)
+class DiningCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'order', 'is_published')
+    list_editable = ('order', 'is_published')
     search_fields = ('name', 'description')
     prepopulated_fields = {'slug': ('name',)}
 
-@admin.register(DiningReservation)
-class DiningReservationAdmin(admin.ModelAdmin):
-    list_display = ('name', 'venue', 'date', 'time', 'guests', 'status')
-    list_filter = ('status', 'date', 'venue')
-    search_fields = ('name', 'email', 'phone')
+@admin.register(DiningItem)
+class DiningItemAdmin(admin.ModelAdmin):
+    list_display = ('title', 'category', 'base_price', 'is_vegetarian', 'is_spicy', 'is_chef_special', 'is_published')
+    list_filter = ('category', 'is_vegetarian', 'is_spicy', 'is_chef_special', 'is_published')
+    list_editable = ('base_price', 'is_vegetarian', 'is_spicy', 'is_chef_special', 'is_published')
+    search_fields = ('title', 'description')
+    prepopulated_fields = {'slug': ('title',)}
+    inlines = [DiningItemBasePriceInline]

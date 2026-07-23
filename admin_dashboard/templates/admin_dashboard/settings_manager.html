@@ -12,15 +12,15 @@
 {% block page_actions %}
 <div class="flex items-center gap-3">
     {% if active_tab == 'currencies' %}
-    <a href="{% url 'admin_dashboard:currency_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+    <a href="{% url 'admin_dashboard:currency_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
         <i class="fa-solid fa-plus mr-1.5"></i> Add Currency
     </a>
     {% elif active_tab == 'navigation' %}
-    <a href="{% url 'admin_dashboard:menu_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+    <a href="{% url 'admin_dashboard:menu_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
         <i class="fa-solid fa-plus mr-1.5"></i> Add Menu Item
     </a>
     {% elif active_tab == 'processors' %}
-    <a href="{% url 'admin_dashboard:processor_create' %}" class="px-4 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-lg text-sm transition">
+    <a href="{% url 'admin_dashboard:processor_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
         <i class="fa-solid fa-plus mr-1.5"></i> Add Payment Processor
     </a>
     {% endif %}
@@ -31,19 +31,19 @@
 <!-- Module Tabs navigation -->
 <div class="flex items-center gap-2 border-b border-neutral-200 dark:border-neutral-800 mb-8">
     <a href="?tab=general" 
-       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'general' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'general' %}border-brand-primary text-brand-primary dark:text-brand-secondary{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
         Hotel Site Settings
     </a>
     <a href="?tab=currencies" 
-       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'currencies' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'currencies' %}border-brand-primary text-brand-primary dark:text-brand-secondary{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
         Currencies visibility
     </a>
     <a href="?tab=navigation" 
-       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'navigation' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'navigation' %}border-brand-primary text-brand-primary dark:text-brand-secondary{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
         Navigation Menus
     </a>
     <a href="?tab=processors" 
-       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'processors' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'processors' %}border-brand-primary text-brand-primary dark:text-brand-secondary{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
         Payment Processors
     </a>
 </div>
@@ -157,7 +157,7 @@
 
                 <div class="pt-6 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-end">
                     <button type="submit" 
-                            class="px-6 py-2.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 font-bold rounded-xl shadow-lg transition">
+                            class="btn-gold-gradient px-6 py-2.5 text-white font-bold rounded-xl shadow-lg transition">
                         Update Global settings
                     </button>
                 </div>

@@ -22,37 +22,36 @@
          class="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto py-4 pb-12 shadow-xl border-l"
          :class="{
              'bg-white border-gray-200 text-gray-800': currentTheme === 'light',
-             'bg-[#121212] border-[#2D2D2D] text-gray-200': currentTheme === 'dark',
-             'bg-[#0A0908] border-amber-900/30 text-amber-200': currentTheme === 'luxury' || currentTheme === 'festival'
+             'bg-[#0A2017] border-brand-primary/30 text-white': currentTheme !== 'light'
          }">
-        <div class="flex items-center justify-between px-4 pb-6 border-b" :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/20': currentTheme !== 'light' }">
+        <div class="flex items-center justify-between px-4 pb-6 border-b" :class="{ 'border-gray-200': currentTheme === 'light', 'border-brand-primary/20': currentTheme !== 'light' }">
             <span class="font-luxury-title text-xl font-bold tracking-wider">Navigation</span>
-            <button @click="mobileMenuOpen = false" class="p-2 rounded-lg hover:bg-luxuryGold-900/10">
-                <i class="fa-solid fa-xmark text-xl"></i>
+            <button @click="mobileMenuOpen = false" class="p-2 rounded-lg hover:bg-brand-primary/10">
+                <i class="fa-solid fa-xmark text-lg"></i>
             </button>
         </div>
 
-        <div class="mt-4 px-4 space-y-3">
-            <a href="{% url 'homepage:home' %}" data-nav-mobile class="block py-2 text-base font-medium border-b border-transparent hover:text-luxuryGold-400">Home</a>
-            
-            {% for item in header_menu %}
-                <a href="{{ item.url }}" data-nav-mobile class="block py-2 text-base font-medium border-b border-transparent hover:text-luxuryGold-400">{{ item.name }}</a>
-            {% empty %}
-                <a href="{% url 'homepage:about' %}" class="block py-2 text-base font-medium hover:text-luxuryGold-400">About Us</a>
-                <a href="{% url 'rooms:room_list' %}" class="block py-2 text-base font-medium hover:text-luxuryGold-400">Rooms & Suites</a>
-                <a href="{% url 'dining:dining_list' %}" class="block py-2 text-base font-medium hover:text-luxuryGold-400">Dining</a>
-                <a href="{% url 'homepage:zipline' %}" class="block py-2 text-base font-medium hover:text-luxuryGold-400">Nagarkot Zipline</a>
-                <a href="{% url 'homepage:sustainability' %}" class="block py-2 text-base font-medium hover:text-luxuryGold-400">Sustainability</a>
-                <a href="{% url 'gallery:gallery_list' %}" class="block py-2 text-base font-medium hover:text-luxuryGold-400">Gallery</a>
-                <a href="{% url 'contact:contact_page' %}" class="block py-2 text-base font-medium hover:text-luxuryGold-400">Contact</a>
-            {% endfor %}
+        <div class="px-4 py-6 space-y-6">
+            <nav class="flex flex-col space-y-4">
+                {% for item in cms_nav_items %}
+                    <a href="{{ item.url }}" class="text-base font-semibold uppercase tracking-wider hover:text-brand-primaryLight transition-colors">{{ item.name }}</a>
+                {% empty %}
+                    <a href="{% url 'homepage:about' %}" class="text-base font-semibold uppercase tracking-wider hover:text-brand-primaryLight transition-colors">About Us</a>
+                    <a href="{% url 'rooms:room_list' %}" class="text-base font-semibold uppercase tracking-wider hover:text-brand-primaryLight transition-colors">Rooms & Suites</a>
+                    <a href="{% url 'dining:dining_list' %}" class="text-base font-semibold uppercase tracking-wider hover:text-brand-primaryLight transition-colors">Dining</a>
+                    <a href="{% url 'homepage:zipline' %}" class="text-base font-semibold uppercase tracking-wider hover:text-brand-primaryLight transition-colors">Zipline</a>
+                    <a href="{% url 'homepage:sustainability' %}" class="text-base font-semibold uppercase tracking-wider hover:text-brand-primaryLight transition-colors">Sustainability</a>
+                    <a href="{% url 'gallery:gallery_list' %}" class="text-base font-semibold uppercase tracking-wider hover:text-brand-primaryLight transition-colors">Gallery</a>
+                    <a href="{% url 'contact:contact_page' %}" class="text-base font-semibold uppercase tracking-wider hover:text-brand-primaryLight transition-colors">Contact</a>
+                {% endfor %}
+            </nav>
 
-            <div class="pt-6 border-t mt-6" :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/20': currentTheme !== 'light' }">
-                <h4 class="text-xs font-semibold tracking-widest uppercase mb-3 opacity-60">Currency</h4>
+            <div class="pt-6 border-t" :class="{ 'border-gray-200': currentTheme === 'light', 'border-brand-primary/20': currentTheme !== 'light' }">
+                <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Select Currency</label>
                 <div class="relative">
                     <select @change="setCurrency($event.target.value)" 
-                            class="w-full appearance-none px-3 py-2.5 text-xs rounded border bg-transparent focus:outline-none focus:ring-1 focus:ring-luxuryGold-400 font-medium"
-                            :class="currentTheme === 'light' ? 'border-gray-300 text-gray-800 bg-white' : 'border-amber-900/40 text-amber-200 bg-[#161412]'">
+                            class="w-full px-4 py-3 rounded-lg border text-sm font-semibold focus:outline-none appearance-none cursor-pointer"
+                            :class="currentTheme === 'light' ? 'border-gray-300 text-gray-800 bg-white' : 'border-brand-primary/40 text-white bg-[#1A3A32]'">
                         {% for c in published_currencies %}
                             <option value="{{ c.iso_code }}" {% if c.iso_code == selected_currency %}selected{% endif %} :selected="currentCurrency === '{{ c.iso_code }}'">{{ c.name }} ({{ c.iso_code }})</option>
                         {% empty %}
@@ -66,11 +65,7 @@
             </div>
 
             <div class="pt-6">
-                <a href="{% url 'rooms:room_list' %}" class="block text-center w-full py-3 text-sm font-semibold uppercase tracking-wider rounded-lg border border-luxuryGold-400 {% if selected_theme == 'light' %}bg-amber-800 text-white{% else %}bg-luxuryGold-500 text-black{% endif %}"
-                   :class="{
-                       'bg-amber-800 text-white': currentTheme === 'light',
-                       'bg-luxuryGold-500 text-black': currentTheme !== 'light'
-                   }">
+                <a href="{% url 'rooms:room_list' %}" class="btn-gold-gradient block text-center w-full py-3 text-sm font-semibold uppercase tracking-wider rounded-lg text-white shadow-md">
                     Book A Stay
                 </a>
             </div>

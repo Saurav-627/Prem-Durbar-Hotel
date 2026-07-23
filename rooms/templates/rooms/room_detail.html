@@ -83,7 +83,7 @@
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-6">
                     {% for fac in room.facilities.all %}
                     <div class="flex items-center gap-3 p-3 rounded-lg border"
-                         :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#161412] border-amber-900/10': currentTheme !== 'light' }">
+                         :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#1A3A32] border-brand-primary/20 text-white': currentTheme !== 'light' }">
                         <div class="text-xl text-luxuryGold-500">
                             {% if fac.icon_class %}
                                 <i class="{{ fac.icon_class }}"></i>
@@ -123,8 +123,8 @@
                 <h3 class="font-luxury-title text-xl font-semibold">Suite Policies & Regs</h3>
                 <div class="space-y-4">
                     {% for policy in room.policies.all %}
-                    <div class="p-4 rounded-xl border" :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#161412] border-amber-900/10': currentTheme !== 'light' }">
-                        <h4 class="font-semibold text-sm mb-1 text-luxuryGold-400">{{ policy.title }}</h4>
+                    <div class="p-4 rounded-xl border" :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#1A3A32] border-brand-primary/20 text-white': currentTheme !== 'light' }">
+                        <h4 class="font-semibold text-sm mb-1 text-brand-primaryLight">{{ policy.title }}</h4>
                         <p class="text-xs opacity-75 leading-relaxed">{{ policy.description }}</p>
                     </div>
                     {% endfor %}
@@ -134,14 +134,13 @@
 
         </div>
 
-        <!-- RIGHT RESERVATION SIDEBAR (1 COL) -->
-        <div class="space-y-8 lg:col-span-1" x-data="{
-            checkIn: new URLSearchParams(window.location.search).get('check_in') || new Date(new Date().getTime() + 24*60*60*1000).toISOString().split('T')[0],
-            checkOut: new URLSearchParams(window.location.search).get('check_out') || new Date(new Date().getTime() + 2*24*60*60*1000).toISOString().split('T')[0],
-            adults: parseInt(new URLSearchParams(window.location.search).get('adults')) || 2,
-            children: parseInt(new URLSearchParams(window.location.search).get('children')) || 0,
+        <!-- RIGHT SIDEBAR BOOKING FORM -->
+        <aside class="space-y-8" x-data="{
+            checkIn: '{{ default_checkin }}',
+            checkOut: '{{ default_checkout }}',
+            adults: {{ request.GET.adults|default:1 }},
+            children: {{ request.GET.children|default:0 }},
             numRooms: 1,
-            maxRooms: {{ room.total_rooms }},
             showModal: false,
             basePrice: {{ room.current_price|default:0 }},
             roomCurrency: '{{ room.currency.iso_code|default:"USD" }}',
@@ -297,7 +296,7 @@
             <div class="rounded-2xl p-6 border shadow-xl sticky top-28"
                  :class="{
                      'bg-white border-gray-200': currentTheme === 'light',
-                     'bg-[#161412] border-amber-900/20': currentTheme !== 'light'
+                     'bg-[#1A3A32] border-brand-primary/20 text-white': currentTheme !== 'light'
                  }">
                 <div class="border-b pb-4 mb-6 border-gray-200" :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/10': currentTheme !== 'light' }">
                     <span class="text-xs uppercase opacity-75 font-semibold text-gray-500">Starting from</span>
@@ -407,10 +406,9 @@
                         <p x-text="errorMessage"></p>
                     </div>
 
-                    <button type="submit" :disabled="checkingAvailability" class="w-full py-3.5 mt-4 rounded-lg text-xs font-bold uppercase tracking-wider text-center"
+                    <button type="submit" :disabled="checkingAvailability" 
+                            class="btn-gold-gradient w-full py-3.5 mt-4 rounded-lg text-xs font-bold uppercase tracking-wider text-center text-white shadow-md"
                             :class="{
-                                'bg-amber-800 text-white': currentTheme === 'light',
-                                'bg-luxuryGold-500 text-black gold-glow': currentTheme !== 'light',
                                 'opacity-50 cursor-wait': checkingAvailability,
                                 'cursor-pointer': !checkingAvailability
                             }">
@@ -424,12 +422,12 @@
                     <div @click.away="showModal = false" class="relative w-full max-w-4xl rounded-2xl p-6 sm:p-8 border shadow-2xl overflow-y-auto max-h-[90vh] animate__animated animate__zoomIn text-left"
                          :class="{
                              'bg-white border-gray-200 text-gray-800': currentTheme === 'light',
-                             'bg-[#161412] border-amber-900/30 text-amber-200': currentTheme !== 'light'
+                             'bg-[#1A3A32] border-brand-primary/30 text-white': currentTheme !== 'light'
                          }">
                         
-                        <div class="flex items-center justify-between pb-4 border-b border-amber-900/10 mb-6">
+                        <div class="flex items-center justify-between pb-4 border-b border-brand-primary/10 mb-6">
                             <h3 class="font-luxury-title text-2xl font-bold tracking-wide">Complete Your Draft Booking</h3>
-                            <button @click="showModal = false" type="button" class="p-2 rounded-lg hover:bg-luxuryGold-900/10 transition-colors">
+                            <button @click="showModal = false" type="button" class="p-2 rounded-lg hover:bg-brand-primary/10 transition-colors">
                                 <i class="fa-solid fa-xmark text-lg"></i>
                             </button>
                         </div>
@@ -437,7 +435,7 @@
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                             <!-- Left: Guest Details Form (2 Cols) -->
                             <div class="lg:col-span-2 space-y-6">
-                                <div class="rounded-xl border px-4 py-3 text-xs" :class="{ 'bg-amber-500/10 border-amber-500/20 text-amber-900': currentTheme === 'light', 'bg-amber-900/10 border-amber-900/20 text-amber-100': currentTheme !== 'light' }">
+                                <div class="rounded-xl border px-4 py-3 text-xs" :class="{ 'bg-brand-primary/10 border-brand-primary/20 text-brand-primaryDark': currentTheme === 'light', 'bg-brand-primary/20 border-brand-primary/30 text-white': currentTheme !== 'light' }">
                                     <p class="font-semibold">Draft booking only</p>
                                     <p>Your room is not reserved yet. It becomes confirmed only after payment succeeds.</p>
                                 </div>
@@ -454,14 +452,14 @@
                                         <div>
                                             <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Full Name *</label>
                                             <input type="text" name="name" required placeholder="John Doe"
-                                                   class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
-                                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                                                   class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight"
+                                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }">
                                         </div>
                                         <div>
                                             <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Email Address *</label>
                                             <input type="email" name="email" required placeholder="john.doe@example.com"
-                                                   class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
-                                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                                                   class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight"
+                                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }">
                                         </div>
                                     </div>
                                     
@@ -469,33 +467,29 @@
                                         <div>
                                             <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Contact Phone Number *</label>
                                             <input type="tel" name="phone" required placeholder="+1 555-0199"
-                                                   class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
-                                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                                                   class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight"
+                                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }">
                                         </div>
                                         <div>
                                             <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Promo / Coupon Code</label>
                                             <input type="text" name="promo_code" placeholder="ENTER CODE"
-                                                   class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400 font-mono uppercase"
-                                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                                                   class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight font-mono uppercase"
+                                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }">
                                         </div>
                                     </div>
                                     
                                     <div>
                                         <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Special Requests / Notes</label>
                                         <textarea name="special_requests" rows="3" placeholder="Airport pickup, dietary restrictions, extra bed requests..."
-                                                  class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
-                                                  :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }"></textarea>
+                                                  class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight"
+                                                  :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }"></textarea>
                                     </div>
                                     
                                     <div class="pt-4 flex gap-4">
-                                        <button type="button" @click="showModal = false" class="flex-1 py-3.5 rounded-lg text-xs font-bold uppercase tracking-wider border hover:bg-luxuryGold-900/10 transition-colors">
+                                        <button type="button" @click="showModal = false" class="flex-1 py-3.5 rounded-lg text-xs font-bold uppercase tracking-wider border hover:bg-brand-primary/10 transition-colors">
                                             Cancel
                                         </button>
-                                        <button type="submit" class="flex-1 py-3.5 rounded-lg text-xs font-bold uppercase tracking-widest text-center cursor-pointer"
-                                                :class="{
-                                                    'bg-amber-800 text-white': currentTheme === 'light',
-                                                    'bg-luxuryGold-500 text-black gold-glow': currentTheme !== 'light'
-                                                }">
+                                        <button type="submit" class="btn-gold-gradient flex-1 py-3.5 rounded-lg text-xs font-bold uppercase tracking-widest text-center cursor-pointer text-white shadow-md">
                                             Save Draft & Continue
                                         </button>
                                     </div>
@@ -504,7 +498,7 @@
                             
                             <!-- Right: Summary (1 Col) -->
                             <div class="rounded-xl p-4 border space-y-3 text-xs"
-                                 :class="{ 'bg-gray-50 border-gray-200': currentTheme === 'light', 'bg-[#1e1a17] border-amber-900/20': currentTheme !== 'light' }">
+                                 :class="{ 'bg-[#EEF5F0] border-gray-200': currentTheme === 'light', 'bg-[#0A2017] border-brand-primary/20 text-white': currentTheme !== 'light' }">
                                 <h4 class="font-luxury-title text-base font-semibold border-b pb-2 mb-3"
                                     :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/20': currentTheme !== 'light' }">Booking Summary</h4>
 
