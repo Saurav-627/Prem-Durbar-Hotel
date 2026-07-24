@@ -351,12 +351,12 @@
                 <form @submit.prevent="submitReservation()" class="space-y-4">
                     <div>
                         <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Arrival</label>
-                        <input type="text" name="check_in" id="room_check_in" x-model="checkIn" required placeholder="Select check-in date" class="w-full px-3 py-2.5 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400 cursor-pointer"
+                        <input type="text" name="check_in" id="room_check_in" x-model="checkIn" required placeholder="Select check-in date" autocomplete="off" class="w-full px-3 py-2.5 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400 cursor-pointer"
                                :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
                     </div>
                     <div>
                         <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Departure</label>
-                        <input type="text" name="check_out" id="room_check_out" x-model="checkOut" required placeholder="Select check-out date" class="w-full px-3 py-2.5 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400 cursor-pointer"
+                        <input type="text" name="check_out" id="room_check_out" x-model="checkOut" required placeholder="Select check-out date" autocomplete="off" class="w-full px-3 py-2.5 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400 cursor-pointer"
                                :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
                     </div>
                     
@@ -418,145 +418,149 @@
                 </form>
 
                 <!-- Guest Personal Details Modal -->
-                <div x-show="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate__animated animate__fadeIn" style="display: none;">
-                    <div @click.away="showModal = false" class="relative w-full max-w-4xl rounded-2xl p-6 sm:p-8 border shadow-2xl overflow-y-auto max-h-[90vh] animate__animated animate__zoomIn text-left"
-                         :class="{
-                             'bg-white border-gray-200 text-gray-800': currentTheme === 'light',
-                             'bg-[#1A3A32] border-brand-primary/30 text-white': currentTheme !== 'light'
-                         }">
-                        
-                        <div class="flex items-center justify-between pb-4 border-b border-brand-primary/10 mb-6">
-                            <h3 class="font-luxury-title text-2xl font-bold tracking-wide">Complete Your Draft Booking</h3>
-                            <button @click="showModal = false" type="button" class="p-2 rounded-lg hover:bg-brand-primary/10 transition-colors">
-                                <i class="fa-solid fa-xmark text-lg"></i>
-                            </button>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            <!-- Left: Guest Details Form (2 Cols) -->
-                            <div class="lg:col-span-2 space-y-6">
-                                <div class="rounded-xl border px-4 py-3 text-xs" :class="{ 'bg-brand-primary/10 border-brand-primary/20 text-brand-primaryDark': currentTheme === 'light', 'bg-brand-primary/20 border-brand-primary/30 text-white': currentTheme !== 'light' }">
-                                    <p class="font-semibold">Draft booking only</p>
-                                    <p>Your room is not reserved yet. It becomes confirmed only after payment succeeds.</p>
-                                </div>
-                                <form method="POST" action="{% url 'booking:create_booking' room.id %}" class="space-y-6">
-                                    {% csrf_token %}
-                                    <!-- Hidden stay inputs -->
-                                    <input type="hidden" name="check_in" :value="checkIn">
-                                    <input type="hidden" name="check_out" :value="checkOut">
-                                    <input type="hidden" name="adults" :value="adults">
-                                    <input type="hidden" name="children" :value="children">
-                                    <input type="hidden" name="num_rooms" :value="numRooms">
-                                    
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                        <div>
-                                            <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Full Name *</label>
-                                            <input type="text" name="name" required placeholder="John Doe"
-                                                   class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight"
-                                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }">
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Email Address *</label>
-                                            <input type="email" name="email" required placeholder="john.doe@example.com"
-                                                   class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight"
-                                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }">
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                        <div>
-                                            <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Contact Phone Number *</label>
-                                            <input type="tel" name="phone" required placeholder="+1 555-0199"
-                                                   class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight"
-                                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }">
-                                        </div>
-                                        <div>
-                                            <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Promo / Coupon Code</label>
-                                            <input type="text" name="promo_code" placeholder="ENTER CODE"
-                                                   class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight font-mono uppercase"
-                                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }">
-                                        </div>
-                                    </div>
-                                    
-                                    <div>
-                                        <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Special Requests / Notes</label>
-                                        <textarea name="special_requests" rows="3" placeholder="Airport pickup, dietary restrictions, extra bed requests..."
-                                                  class="w-full px-4 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight"
-                                                  :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }"></textarea>
-                                    </div>
-                                    
-                                    <div class="pt-4 flex gap-4">
-                                        <button type="button" @click="showModal = false" class="flex-1 py-3.5 rounded-lg text-xs font-bold uppercase tracking-wider border hover:bg-brand-primary/10 transition-colors">
-                                            Cancel
-                                        </button>
-                                        <button type="submit" class="btn-gold-gradient flex-1 py-3.5 rounded-lg text-xs font-bold uppercase tracking-widest text-center cursor-pointer text-white shadow-md">
-                                            Save Draft & Continue
-                                        </button>
-                                    </div>
-                                </form>
+                <template x-teleport="body">
+                    <div x-show="showModal" 
+                         x-effect="document.body.style.overflow = showModal ? 'hidden' : ''"
+                         class="fixed inset-0 z-[99999] flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md animate__animated animate__fadeIn" style="display: none;">
+                        <div @click.away="showModal = false" class="relative w-full max-w-4xl rounded-2xl p-4 sm:p-6 lg:p-8 border shadow-2xl overflow-y-auto max-h-[90vh] animate__animated animate__zoomIn text-left my-auto"
+                             :class="{
+                                 'bg-white border-gray-200 text-gray-800': currentTheme === 'light',
+                                 'bg-[#1A3A32] border-brand-primary/30 text-white': currentTheme !== 'light'
+                             }">
+                            
+                            <div class="flex items-center justify-between pb-1 md:pb-4 border-b border-brand-primary/10 mb-2 sm:mb-6">
+                                <h3 class="font-luxury-title text-xl sm:text-2xl font-bold tracking-wide">Complete Your Draft Booking</h3>
+                                <button @click="showModal = false" type="button" class="p-2 rounded-lg hover:bg-brand-primary/10 transition-colors">
+                                    <i class="fa-solid fa-xmark text-lg"></i>
+                                </button>
                             </div>
                             
-                            <!-- Right: Summary (1 Col) -->
-                            <div class="rounded-xl p-4 border space-y-3 text-xs"
-                                 :class="{ 'bg-[#EEF5F0] border-gray-200': currentTheme === 'light', 'bg-[#0A2017] border-brand-primary/20 text-white': currentTheme !== 'light' }">
-                                <h4 class="font-luxury-title text-base font-semibold border-b pb-2 mb-3"
-                                    :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/20': currentTheme !== 'light' }">Booking Summary</h4>
-
-                                <!-- Room name (truncated if long) -->
-                                <div class="flex items-start justify-between gap-2">
-                                    <span class="opacity-70 shrink-0">Room</span>
-                                    <span class="font-semibold text-right truncate max-w-[120px]" title="{{ room.title }}">{{ room.title }}</span>
-                                </div>
-
-                                <div class="flex items-center justify-between gap-2">
-                                    <span class="opacity-70 shrink-0">Arrival</span>
-                                    <span class="font-semibold tabular-nums" x-text="checkIn"></span>
-                                </div>
-                                <div class="flex items-center justify-between gap-2">
-                                    <span class="opacity-70 shrink-0">Departure</span>
-                                    <span class="font-semibold tabular-nums" x-text="checkOut"></span>
-                                </div>
-                                <div class="flex items-center justify-between gap-2">
-                                    <span class="opacity-70 shrink-0">Nights</span>
-                                    <span class="font-semibold tabular-nums"><span x-text="nights"></span> night<span x-show="nights !== 1">s</span></span>
-                                </div>
-                                <div class="flex items-center justify-between gap-2 border-b pb-2"
-                                     :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/10': currentTheme !== 'light' }">
-                                    <span class="opacity-70 shrink-0">Guests</span>
-                                    <span class="font-semibold tabular-nums">
-                                        <span x-text="adults"></span>A
-                                        <span x-show="children > 0">, <span x-text="children"></span>C</span>
-                                    </span>
-                                </div>
-                                <div class="flex items-center justify-between gap-2">
-                                    <span class="opacity-70 shrink-0">Rooms</span>
-                                    <span class="font-semibold tabular-nums" x-text="numRooms + (numRooms === 1 ? ' Room' : ' Rooms')"></span>
-                                </div>
-
-                                <div class="flex items-center justify-between gap-2">
-                                    <span class="opacity-70 shrink-0">Rate/night</span>
-                                    <span class="tabular-nums" x-text="roomCurrency + ' ' + basePrice.toFixed(2) + ' / room'"></span>
-                                </div>
-                                <div class="flex items-center justify-between gap-2">
-                                    <span class="opacity-70 shrink-0">Subtotal</span>
-                                    <span class="tabular-nums" x-text="roomCurrency + ' ' + subtotal.toFixed(2)"></span>
-                                </div>
-                                <template x-if="taxPercentage > 0">
-                                    <div class="flex items-center justify-between gap-2">
-                                        <span class="opacity-70 shrink-0">Tax (<span x-text="taxPercentage"></span>%)</span>
-                                        <span class="tabular-nums" x-text="roomCurrency + ' ' + tax.toFixed(2)"></span>
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 md:gap-6 lg:gap-8">
+                                <!-- Left: Guest Details Form (2 Cols on desktop, order 2 on mobile) -->
+                                <div class="lg:col-span-2 order-2 lg:order-1 space-y-5 sm:space-y-6">
+                                    <div class="rounded-xl border px-4 py-3 text-xs" :class="{ 'bg-brand-primary/10 border-brand-primary/20 text-brand-primaryDark': currentTheme === 'light', 'bg-brand-primary/20 border-brand-primary/30 text-white': currentTheme !== 'light' }">
+                                        <p class="font-semibold">Draft booking only</p>
+                                        <p>Your room is not reserved yet. It becomes confirmed only after payment succeeds.</p>
                                     </div>
-                                </template>
+                                    <form method="POST" action="{% url 'booking:create_booking' room.id %}" class="space-y-5 sm:space-y-6">
+                                        {% csrf_token %}
+                                        <!-- Hidden stay inputs -->
+                                        <input type="hidden" name="check_in" :value="checkIn">
+                                        <input type="hidden" name="check_out" :value="checkOut">
+                                        <input type="hidden" name="adults" :value="adults">
+                                        <input type="hidden" name="children" :value="children">
+                                        <input type="hidden" name="num_rooms" :value="numRooms">
+                                        
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                            <div>
+                                                <label class="block text-xs font-semibold uppercase tracking-wider mb-1.5 opacity-80">Full Name *</label>
+                                                <input type="text" name="name" required placeholder="John Doe"
+                                                       class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight"
+                                                       :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold uppercase tracking-wider mb-1.5 opacity-80">Email Address *</label>
+                                                <input type="email" name="email" required placeholder="john.doe@example.com"
+                                                       class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight"
+                                                       :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                                            <div>
+                                                <label class="block text-xs font-semibold uppercase tracking-wider mb-1.5 opacity-80">Contact Phone Number *</label>
+                                                <input type="tel" name="phone" required placeholder="+1 555-0199"
+                                                       class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight"
+                                                       :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }">
+                                            </div>
+                                            <div>
+                                                <label class="block text-xs font-semibold uppercase tracking-wider mb-1.5 opacity-80">Promo / Coupon Code</label>
+                                                <input type="text" name="promo_code" placeholder="ENTER CODE"
+                                                       class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight font-mono uppercase"
+                                                       :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }">
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <label class="block text-xs font-semibold uppercase tracking-wider mb-1.5 opacity-80">Special Requests / Notes</label>
+                                            <textarea name="special_requests" rows="3" placeholder="Airport pickup, dietary restrictions, extra bed requests..."
+                                                      class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight"
+                                                      :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }"></textarea>
+                                        </div>
+                                        
+                                        <div class="pt-2 sm:pt-4 flex flex-col-reverse sm:flex-row gap-3 sm:gap-4">
+                                            <button type="button" @click="showModal = false" class="w-full sm:flex-1 py-3 sm:py-3.5 rounded-lg text-xs font-bold uppercase tracking-wider border hover:bg-brand-primary/10 transition-colors">
+                                                Cancel
+                                            </button>
+                                            <button type="submit" class="btn-gold-gradient w-full sm:flex-1 py-3 sm:py-3.5 rounded-lg text-xs font-bold uppercase tracking-widest text-center cursor-pointer text-white shadow-md">
+                                                Save Draft & Continue
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                
+                                <!-- Right: Summary (1 Col on desktop, order 1 on mobile) -->
+                                <div class="order-1 lg:order-2 lg:col-span-1 rounded-xl p-3 sm:p-4 border space-y-1.5 sm:space-y-3 text-[11px] sm:text-xs h-fit"
+                                     :class="{ 'bg-[#EEF5F0] border-gray-200': currentTheme === 'light', 'bg-[#0A2017] border-brand-primary/20 text-white': currentTheme !== 'light' }">
+                                    <h4 class="font-luxury-title text-xs sm:text-base font-bold border-b pb-1 sm:pb-2 mb-1.5 sm:mb-3"
+                                        :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/20': currentTheme !== 'light' }">Booking Summary</h4>
 
-                                <div class="flex items-center justify-between gap-2 text-sm font-bold text-luxuryGold-500 border-t pt-2 mt-1"
-                                     :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/10': currentTheme !== 'light' }">
-                                    <span>Total</span>
-                                    <span class="font-luxury-title tabular-nums" x-text="roomCurrency + ' ' + total.toFixed(2)"></span>
+                                    <!-- Room name (truncated if long) -->
+                                    <div class="flex items-start justify-between gap-2">
+                                        <span class="opacity-70 shrink-0">Room</span>
+                                        <span class="font-semibold text-right truncate max-w-[140px]" title="{{ room.title }}">{{ room.title }}</span>
+                                    </div>
+
+                                    <div class="flex items-center justify-between gap-2">
+                                        <span class="opacity-70 shrink-0">Arrival</span>
+                                        <span class="font-semibold tabular-nums" x-text="checkIn"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between gap-2">
+                                        <span class="opacity-70 shrink-0">Departure</span>
+                                        <span class="font-semibold tabular-nums" x-text="checkOut"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between gap-2">
+                                        <span class="opacity-70 shrink-0">Nights</span>
+                                        <span class="font-semibold tabular-nums"><span x-text="nights"></span> night<span x-show="nights !== 1">s</span></span>
+                                    </div>
+                                    <div class="flex items-center justify-between gap-2 border-b pb-1.5 sm:pb-2"
+                                         :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/10': currentTheme !== 'light' }">
+                                        <span class="opacity-70 shrink-0">Guests</span>
+                                        <span class="font-semibold tabular-nums">
+                                            <span x-text="adults"></span>A
+                                            <span x-show="children > 0">, <span x-text="children"></span>C</span>
+                                        </span>
+                                    </div>
+                                    <div class="flex items-center justify-between gap-2">
+                                        <span class="opacity-70 shrink-0">Rooms</span>
+                                        <span class="font-semibold tabular-nums" x-text="numRooms + (numRooms === 1 ? ' Room' : ' Rooms')"></span>
+                                    </div>
+
+                                    <div class="flex items-center justify-between gap-2">
+                                        <span class="opacity-70 shrink-0">Rate/night</span>
+                                        <span class="tabular-nums" x-text="roomCurrency + ' ' + basePrice.toFixed(2) + ' / room'"></span>
+                                    </div>
+                                    <div class="flex items-center justify-between gap-2">
+                                        <span class="opacity-70 shrink-0">Subtotal</span>
+                                        <span class="tabular-nums" x-text="roomCurrency + ' ' + subtotal.toFixed(2)"></span>
+                                    </div>
+                                    <template x-if="taxPercentage > 0">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <span class="opacity-70 shrink-0">Tax (<span x-text="taxPercentage"></span>%)</span>
+                                            <span class="tabular-nums" x-text="roomCurrency + ' ' + tax.toFixed(2)"></span>
+                                        </div>
+                                    </template>
+
+                                    <div class="flex items-center justify-between gap-2 text-xs sm:text-sm font-bold text-luxuryGold-500 border-t pt-1.5 sm:pt-2 mt-1 sm:mt-2"
+                                         :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/10': currentTheme !== 'light' }">
+                                        <span>Total</span>
+                                        <span class="font-luxury-title tabular-nums" x-text="roomCurrency + ' ' + total.toFixed(2)"></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </template>
 
     </div>
 </section>

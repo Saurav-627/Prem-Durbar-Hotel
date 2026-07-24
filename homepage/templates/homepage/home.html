@@ -90,7 +90,7 @@
                 <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Arrival Date</label>
                 <div class="relative">
                     <i class="fa-regular fa-calendar absolute left-3 top-1/2 -translate-y-1/2 opacity-60"></i>
-                    <input type="date" name="check_in" required class="w-full pl-10 pr-3 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                    <input type="date" name="check_in" required autocomplete="off" class="w-full pl-10 pr-3 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
                            :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
                 </div>
             </div>
@@ -99,7 +99,7 @@
                 <label class="block text-xs font-semibold uppercase tracking-wider mb-2 opacity-80">Departure Date</label>
                 <div class="relative">
                     <i class="fa-regular fa-calendar absolute left-3 top-1/2 -translate-y-1/2 opacity-60"></i>
-                    <input type="date" name="check_out" required class="w-full pl-10 pr-3 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                    <input type="date" name="check_out" required autocomplete="off" class="w-full pl-10 pr-3 py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
                            :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
                 </div>
             </div>
