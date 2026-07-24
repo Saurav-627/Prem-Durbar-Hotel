@@ -8,6 +8,7 @@ from homepage.models.about_preview import AboutPreview
 from homepage.models.about_cms import AboutCMS
 from homepage.models.zipline_cms import ZiplineCMS
 from homepage.models.sustainability_cms import SustainabilityCMS, SustainabilityPillar
+from homepage.models.team_member import TeamMember
 from rooms.models.room_category import RoomCategory
 from rooms.models.room import Room
 from rooms.models.room_image import RoomImage
@@ -373,5 +374,11 @@ class SustainabilityCMSForm(TailwindFormMixin, forms.ModelForm):
 class SustainabilityPillarForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = SustainabilityPillar
+        fields = '__all__'
+
+
+class TeamMemberForm(TailwindFormMixin, forms.ModelForm):
+    class Meta:
+        model = TeamMember
         fields = '__all__'
 

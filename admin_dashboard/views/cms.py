@@ -9,6 +9,7 @@ from homepage.models.about_preview import AboutPreview
 from homepage.models.about_cms import AboutCMS
 from homepage.models.zipline_cms import ZiplineCMS
 from homepage.models.sustainability_cms import SustainabilityCMS, SustainabilityPillar
+from homepage.models.team_member import TeamMember
 from testimonials.models.testimonial import Testimonial
 from gallery.models.category import GalleryCategory
 from gallery.models.item import GalleryItem
@@ -16,7 +17,7 @@ from seo.models.seo_data import SEOData
 
 from admin_dashboard.forms import (
     HeroSlideForm, AboutPreviewForm, AboutCMSForm, ZiplineCMSForm, 
-    SustainabilityCMSForm, SustainabilityPillarForm,
+    SustainabilityCMSForm, SustainabilityPillarForm, TeamMemberForm,
     TestimonialForm, GalleryCategoryForm, GalleryItemForm, SEODataForm
 )
 
@@ -71,6 +72,7 @@ class CmsDashboardView(StaffRequiredMixin, View):
         else:
             seo_data = seo_data_qs
 
+        team_members = TeamMember.objects.all()
         is_paginated = page_obj.has_other_pages() if page_obj else False
 
         return render(request, 'admin_dashboard/cms/dashboard.html', {
@@ -80,6 +82,7 @@ class CmsDashboardView(StaffRequiredMixin, View):
             'zipline_cms_form': zipline_cms_form,
             'sustainability_cms_form': sustainability_cms_form,
             'sustainability_pillars': sustainability_pillars,
+            'team_members': team_members,
             'testimonials': testimonials,
             'gallery_categories': gallery_categories,
             'gallery_items': gallery_items,
@@ -304,7 +307,30 @@ class SeoDeleteView(StaffRequiredMixin, DeleteView):
         messages.success(self.request, "SEO record deleted successfully.")
         return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=seo"
 
+
+# Team Member Views
+class TeamMemberCreateView(StaffRequiredMixin, CreateView):
+    model = TeamMember
+    form_class = TeamMemberForm
+    template_name = 'admin_dashboard/generic_form.html'
     
     def get_success_url(self):
-        messages.success(self.request, "SEO record updated successfully.")
-        return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=seo"
+        messages.success(self.request, "Team member added successfully.")
+        return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=about_cms"
+
+class TeamMemberUpdateView(StaffRequiredMixin, UpdateView):
+    model = TeamMember
+    form_class = TeamMemberForm
+    template_name = 'admin_dashboard/generic_form.html'
+    
+    def get_success_url(self):
+        messages.success(self.request, "Team member updated successfully.")
+        return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=about_cms"
+
+class TeamMemberDeleteView(StaffRequiredMixin, DeleteView):
+    model = TeamMember
+    template_name = 'admin_dashboard/confirm_delete.html'
+    
+    def get_success_url(self):
+        messages.success(self.request, "Team member deleted successfully.")
+        return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=about_cms"

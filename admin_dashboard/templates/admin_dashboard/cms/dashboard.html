@@ -97,7 +97,7 @@
 
     {% elif active_tab == 'about_cms' %}
     <!-- About Page CMS Settings Form -->
-    <div class="max-w-4xl">
+    <div class="space-y-8 max-w-5xl">
         <div class="custom-card rounded-2xl p-8 bg-white/50 dark:bg-neutral-900/50">
             <form action="{% url 'admin_dashboard:about_cms_update' %}" method="post" enctype="multipart/form-data" class="space-y-6">
                 {% csrf_token %}
@@ -118,9 +118,18 @@
                         <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Hero Banner Description</label>
                         {{ about_cms_form.hero_description }}
                     </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Hero Background Image</label>
+                        {{ about_cms_form.hero_image }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Promo Video URL (Optional)</label>
+                        {{ about_cms_form.video_url }}
+                    </div>
                     
+                    <!-- Story Section -->
                     <div class="sm:col-span-2 pt-4 border-t border-neutral-200 dark:border-neutral-800">
-                        <h5 class="font-bold text-sm text-brand-primaryDark dark:text-brand-secondary mb-3">Our Story Section</h5>
+                        <h5 class="font-bold text-sm text-brand-primaryDark dark:text-brand-secondary mb-3">Our Story Section & Highlights</h5>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Story Subtitle</label>
@@ -131,12 +140,80 @@
                         {{ about_cms_form.story_title }}
                     </div>
                     <div class="sm:col-span-2">
-                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Story Content Body</label>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Story Main Paragraph</label>
                         {{ about_cms_form.story_content }}
                     </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Story Secondary Paragraph</label>
+                        {{ about_cms_form.story_extra }}
+                    </div>
+
                     <div>
-                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Promo Video URL (Optional)</label>
-                        {{ about_cms_form.video_url }}
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Highlight 1 Title</label>
+                        {{ about_cms_form.badge1_title }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Highlight 1 Description</label>
+                        {{ about_cms_form.badge1_desc }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Highlight 2 Title</label>
+                        {{ about_cms_form.badge2_title }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Highlight 2 Description</label>
+                        {{ about_cms_form.badge2_desc }}
+                    </div>
+
+                    <!-- Story Images Grid Upload -->
+                    <div class="sm:col-span-2 pt-4 border-t border-neutral-200 dark:border-neutral-800">
+                        <h5 class="font-bold text-sm text-brand-primaryDark dark:text-brand-secondary mb-3">Our Story Showcase Images (4 Grid Photo Slots)</h5>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Story Image 1 (Top Left)</label>
+                        {{ about_cms_form.story_image1 }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Story Image 2 (Bottom Left)</label>
+                        {{ about_cms_form.story_image2 }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Story Image 3 (Top Right)</label>
+                        {{ about_cms_form.story_image3 }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Story Image 4 (Bottom Right)</label>
+                        {{ about_cms_form.story_image4 }}
+                    </div>
+
+                    <!-- Zipline Callout Banner -->
+                    <div class="sm:col-span-2 pt-4 border-t border-neutral-200 dark:border-neutral-800">
+                        <h5 class="font-bold text-sm text-brand-primaryDark dark:text-brand-secondary mb-3">Zipline Feature Banner Callout</h5>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Zipline Banner Title</label>
+                        {{ about_cms_form.zipline_callout_title }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Zipline Button Text</label>
+                        {{ about_cms_form.zipline_callout_link_text }}
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Zipline Banner Description</label>
+                        {{ about_cms_form.zipline_callout_desc }}
+                    </div>
+
+                    <!-- Team Section Titles -->
+                    <div class="sm:col-span-2 pt-4 border-t border-neutral-200 dark:border-neutral-800">
+                        <h5 class="font-bold text-sm text-brand-primaryDark dark:text-brand-secondary mb-3">Team Section Titles</h5>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Team Section Subtitle</label>
+                        {{ about_cms_form.team_subtitle }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Team Section Main Title</label>
+                        {{ about_cms_form.team_title }}
                     </div>
                 </div>
 
@@ -146,6 +223,70 @@
                     </button>
                 </div>
             </form>
+        </div>
+
+        <!-- Team Members Management Card -->
+        <div class="custom-card rounded-2xl p-8 bg-white/50 dark:bg-neutral-900/50">
+            <div class="flex items-center justify-between pb-4 border-b border-neutral-200 dark:border-neutral-800 mb-6">
+                <div>
+                    <h4 class="text-base font-bold text-neutral-900 dark:text-neutral-100 font-serif">
+                        <i class="fa-solid fa-users text-brand-gold mr-2"></i> Executive Leadership & Staff Team Members
+                    </h4>
+                    <p class="text-xs text-neutral-500 mt-1">Manage team members displayed on the About Us page.</p>
+                </div>
+                <a href="{% url 'admin_dashboard:team_member_create' %}" 
+                   class="btn-gold-gradient px-4 py-2 text-brand-forestDark font-bold rounded-xl text-xs transition shadow-md">
+                    <i class="fa-solid fa-plus mr-1"></i> Add Team Member
+                </a>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+                            <th class="px-4 py-3 font-semibold">Photo</th>
+                            <th class="px-4 py-3 font-semibold">Name</th>
+                            <th class="px-4 py-3 font-semibold">Role / Title</th>
+                            <th class="px-4 py-3 font-semibold">Order</th>
+                            <th class="px-4 py-3 font-semibold">Status</th>
+                            <th class="px-4 py-3 text-right font-semibold">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                        {% for member in team_members %}
+                        <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10 transition">
+                            <td class="px-4 py-3">
+                                <img src="{{ member.display_image }}" alt="{{ member.name }}" class="w-12 h-12 rounded-xl object-cover border border-neutral-200 dark:border-neutral-700">
+                            </td>
+                            <td class="px-4 py-3 font-bold text-neutral-900 dark:text-neutral-100">{{ member.name }}</td>
+                            <td class="px-4 py-3 text-xs text-brand-gold font-semibold">{{ member.role }}</td>
+                            <td class="px-4 py-3 text-xs font-mono">{{ member.order }}</td>
+                            <td class="px-4 py-3 text-xs">
+                                {% if member.is_published %}
+                                <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-semibold">Published</span>
+                                {% else %}
+                                <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 font-semibold">Draft</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-3 text-right">
+                                <div class="flex items-center justify-end gap-3 text-sm">
+                                    <a href="{% url 'admin_dashboard:team_member_edit' member.id %}" class="text-neutral-400 hover:text-brand-primaryLight" title="Edit">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                    <a href="{% url 'admin_dashboard:team_member_delete' member.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="px-4 py-8 text-center text-xs text-neutral-500">No team members added yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -172,6 +313,10 @@
                         <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Hero Banner Description</label>
                         {{ zipline_cms_form.hero_description }}
                     </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Hero Background Image</label>
+                        {{ zipline_cms_form.hero_image }}
+                    </div>
 
                     <!-- VIDEO PREVIEW SECTION -->
                     <div class="sm:col-span-2 p-5 rounded-xl bg-neutral-100 dark:bg-neutral-800/60 border border-brand-gold/30 space-y-4">
@@ -191,29 +336,60 @@
                             </div>
                         </div>
                     </div>
-                    
+
+                    <!-- BOOKING LINK & BUTTON TEXT -->
                     <div class="sm:col-span-2 pt-4 border-t border-neutral-200 dark:border-neutral-800">
-                        <h5 class="font-bold text-sm text-brand-primaryDark dark:text-brand-secondary mb-3">Zipline Specifications & Badges</h5>
+                        <h5 class="font-bold text-sm text-brand-primaryDark dark:text-brand-secondary mb-3">Zipline Booking Link & Button Text</h5>
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Flight Length</label>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Booking External URL</label>
+                        {{ zipline_cms_form.booking_url }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Booking Button Label</label>
+                        {{ zipline_cms_form.booking_button_text }}
+                    </div>
+                    
+                    <!-- SPECS & LABELS -->
+                    <div class="sm:col-span-2 pt-4 border-t border-neutral-200 dark:border-neutral-800">
+                        <h5 class="font-bold text-sm text-brand-primaryDark dark:text-brand-secondary mb-3">Zipline Specifications & Labels</h5>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Flight Length Value</label>
                         {{ zipline_cms_form.spec_length }}
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Top Speed</label>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Flight Length Label</label>
+                        {{ zipline_cms_form.spec_length_label }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Top Speed Value</label>
                         {{ zipline_cms_form.spec_speed }}
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Altitude Elevation</label>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Top Speed Label</label>
+                        {{ zipline_cms_form.spec_speed_label }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Altitude Elevation Value</label>
                         {{ zipline_cms_form.spec_elevation }}
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Safety Certification</label>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Altitude Elevation Label</label>
+                        {{ zipline_cms_form.spec_elevation_label }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Safety Certification Value</label>
                         {{ zipline_cms_form.spec_safety }}
                     </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Safety Certification Label</label>
+                        {{ zipline_cms_form.spec_safety_label }}
+                    </div>
 
+                    <!-- OVERVIEW BODY & IMAGE SHOWCASE -->
                     <div class="sm:col-span-2 pt-4 border-t border-neutral-200 dark:border-neutral-800">
-                        <h5 class="font-bold text-sm text-brand-primaryDark dark:text-brand-secondary mb-3">Overview Body Content</h5>
+                        <h5 class="font-bold text-sm text-brand-primaryDark dark:text-brand-secondary mb-3">Overview Content & Image Showcase</h5>
                     </div>
                     <div>
                         <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Overview Subtitle</label>
@@ -226,6 +402,18 @@
                     <div class="sm:col-span-2">
                         <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Overview Description</label>
                         {{ zipline_cms_form.overview_content }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Overview Showcase Image</label>
+                        {{ zipline_cms_form.overview_image }}
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Image Caption Title</label>
+                        {{ zipline_cms_form.image_caption_title }}
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-2">Image Caption Subtitle</label>
+                        {{ zipline_cms_form.image_caption_subtitle }}
                     </div>
                 </div>
 

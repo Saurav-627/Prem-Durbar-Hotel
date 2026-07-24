@@ -68,43 +68,43 @@
                     <div class="p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
                          :class="{ 'bg-white border-brand-lightgray': currentTheme === 'light', 'bg-brand-forest border-brand-gold/20': currentTheme !== 'light' }">
                         <span class="block text-xl font-bold text-brand-gold">{{ zipline_cms.spec_length }}</span>
-                        <span class="text-xs opacity-75">Flight Length</span>
+                        <span class="text-xs opacity-75">{{ zipline_cms.spec_length_label|default:"Flight Length" }}</span>
                     </div>
                     <div class="p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
                          :class="{ 'bg-white border-brand-lightgray': currentTheme === 'light', 'bg-brand-forest border-brand-gold/20': currentTheme !== 'light' }">
                         <span class="block text-xl font-bold text-brand-gold">{{ zipline_cms.spec_speed }}</span>
-                        <span class="text-xs opacity-75">Top Speed</span>
+                        <span class="text-xs opacity-75">{{ zipline_cms.spec_speed_label|default:"Top Speed" }}</span>
                     </div>
                     <div class="p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
                          :class="{ 'bg-white border-brand-lightgray': currentTheme === 'light', 'bg-brand-forest border-brand-gold/20': currentTheme !== 'light' }">
                         <span class="block text-xl font-bold text-brand-gold">{{ zipline_cms.spec_safety }}</span>
-                        <span class="text-xs opacity-75">Safety Standard</span>
+                        <span class="text-xs opacity-75">{{ zipline_cms.spec_safety_label|default:"Safety Standard" }}</span>
                     </div>
                     <div class="p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
                          :class="{ 'bg-white border-brand-lightgray': currentTheme === 'light', 'bg-brand-forest border-brand-gold/20': currentTheme !== 'light' }">
                         <span class="block text-xl font-bold text-brand-gold">{{ zipline_cms.spec_elevation }}</span>
-                        <span class="text-xs opacity-75">Altitude Elevation</span>
+                        <span class="text-xs opacity-75">{{ zipline_cms.spec_elevation_label|default:"Altitude Elevation" }}</span>
                     </div>
                 </div>
 
                 <div class="pt-4">
-                    <a href="https://www.facebook.com/ziplinenagarkot" target="_blank" 
+                    <a href="{{ zipline_cms.booking_url|default:'https://www.facebook.com/ziplinenagarkot' }}" target="_blank" 
                        class="btn-gold-gradient inline-flex items-center gap-2 px-8 py-4 text-brand-forestDark font-bold rounded-xl text-sm transition transform hover:scale-105 shadow-glow">
-                        <i class="fa-brands fa-facebook"></i>
-                        <span>Book Zipline Flight / Facebook Page</span>
+                        <i class="fa-solid fa-external-link mr-1"></i>
+                        <span>{{ zipline_cms.booking_button_text|default:"Book Zipline Flight / Facebook Page" }}</span>
                     </a>
                 </div>
             </div>
 
             <!-- Image Showcase -->
             <div class="relative animate__animated animate__fadeInRight">
-                <img src="https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?q=80&w=800&auto=format&fit=crop" 
+                <img src="{% if zipline_cms.overview_image %}{{ zipline_cms.overview_image.url }}{% else %}https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?q=80&w=800&auto=format&fit=crop{% endif %}" 
                      alt="Nagarkot Zipline Flight" 
                      class="rounded-3xl shadow-luxury w-full h-[450px] object-cover hover:scale-[1.02] transition-transform duration-500">
                 <div class="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-black/80 backdrop-blur-md border border-white/20 text-white flex items-center justify-between">
                     <div>
-                        <h4 class="font-heading font-bold text-sm">Superman Flying Harness</h4>
-                        <p class="text-xs text-brand-champagne">Head-first aerial view of Everest range</p>
+                        <h4 class="font-heading font-bold text-sm">{{ zipline_cms.image_caption_title|default:"Superman Flying Harness" }}</h4>
+                        <p class="text-xs text-brand-champagne">{{ zipline_cms.image_caption_subtitle|default:"Head-first aerial view of Everest range" }}</p>
                     </div>
                     <span class="px-3 py-1 bg-brand-adventure rounded-lg text-xs font-bold uppercase">Popular</span>
                 </div>

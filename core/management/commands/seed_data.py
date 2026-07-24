@@ -203,6 +203,22 @@ class Command(BaseCommand):
                 AboutCMS.objects.create(**acms)
                 self.stdout.write(self.style.SUCCESS("Created AboutCMS."))
 
+        # -- 9.5. Team Members
+        from homepage.models.team_member import TeamMember
+        t_members = data.get("team_members", [])
+        for tm in t_members:
+            TeamMember.objects.update_or_create(
+                name=tm["name"],
+                defaults={
+                    "role": tm.get("role", ""),
+                    "bio": tm.get("bio", ""),
+                    "order": tm.get("order", 0),
+                    "is_published": tm.get("is_published", True),
+                }
+            )
+        if t_members:
+            self.stdout.write(self.style.SUCCESS("Seeded Team Members."))
+
         # -- 10. Zipline CMS (singleton)
         from homepage.models.zipline_cms import ZiplineCMS
         zcms = data.get("zipline_cms")

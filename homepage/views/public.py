@@ -55,7 +55,7 @@ class HomeView(TemplateView):
         return context
 
 
-from homepage.models import HeroSlide, AboutPreview, AboutCMS, ZiplineCMS, SustainabilityCMS, SustainabilityPillar
+from homepage.models import AboutPreview, AboutCMS, ZiplineCMS, SustainabilityCMS, SustainabilityPillar, TeamMember
 
 # (keep HomeView...)
 
@@ -70,26 +70,7 @@ class AboutView(TemplateView):
         context['about_cms'] = about_cms
         context['about_preview'] = AboutPreview.objects.first()
         context['testimonials'] = Testimonial.objects.filter(is_featured=True, is_published=True)[:4]
-        context['team_members'] = [
-            {
-                'name': 'Prem Durbar Management',
-                'role': 'Executive Hospitality Leadership',
-                'bio': 'Dedicated to preserving Newari heritage craftsmanship, sustainable tourism, and delivering high-altitude Himalayan hospitality in Nagarkot.',
-                'image': 'https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=800&auto=format&fit=crop'
-            },
-            {
-                'name': 'Adventure Zipline Crew',
-                'role': 'Certified Flight & Safety Instructors',
-                'bio': 'Internationally trained zip line flight operators ensuring 100% safety standards on Nepal’s longest Superman Zip Line.',
-                'image': 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop'
-            },
-            {
-                'name': 'Culinary & Dining Team',
-                'role': 'Farm-to-Table Master Chefs',
-                'bio': 'Crafting authentic Nepali Khaja sets, Mutton & Chicken Thalis, Kodo Salsa, and continental gourmets with organic local produce.',
-                'image': 'https://images.unsplash.com/photo-1583394838336-acd977736f90?q=80&w=800&auto=format&fit=crop'
-            }
-        ]
+        context['team_members'] = TeamMember.objects.filter(is_published=True).order_by('order', 'id')
         return context
 
 
