@@ -116,3 +116,9 @@ class Room(models.Model):
     def children_range(self):
         return range(0, max(0, self.max_children) + 1)
 
+    @property
+    def added_base_prices(self):
+        """Returns only base prices greater than 0."""
+        return [p for p in self.base_prices.all() if p.base_price and p.base_price > 0]
+
+

@@ -7,14 +7,22 @@ from admin_dashboard.mixins import StaffRequiredMixin
 from dining.models.item import DiningCategory, DiningItem, DiningItemBasePrice
 from admin_dashboard.forms import DiningItemForm, DiningItemBasePriceFormSet
 
+from django.core.paginator import Paginator
+
 class DiningDashboardView(StaffRequiredMixin, View):
     def get(self, request):
         categories = DiningCategory.objects.all()
-        menu_items = DiningItem.objects.all().select_related('category').prefetch_related('base_prices__currency')
+        menu_items_qs = DiningItem.objects.all().select_related('category').prefetch_related('base_prices__currency')
+        
+        paginator = Paginator(menu_items_qs, 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
         
         return render(request, 'admin_dashboard/dining/dashboard.html', {
             'categories': categories,
-            'menu_items': menu_items,
+            'menu_items': page_obj.object_list,
+            'page_obj': page_obj,
+            'is_paginated': page_obj.has_other_pages(),
         })
 
 

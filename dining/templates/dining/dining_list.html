@@ -22,6 +22,7 @@
     searchQuery: '',
     dietaryFilter: 'all',
     matchesItem(item) {
+        if (!item.hasPrice) return false;
         const matchesCategory = (this.activeTab === 'all' || item.categorySlug === this.activeTab);
         const q = this.searchQuery.toLowerCase().trim();
         const matchesSearch = !q || item.title.toLowerCase().includes(q) || item.description.toLowerCase().includes(q);
@@ -102,7 +103,38 @@
     <!-- CATEGORY-BY-CATEGORY DISHES GRID -->
     <div class="space-y-16">
         {% for cat in categories %}
-        <div x-show="activeTab === 'all' || activeTab === '{{ cat.slug }}'" 
+        <div x-data="{ 
+                page: 1, 
+                perPage: 6,
+                items: [
+                    {% for item in cat.active_items %}
+                    {
+                        id: {{ item.id }},
+                        title: '{{ item.title|escapejs }}',
+                        description: '{{ item.description|escapejs }}',
+                        categorySlug: '{{ cat.slug }}',
+                        isVeg: {% if item.is_vegetarian %}true{% else %}false{% endif %},
+                        isSpicy: {% if item.is_spicy %}true{% else %}false{% endif %},
+                        isSpecial: {% if item.is_chef_special %}true{% else %}false{% endif %},
+                        hasPrice: {% if item.active_price_info %}true{% else %}false{% endif %}
+                    },
+                    {% endfor %}
+                ],
+                get matching() {
+                    return this.items.filter(i => matchesItem(i));
+                },
+                get totalPages() {
+                    return Math.max(1, Math.ceil(this.matching.length / this.perPage));
+                },
+                isItemVisible(itemId) {
+                    const idx = this.matching.findIndex(i => i.id === itemId);
+                    if (idx === -1) return false;
+                    const start = (this.page - 1) * this.perPage;
+                    return idx >= start && idx < start + this.perPage;
+                }
+             }"
+             x-init="$watch('searchQuery', () => page = 1); $watch('dietaryFilter', () => page = 1); $watch('activeTab', () => page = 1)"
+             x-show="(activeTab === 'all' || activeTab === '{{ cat.slug }}') && matching.length > 0" 
              class="space-y-6"
              x-transition:enter="transition ease-out duration-300"
              x-transition:enter-start="opacity-0 translate-y-4"
@@ -121,20 +153,13 @@
                         {% endif %}
                     </div>
                 </div>
-                <span class="text-xs opacity-60 font-semibold uppercase">{{ cat.active_items|length }} Item(s)</span>
+                <span class="text-xs opacity-60 font-semibold uppercase"><span x-text="matching.length"></span> Item(s)</span>
             </div>
 
             <!-- Items Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {% for item in cat.active_items %}
-                <div x-show="matchesItem({
-                        title: '{{ item.title|escapejs }}',
-                        description: '{{ item.description|escapejs }}',
-                        categorySlug: '{{ cat.slug }}',
-                        isVeg: {% if item.is_vegetarian %}true{% else %}false{% endif %},
-                        isSpicy: {% if item.is_spicy %}true{% else %}false{% endif %},
-                        isSpecial: {% if item.is_chef_special %}true{% else %}false{% endif %}
-                     })"
+                <div x-show="isItemVisible({{ item.id }})"
                      class="rounded-2xl border overflow-hidden shadow-sm hover:shadow-xl hover:translate-y-[-4px] duration-300 flex flex-col justify-between"
                      :class="{
                          'bg-white border-gray-200': currentTheme === 'light',
@@ -193,6 +218,35 @@
                     No items available in {{ cat.name }} category.
                 </div>
                 {% endfor %}
+            </div>
+
+            <!-- Category Pagination Controls -->
+            <div x-show="totalPages > 1" class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t"
+                 :class="{ 'border-gray-200': currentTheme === 'light', 'border-brand-primary/20': currentTheme !== 'light' }">
+                <span class="text-xs opacity-75">
+                    Showing page <strong x-text="page"></strong> of <strong x-text="totalPages"></strong> (<span x-text="matching.length"></span> dishes)
+                </span>
+                <div class="flex items-center gap-1.5">
+                    <button @click="if (page > 1) page--" 
+                            :disabled="page <= 1"
+                            class="px-3 py-1.5 rounded-lg border text-xs font-semibold transition disabled:opacity-30 disabled:cursor-not-allowed"
+                            :class="{ 'border-gray-300 hover:bg-gray-100': currentTheme === 'light', 'border-brand-primary/30 hover:bg-[#0A2017]': currentTheme !== 'light' }">
+                        <i class="fa-solid fa-chevron-left mr-1"></i> Prev
+                    </button>
+                    <template x-for="p in totalPages" :key="p">
+                        <button @click="page = p" 
+                                class="w-8 h-8 rounded-lg text-xs font-bold transition flex items-center justify-center"
+                                :class="page === p ? 'btn-gold-gradient text-white shadow-md' : 'opacity-70 hover:opacity-100 border border-transparent'">
+                            <span x-text="p"></span>
+                        </button>
+                    </template>
+                    <button @click="if (page < totalPages) page++" 
+                            :disabled="page >= totalPages"
+                            class="px-3 py-1.5 rounded-lg border text-xs font-semibold transition disabled:opacity-30 disabled:cursor-not-allowed"
+                            :class="{ 'border-gray-300 hover:bg-gray-100': currentTheme === 'light', 'border-brand-primary/30 hover:bg-[#0A2017]': currentTheme !== 'light' }">
+                        Next <i class="fa-solid fa-chevron-right ml-1"></i>
+                    </button>
+                </div>
             </div>
         </div>
         {% endfor %}

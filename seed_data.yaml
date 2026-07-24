@@ -127,7 +127,7 @@ rooms:
     base_price: 9500.0
     discount_price: 8500.0
   images:
-  - image: images/hotel-logo.png
+  - image: ""
     is_primary: true
     alt_text: Standard Room Jungle View
   policies:
@@ -164,7 +164,7 @@ rooms:
     base_price: 9000.0
     discount_price: 8000.0
   images:
-  - image: images/hotel-logo.png
+  - image: ""
     is_primary: true
     alt_text: Standard Room City View
   policies:
@@ -201,7 +201,7 @@ rooms:
     base_price: 14000.0
     discount_price: 12500.0
   images:
-  - image: images/hotel-logo.png
+  - image: ""
     is_primary: true
     alt_text: Family Room Jungle View
   policies:
@@ -235,7 +235,7 @@ rooms:
     base_price: 13500.0
     discount_price: 12000.0
   images:
-  - image: images/hotel-logo.png
+  - image: ""
     is_primary: true
     alt_text: Family Room City View
   policies:
@@ -274,7 +274,7 @@ rooms:
     base_price: 17500.0
     discount_price: 15500.0
   images:
-  - image: images/hotel-logo.png
+  - image: ""
     is_primary: true
     alt_text: Deluxe Room Jungle View
   policies:
@@ -310,7 +310,7 @@ rooms:
     base_price: 17000.0
     discount_price: 15000.0
   images:
-  - image: images/hotel-logo.png
+  - image: ""
     is_primary: true
     alt_text: Deluxe Room City View
   policies:

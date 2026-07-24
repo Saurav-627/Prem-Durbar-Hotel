@@ -105,11 +105,11 @@
     <div class="header">
         <div class="logo">
             {% if hotel_settings.logo %}
-            <img src="{{ hotel_settings.logo.url }}" alt="Logo" style="height: 45px; width: auto; vertical-align: middle; margin-right: 12px; border-radius: 4px;">
+            <img src="{{ hotel_settings.logo.url }}" alt="Logo" style="height: 90px; width: auto; vertical-align: middle; margin-right: 12px; border-radius: 4px;">
             {% elif hotel_settings.admin_logo %}
-            <img src="{{ hotel_settings.admin_logo.url }}" alt="Logo" style="height: 45px; width: auto; vertical-align: middle; margin-right: 12px; border-radius: 4px;">
+            <img src="{{ hotel_settings.admin_logo.url }}" alt="Logo" style="height: 90px; width: auto; vertical-align: middle; margin-right: 12px; border-radius: 4px;">
             {% else %}
-            <img src="{% static 'images/hotel-logo.png' %}" alt="Logo" style="height: 45px; width: auto; vertical-align: middle; margin-right: 12px; border-radius: 4px;">
+            <img src="{% static 'images/hotel-logo.png' %}" alt="Logo" style="height: 90px; width: auto; vertical-align: middle; margin-right: 12px; border-radius: 4px;">
             {% endif %}
             <span style="vertical-align: middle; font-size: 20px; font-weight: bold; color: #b47825; letter-spacing: 0.5px;">{{ hotel_settings.site_name|upper }}</span>
         </div>

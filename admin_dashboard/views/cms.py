@@ -20,8 +20,13 @@ from admin_dashboard.forms import (
     TestimonialForm, GalleryCategoryForm, GalleryItemForm, SEODataForm
 )
 
+from django.core.paginator import Paginator
+
 class CmsDashboardView(StaffRequiredMixin, View):
     def get(self, request):
+        active_tab = request.GET.get('tab', 'hero')
+        page_number = request.GET.get('page')
+
         hero_slides = HeroSlide.objects.all()
         
         about_obj = AboutPreview.objects.first()
@@ -39,14 +44,35 @@ class CmsDashboardView(StaffRequiredMixin, View):
         sustainability_cms_form = SustainabilityCMSForm(instance=sustainability_cms_obj)
         sustainability_pillars = SustainabilityPillar.objects.all()
         
-        testimonials = Testimonial.objects.all()
-        
+        testimonials_qs = Testimonial.objects.all()
         gallery_categories = GalleryCategory.objects.all()
-        gallery_items = GalleryItem.objects.all().select_related('category')
-        seo_data = SEOData.objects.all()
-        
-        active_tab = request.GET.get('tab', 'hero')
-        
+        gallery_items_qs = GalleryItem.objects.all().select_related('category')
+        seo_data_qs = SEOData.objects.all()
+
+        page_obj = None
+        if active_tab == 'testimonials':
+            paginator = Paginator(testimonials_qs, 10)
+            page_obj = paginator.get_page(page_number)
+            testimonials = page_obj.object_list
+        else:
+            testimonials = testimonials_qs
+
+        if active_tab == 'gallery':
+            paginator = Paginator(gallery_items_qs, 10)
+            page_obj = paginator.get_page(page_number)
+            gallery_items = page_obj.object_list
+        else:
+            gallery_items = gallery_items_qs
+
+        if active_tab == 'seo':
+            paginator = Paginator(seo_data_qs, 10)
+            page_obj = paginator.get_page(page_number)
+            seo_data = page_obj.object_list
+        else:
+            seo_data = seo_data_qs
+
+        is_paginated = page_obj.has_other_pages() if page_obj else False
+
         return render(request, 'admin_dashboard/cms/dashboard.html', {
             'hero_slides': hero_slides,
             'about_form': about_form,
@@ -59,6 +85,8 @@ class CmsDashboardView(StaffRequiredMixin, View):
             'gallery_items': gallery_items,
             'seo_data': seo_data,
             'active_tab': active_tab,
+            'page_obj': page_obj,
+            'is_paginated': is_paginated,
         })
 
 # Hero Slide Views

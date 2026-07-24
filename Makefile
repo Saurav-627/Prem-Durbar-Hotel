@@ -47,7 +47,7 @@ collectstatic: ## Collect static files into staticfiles directory
 	$(PYTHON) manage.py collectstatic --noinput --clear
 
 ##@ Database & Migrations
-makemigrations: ## Generate new migrations based on model changes
+migrations: ## Generate new migrations based on model changes
 	$(PYTHON) manage.py makemigrations
 
 migrate: ## Apply database migrations

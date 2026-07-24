@@ -12,6 +12,7 @@ class AboutPreview(models.Model):
         validators=[ValidateFileSize(2)]
     )
     video_url = models.URLField(blank=True, null=True, help_text="Promo video YouTube/Vimeo link")
+    video_file = models.FileField(upload_to=UploadTo('homepage/videos'), blank=True, null=True, help_text="Upload MP4 video file to play on the homepage")
 
     # Statistics Counters
     stat1_value = models.CharField(max_length=10, default="120")

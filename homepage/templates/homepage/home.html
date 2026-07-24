@@ -140,16 +140,21 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
         <!-- Visuals Column -->
         <div class="relative group" data-animate="fadeInLeft">
-            <div class="overflow-hidden rounded-2xl border border-amber-900/10">
-                <img src="{% if about_preview.image %}{{ about_preview.image.url }}{% else %}https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=800{% endif %}" 
-                     alt="About hotel" class="w-full h-[450px] object-cover hover:scale-105 duration-700">
+           <div class="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-brand-gold/30 bg-black"> 
+                {% if about_preview.video_file %}
+                <video controls autoplay loop muted class="w-full h-full object-cover">
+                    <source src="{{ about_preview.video_file.url }}" type="video/mp4">
+                    Your browser does not support HTML video.
+                </video>
+                {% elif about_preview.video_url %}
+                <iframe class="w-full h-full" src="{{ about_preview.video_url }}" title="Nagarkot Zipline Video Preview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                {% else %}
+                <div class="overflow-hidden rounded-2xl border border-amber-900/10">
+                    <img src="{% if about_preview.image %}{{ about_preview.image.url }}{% else %}https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=800{% endif %}" 
+                         alt="About hotel" class="w-full h-[450px] object-cover hover:scale-105 duration-700">
+                </div>
+                {% endif %}
             </div>
-            {% if about_preview.video_url %}
-            <a href="{{ about_preview.video_url }}" target="_blank"
-               class="btn-gold-gradient absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full text-white flex items-center justify-center text-xl shadow-2xl hover:scale-110 duration-300">
-                <i class="fa-solid fa-play"></i>
-            </a>
-            {% endif %}
         </div>
 
         <!-- Text Details Column -->
@@ -157,7 +162,7 @@
             <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-500">
                 {{ about_preview.subtitle }}
             </span>
-            <h2 class="font-luxury-title text-4xl sm:text-5xl font-bold leading-tight">
+            <h2 class="font-luxury-title text-4xl sm:text-4xl font-bold leading-tight">
                 {{ about_preview.title }}
             </h2>
             <div class="text-sm opacity-80 leading-relaxed space-y-4">

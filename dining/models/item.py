@@ -76,35 +76,16 @@ class DiningItem(models.Model):
     @property
     def current_price(self):
         active_price = getattr(self, '_active_price', None)
-        if active_price and active_price.base_price:
+        if active_price and active_price.base_price and active_price.base_price > 0:
             return active_price.base_price
-        first_price = self.base_prices.first()
-        if first_price and first_price.base_price:
-            return first_price.base_price
-        
-        # Fallback exchange conversion if no explicit currency base price is entered yet
-        curr_code = getattr(self, '_active_currency_code', 'USD')
-        npr_val = float(self.base_price)
-        if curr_code == 'NPR':
-            return npr_val
-        elif curr_code == 'INR':
-            return round(npr_val / 1.6, 2)
-        elif curr_code == 'EUR':
-            return round(npr_val / 145.0, 2)
-        elif curr_code == 'GBP':
-            return round(npr_val / 170.0, 2)
-        else:
-            return round(npr_val / 135.0, 2)
+        return None
 
     @property
     def currency_rel(self):
         active_price = getattr(self, '_active_price', None)
-        if active_price:
+        if active_price and active_price.base_price and active_price.base_price > 0:
             return active_price.currency
-        first_price = self.base_prices.first()
-        if first_price:
-            return first_price.currency
-        return self.currency
+        return None
 
     @property
     def display_image(self):
@@ -117,7 +98,10 @@ class DiningItem(models.Model):
     @property
     def active_price_info(self):
         curr_code = getattr(self, '_active_currency_code', 'USD')
-        val = float(self.current_price or 0.0)
+        price = self.current_price
+        if not price or price <= 0:
+            return None
+        val = float(price)
         curr = self.currency_rel
         symbol = curr.symbol if curr else ('RS.' if curr_code == 'NPR' else '$')
         return {
@@ -126,6 +110,12 @@ class DiningItem(models.Model):
             'amount': val,
             'formatted': f"{symbol} {val:,.2f}" if curr_code != 'NPR' else f"RS. {val:,.0f}"
         }
+
+    @property
+    def added_base_prices(self):
+        """Returns only base prices greater than 0."""
+        return [p for p in self.base_prices.all() if p.base_price and p.base_price > 0]
+
 
 
 class DiningItemBasePrice(models.Model):
