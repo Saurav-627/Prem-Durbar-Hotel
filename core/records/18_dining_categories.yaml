@@ -1,0 +1,28 @@
+dining_categories:
+- name: Authentic Nepali Specialties
+  slug: authentic-nepali-specialties
+  description: Traditional Nepalese delicacies prepared with organic local herbs and Himalayan spices.
+  icon_class: fa-solid fa-utensils
+  order: 1
+  is_published: true
+
+- name: Starters & Khaja Sets
+  slug: starters-khaja-sets
+  description: Popular mountain appetizers, snacks, and authentic Newari Khaja platters.
+  icon_class: fa-solid fa-bowl-food
+  order: 2
+  is_published: true
+
+- name: Continental & Western Favorites
+  slug: continental-western-favorites
+  description: Hearty pasta, sizzlers, artisanal sandwiches, and gourmet continental cuisine.
+  icon_class: fa-solid fa-plate-wheat
+  order: 3
+  is_published: true
+
+- name: Beverages & Mountain Teas
+  slug: beverages-mountain-teas
+  description: Organic Nagarkot herbal teas, fresh juices, Himalayan coffee, and mocktails.
+  icon_class: fa-solid fa-mug-hot
+  order: 4
+  is_published: true

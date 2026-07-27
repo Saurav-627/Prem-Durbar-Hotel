@@ -1,0 +1,19 @@
+payment_processors:
+- code: esewa
+  name: eSewa
+  apply_tax: true
+  is_published: true
+  currencies:
+  - NPR
+- code: khalti
+  name: Khalti
+  apply_tax: true
+  is_published: true
+  currencies:
+  - NPR
+- code: stripe
+  name: Stripe
+  apply_tax: true
+  is_published: true
+  currencies:
+  - USD

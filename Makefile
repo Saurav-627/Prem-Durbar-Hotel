@@ -1,4 +1,4 @@
-.PHONY: help install sync migrate makemigrations collectstatic import-data seed-data seed-conference seed-all superuser run shell backup test clean docker-up docker-down docker-logs docker-clean setup
+.PHONY: help install sync migrate makemigrations collectstatic seed-data seed-update import-data seed-all superuser run shell backup test clean docker-up docker-down docker-logs docker-clean setup
 
 # Default shell
 SHELL := /bin/bash
@@ -53,14 +53,15 @@ migrations: ## Generate new migrations based on model changes
 migrate: ## Apply database migrations
 	$(PYTHON) manage.py migrate
 
-import-data: ## Load initial currency, global settings, and header menu layout from initial_data.yaml
-	$(PYTHON) manage.py import_initial_data
-
-seed-data: ## Seed hotel sample data from seed_data.yaml (rooms, dining, activities, SEO etc.)
+seed-data: ## Seed hotel data from modular YAML files in core/records/ (skips existing records)
 	$(PYTHON) manage.py seed_data
 
-seed-all: ## Import ALL YAML data in one command (initial_data + seed_data)
-	$(PYTHON) manage.py seed_all --update
+seed-update: ## Sync and update existing hotel data from modular YAML files in core/records/
+	$(PYTHON) manage.py seed_data --update
+
+import-data: seed-data ## Alias for seed-data
+
+seed-all: seed-update ## Alias for seed-update
 
 superuser: ## Create an administrative superuser (interactive)
 	$(PYTHON) manage.py createsuperuser
@@ -89,5 +90,5 @@ clean: ## Clean Python cache files (__pycache__, .pyc, .pyo)
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type f -name "*.py[co]" -delete
 
-setup: install migrate seed-all ## Complete one-step workspace setup (install, migrate, import ALL YAML data)
+setup: install migrate seed-data ## Complete one-step workspace setup (install, migrate, import all modular YAML records)
 	@echo "Setup completed! Run 'make run' to start the development server."

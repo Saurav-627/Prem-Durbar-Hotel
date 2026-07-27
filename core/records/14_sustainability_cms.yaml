@@ -1,0 +1,38 @@
+sustainability_cms:
+  hero_subtitle: Responsible Hospitality
+  hero_title: Eco-Sustainability & Local Empowerment
+  hero_description: Preserving Nagarkot’s natural pine beauty and supporting local mountain communities while providing luxurious guest comfort.
+  intro_subtitle: Pillars of Action
+  intro_title: Our Environmental & Community Commitments
+
+sustainability_pillars:
+- icon_class: fa-solid fa-solar-panel
+  title: Solar & Renewable Energy
+  description: 100% solar water heating system across all luxury guest suites and kitchen facilities, reducing carbon footprint.
+  order: 1
+  is_published: true
+- icon_class: fa-solid fa-seedling
+  title: Organic Farm-to-Table
+  description: Sourcing organic fresh produce, mountain honey, and dairy directly from local Changunarayan farm cooperatives.
+  order: 2
+  is_published: true
+- icon_class: fa-solid fa-droplet-slash
+  title: Water Conservation & Harvesting
+  description: Rainwater harvesting and low-flow smart plumbing fixtures preserving Nagarkot’s natural mountain water tables.
+  order: 3
+  is_published: true
+- icon_class: fa-solid fa-users-gear
+  title: Local Mountain Community Employment
+  description: Over 85% of our hospitality, culinary, and zipline safety staff are recruited and trained locally from Nagarkot.
+  order: 4
+  is_published: true
+- icon_class: fa-solid fa-shield-cat
+  title: Zero-Tolerance Child Protection
+  description: Strict commitment to international child safety, ethical tourism standards, and safe mountain adventure protocols.
+  order: 5
+  is_published: true
+- icon_class: fa-solid fa-recycle
+  title: Single-Use Plastic Ban
+  description: Elimination of plastic bottles and straw packaging in favor of refillable glass carafes and biodegradable amenities.
+  order: 6
+  is_published: true

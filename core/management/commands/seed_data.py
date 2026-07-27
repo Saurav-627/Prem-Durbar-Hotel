@@ -1,25 +1,98 @@
 import os
 import yaml
+from datetime import timedelta
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from datetime import timedelta
+from django.apps import apps
 
 User = get_user_model()
+
+# Global Model Mapping Registry:
+# key -> (app_label, model_name, lookup_fields, is_singleton)
+GLOBAL_MODEL_REGISTRY = {
+    # Settings & Config
+    "hotel_settings": ("settings_manager", "HotelSettings", None, True),
+    "currencies": ("settings_manager", "Currency", ["iso_code"], False),
+    "navigation_menus": ("settings_manager", "NavigationMenu", ["name", "position"], False),
+    "seo_banners": ("seo", "SEOData", ["path"], False),
+    "payment_processors": ("payments", "PaymentProcessor", ["code"], False),
+
+    # Homepage & CMS
+    "about_preview": ("homepage", "AboutPreview", None, True),
+    "hero_slides": ("homepage", "HeroSlide", ["title"], False),
+    "about_cms": ("homepage", "AboutCMS", None, True),
+    "team_members": ("homepage", "TeamMember", ["name"], False),
+    "zipline_cms": ("homepage", "ZiplineCMS", None, True),
+    "sustainability_cms": ("homepage", "SustainabilityCMS", None, True),
+    "sustainability_pillars": ("homepage", "SustainabilityPillar", ["title"], False),
+
+    # Rooms & Facilities
+    "room_categories": ("rooms", "RoomCategory", ["slug"], False),
+    "room_facilities": ("rooms", "RoomFacility", ["name"], False),
+
+    # Dining
+    "dining_categories": ("dining", "DiningCategory", ["slug"], False),
+
+    # Other Apps
+    "testimonials": ("testimonials", "Testimonial", ["guest_name", "source"], False),
+    "branches": ("contact", "Branch", ["name"], False),
+    "coupons": ("booking", "Coupon", ["code"], False),
+}
+
+
+def filter_model_fields(model, data_dict):
+    """Dynamically filters dictionary keys to match only real fields present on the target Django model."""
+    valid_field_names = {f.name for f in model._meta.get_fields() if not f.is_relation or f.concrete}
+    return {k: v for k, v in data_dict.items() if k in valid_field_names}
+
+
+def prepare_item_data(key, item, valid_data):
+    """Applies model-specific dynamic preprocessing (e.g. date calculation for Coupons)."""
+    if key == "coupons":
+        valid_days = item.get("valid_days_from_now", 365)
+        if "valid_from" not in valid_data:
+            valid_data["valid_from"] = timezone.now()
+        if "valid_to" not in valid_data:
+            valid_data["valid_to"] = timezone.now() + timedelta(days=valid_days)
+    return valid_data
+
+
+def post_process_item(key, obj, item):
+    """Applies post-creation/update relationship logic (e.g. PaymentProcessor Currency links)."""
+    if key == "payment_processors":
+        currencies_list = item.get("currencies") or item.get("payment_currencies") or []
+        if currencies_list:
+            from payments.models.payment_processor import PaymentProcessorCurrency
+            from settings_manager.models.currency import Currency
+            for ccode in currencies_list:
+                curr = Currency.objects.get_queryset().set_active_test(enabled=False).filter(iso_code=ccode).first()
+                if curr:
+                    PaymentProcessorCurrency.objects.get_or_create(
+                        payment_processor=obj,
+                        currency=curr
+                    )
 
 
 class Command(BaseCommand):
     help = (
-        "Seeds the database with Prem Durbar Hotel & Nagarkot Zipline data from seed_data.yaml. "
-        "Supports --update to sync existing records."
+        "Single Unified Data Importer for Prem Durbar Hotel & Nagarkot Zipline. "
+        "Imports data from YAML files (initial_data.yaml, seed_data.yaml). "
+        "If data exists: SKIPS. If --update: UPDATES. If missing: CREATES."
     )
 
     def add_arguments(self, parser):
         parser.add_argument(
             "--file",
             type=str,
-            default="seed_data.yaml",
-            help="Path to the seed YAML file (default: seed_data.yaml in project root)",
+            default=None,
+            help="Path to specific YAML data file",
+        )
+        parser.add_argument(
+            "--folder",
+            type=str,
+            default="core/records",
+            help="Path to directory containing modular YAML data files (default: core/records)",
         )
         parser.add_argument(
             "--update",
@@ -29,27 +102,23 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        file_path = options["file"]
-        do_update = options["update"]
+        file_path = options.get("file")
+        folder_path = options.get("folder")
+        do_update = options.get("update", False)
 
-        if not os.path.exists(file_path):
-            self.stderr.write(self.style.ERROR(f"Seed file not found: {file_path}"))
-            return
+        files_to_process = []
+        if file_path:
+            files_to_process.append(file_path)
+        else:
+            if folder_path and os.path.exists(folder_path):
+                folder_files = [
+                    os.path.join(folder_path, f)
+                    for f in sorted(os.listdir(folder_path))
+                    if f.endswith(".yaml") or f.endswith(".yml")
+                ]
+                files_to_process.extend(folder_files)
 
-        self.stdout.write(self.style.NOTICE(f"Loading seed data from {file_path}..."))
-
-        with open(file_path, "r", encoding="utf-8") as f:
-            try:
-                data = yaml.safe_load(f)
-            except yaml.YAMLError as exc:
-                self.stderr.write(self.style.ERROR(f"Error parsing YAML: {exc}"))
-                return
-
-        if not data:
-            self.stderr.write(self.style.ERROR("YAML file is empty."))
-            return
-
-        # -- 1. Superuser
+        # -- 1. Ensure Superuser Admin
         if not User.objects.filter(username="admin").exists():
             User.objects.create_superuser(
                 "admin", "info@premdurbar.com", "admin123",
@@ -59,232 +128,221 @@ class Command(BaseCommand):
         else:
             self.stdout.write(self.style.WARNING("Superuser 'admin' already exists. Skipping."))
 
-        # -- 3. Hotel Settings (singleton)
-        from settings_manager.models.hotel_settings import HotelSettings
-        s = data.get("hotel_settings")
-        if s:
-            existing = HotelSettings.objects.first()
-            if existing:
-                for k, v in s.items():
-                    setattr(existing, k, v)
-                existing.save()
-                self.stdout.write(self.style.SUCCESS("Updated Hotel Settings."))
-            else:
-                HotelSettings.objects.create(**s)
-                self.stdout.write(self.style.SUCCESS("Created Hotel Settings."))
-
-        # -- 4. About Preview (singleton)
-        from homepage.models.about_preview import AboutPreview
-        ap = data.get("about_preview")
-        if ap:
-            existing = AboutPreview.objects.first()
-            if existing:
-                for k, v in ap.items():
-                    setattr(existing, k, v)
-                existing.save()
-                self.stdout.write(self.style.SUCCESS("Updated About Preview."))
-            else:
-                AboutPreview.objects.create(**ap)
-                self.stdout.write(self.style.SUCCESS("Created About Preview."))
-
-        # -- 5. Hero Slides
-        from homepage.models.hero_slide import HeroSlide
-        if do_update:
-            HeroSlide.objects.all().delete()
-        for slide in data.get("hero_slides", []):
-            title = slide.get("title")
-            if not title:
+        for current_file in files_to_process:
+            if not os.path.exists(current_file):
                 continue
-            HeroSlide.objects.get_or_create(
-                title=title,
-                defaults={k: v for k, v in slide.items() if k != "title"}
-            )
-            self.stdout.write(self.style.SUCCESS(f"Processed hero slide: {title}"))
 
-        # -- 6. Room Facilities
-        from rooms.models.room_facility import RoomFacility
-        for fac in data.get("room_facilities", []):
-            name = fac.get("name")
-            if not name:
+            self.stdout.write(self.style.NOTICE(f"\nProcessing data from {current_file}..."))
+
+            with open(current_file, "r", encoding="utf-8") as f:
+                try:
+                    data = yaml.safe_load(f)
+                except yaml.YAMLError as exc:
+                    self.stderr.write(self.style.ERROR(f"Error parsing YAML ({current_file}): {exc}"))
+                    continue
+
+            if not data:
+                self.stderr.write(self.style.ERROR(f"YAML file is empty: {current_file}"))
                 continue
-            RoomFacility.objects.get_or_create(
-                name=name,
-                defaults={k: v for k, v in fac.items() if k != "name"}
-            )
 
-        # -- 7. Room Categories
-        from rooms.models.room_category import RoomCategory
-        for cat in data.get("room_categories", []):
-            slug = cat.get("slug")
-            if not slug:
-                continue
-            RoomCategory.objects.get_or_create(
-                slug=slug,
-                defaults={
-                    "name": cat.get("name"),
-                    "order": cat.get("order", 0),
-                    "is_published": cat.get("is_published", True),
-                }
-            )
+            # -- 2. Process All Registered Models Dynamically
+            for key, config in GLOBAL_MODEL_REGISTRY.items():
+                if key not in data:
+                    continue
 
-        # -- 8. Rooms
-        from rooms.models.room import Room
-        if do_update:
-            Room.objects.all().delete()
-        
-        for room_data in data.get("rooms", []):
-            slug = room_data.get("slug")
-            if not slug:
-                continue
-            facility_names = room_data.pop("facilities", [])
-            images = room_data.pop("images", [])
-            policies = room_data.pop("policies", [])
-            prices_data = room_data.pop("prices", [])
-            
-            category_slug = room_data.get("category")
-            if category_slug:
-                cat_obj = RoomCategory.objects.filter(slug=category_slug).first()
-                room_data["category"] = cat_obj
+                app_label, model_name, lookup_fields, is_singleton = config
+                try:
+                    model = apps.get_model(app_label, model_name)
+                except LookupError:
+                    self.stderr.write(self.style.ERROR(f"Model {app_label}.{model_name} not found."))
+                    continue
 
-            room_obj, created = Room.objects.get_or_create(
-                slug=slug,
-                defaults={k: v for k, v in room_data.items()}
-            )
-            
-            from rooms.models.room_base_price import RoomBasePrice
-            from settings_manager.models.currency import Currency
-            for p_data in prices_data:
-                ccode = p_data.get("currency")
-                c_obj = Currency.objects.filter(iso_code=ccode).first()
-                if c_obj:
-                    RoomBasePrice.objects.update_or_create(
-                        room=room_obj,
-                        currency=c_obj,
-                        defaults={
-                            'base_price': p_data.get("base_price"),
-                            'discount_price': p_data.get("discount_price")
-                        }
+                raw_data = data[key]
+
+                # SINGLETON MODELS
+                if is_singleton:
+                    if not isinstance(raw_data, dict):
+                        continue
+                    valid_data = filter_model_fields(model, raw_data)
+                    valid_data = prepare_item_data(key, raw_data, valid_data)
+
+                    existing = model.objects.first()
+                    if existing:
+                        if do_update:
+                            for k, v in valid_data.items():
+                                setattr(existing, k, v)
+                            existing.save()
+                            post_process_item(key, existing, raw_data)
+                            self.stdout.write(self.style.SUCCESS(f"  - Updated {model_name} (Singleton)"))
+                        else:
+                            self.stdout.write(self.style.WARNING(f"  - {model_name} already exists. Skipping."))
+                    else:
+                        new_obj = model.objects.create(**valid_data)
+                        post_process_item(key, new_obj, raw_data)
+                        self.stdout.write(self.style.SUCCESS(f"  - Created {model_name} (Singleton)"))
+
+                # COLLECTION MODELS
+                else:
+                    if not isinstance(raw_data, list):
+                        continue
+
+                    count_created = 0
+                    count_updated = 0
+                    count_skipped = 0
+
+                    for item in raw_data:
+                        if not isinstance(item, dict):
+                            continue
+
+                        valid_data = filter_model_fields(model, item)
+                        valid_data = prepare_item_data(key, item, valid_data)
+
+                        # Special active manager lookup for Currency / PaymentProcessor
+                        if model_name == "Currency" and "iso_code" in item:
+                            existing = model.objects.get_queryset().set_active_test(enabled=False).filter(iso_code=item["iso_code"]).first()
+                        elif model_name == "PaymentProcessor" and "code" in item:
+                            existing = model._base_manager.filter(code=item["code"]).first()
+                        else:
+                            lookup_kwargs = {field: item.get(field) for field in lookup_fields if item.get(field) is not None}
+                            if not lookup_kwargs:
+                                continue
+                            existing = model.objects.filter(**lookup_kwargs).first()
+
+                        if existing:
+                            if do_update:
+                                for k, v in valid_data.items():
+                                    setattr(existing, k, v)
+                                if hasattr(existing, 'is_active'):
+                                    existing.is_active = True
+                                if hasattr(existing, 'deleted_at'):
+                                    existing.deleted_at = None
+                                existing.save()
+                                post_process_item(key, existing, item)
+                                count_updated += 1
+                            else:
+                                count_skipped += 1
+                        else:
+                            new_obj = model.objects.create(**valid_data)
+                            post_process_item(key, new_obj, item)
+                            count_created += 1
+
+                    self.stdout.write(
+                        self.style.SUCCESS(
+                            f"  - Processed {model_name}: {count_created} created, {count_updated} updated, {count_skipped} skipped."
+                        )
                     )
-            for fname in facility_names:
-                fac = RoomFacility.objects.filter(name=fname).first()
-                if fac:
-                    room_obj.facilities.add(fac)
-            
-            from rooms.models.room_image import RoomImage
-            for img in images:
-                RoomImage.objects.get_or_create(
-                    room=room_obj,
-                    image=img.get("image"),
-                    defaults={"is_primary": img.get("is_primary", False), "alt_text": img.get("alt_text", "")}
-                )
-            
-            from rooms.models.room_policy import RoomPolicy
-            for pol in policies:
-                RoomPolicy.objects.get_or_create(
-                    room=room_obj,
-                    title=pol.get("title"),
-                    defaults={"description": pol.get("description")}
-                )
 
-            self.stdout.write(self.style.SUCCESS(f"Processed room: {room_obj.title}"))
+            # -- 3. Complex Models: Rooms with nested FKs, M2Ms, Images, Prices & Policies
+            if "rooms" in data:
+                from rooms.models.room import Room
+                from rooms.models.room_category import RoomCategory
+                from rooms.models.room_facility import RoomFacility
+                from rooms.models.room_base_price import RoomBasePrice
+                from rooms.models.room_image import RoomImage
+                from rooms.models.room_policy import RoomPolicy
+                from settings_manager.models.currency import Currency
 
-        # -- 9. About CMS (singleton)
-        from homepage.models.about_cms import AboutCMS
-        acms = data.get("about_cms")
-        if acms:
-            existing = AboutCMS.objects.first()
-            if existing:
                 if do_update:
-                    for k, v in acms.items():
-                        setattr(existing, k, v)
-                    existing.save()
-                    self.stdout.write(self.style.SUCCESS("Updated AboutCMS."))
-            else:
-                AboutCMS.objects.create(**acms)
-                self.stdout.write(self.style.SUCCESS("Created AboutCMS."))
+                    Room.objects.all().delete()
 
-        # -- 9.5. Team Members
-        from homepage.models.team_member import TeamMember
-        t_members = data.get("team_members", [])
-        for tm in t_members:
-            TeamMember.objects.update_or_create(
-                name=tm["name"],
-                defaults={
-                    "role": tm.get("role", ""),
-                    "bio": tm.get("bio", ""),
-                    "order": tm.get("order", 0),
-                    "is_published": tm.get("is_published", True),
-                }
-            )
-        if t_members:
-            self.stdout.write(self.style.SUCCESS("Seeded Team Members."))
+                for room_data in data.get("rooms", []):
+                    slug = room_data.get("slug")
+                    if not slug:
+                        continue
+                    facility_names = room_data.pop("facilities", [])
+                    images = room_data.pop("images", [])
+                    policies = room_data.pop("policies", [])
+                    prices_data = room_data.pop("prices", [])
 
-        # -- 10. Zipline CMS (singleton)
-        from homepage.models.zipline_cms import ZiplineCMS
-        zcms = data.get("zipline_cms")
-        if zcms:
-            existing = ZiplineCMS.objects.first()
-            if existing:
+                    category_slug = room_data.get("category")
+                    if category_slug:
+                        cat_obj = RoomCategory.objects.filter(slug=category_slug).first()
+                        room_data["category"] = cat_obj
+
+                    valid_room_fields = filter_model_fields(Room, room_data)
+
+                    room_obj, created = Room.objects.get_or_create(
+                        slug=slug,
+                        defaults=valid_room_fields
+                    )
+
+                    for p_data in prices_data:
+                        ccode = p_data.get("currency")
+                        c_obj = Currency.objects.filter(iso_code=ccode).first()
+                        if c_obj:
+                            RoomBasePrice.objects.update_or_create(
+                                room=room_obj,
+                                currency=c_obj,
+                                defaults={
+                                    'base_price': p_data.get("base_price"),
+                                    'discount_price': p_data.get("discount_price")
+                                }
+                            )
+                    for fname in facility_names:
+                        fac = RoomFacility.objects.filter(name=fname).first()
+                        if fac:
+                            room_obj.facilities.add(fac)
+
+                    for img in images:
+                        img_path = img.get("image")
+                        if img_path:
+                            RoomImage.objects.get_or_create(
+                                room=room_obj,
+                                image=img_path,
+                                defaults={"is_primary": img.get("is_primary", False), "alt_text": img.get("alt_text", "")}
+                            )
+
+                    for pol in policies:
+                        RoomPolicy.objects.get_or_create(
+                            room=room_obj,
+                            title=pol.get("title"),
+                            defaults={"description": pol.get("description")}
+                        )
+
+                    self.stdout.write(self.style.SUCCESS(f"  - Processed room: {room_obj.title}"))
+
+            # -- 4. Dining Items with Category FK & Multi-Currency Base Prices
+            if "dining_items" in data:
+                from dining.models.item import DiningItem, DiningCategory, DiningItemBasePrice
+                from settings_manager.models.currency import Currency
+                from django.utils.text import slugify
+
                 if do_update:
-                    for k, v in zcms.items():
-                        setattr(existing, k, v)
-                    existing.save()
-                    self.stdout.write(self.style.SUCCESS("Updated ZiplineCMS."))
-            else:
-                ZiplineCMS.objects.create(**zcms)
-                self.stdout.write(self.style.SUCCESS("Created ZiplineCMS."))
+                    DiningItem.objects.all().delete()
 
-        # -- 11. Sustainability CMS & Pillars
-        from homepage.models.sustainability_cms import SustainabilityCMS, SustainabilityPillar
-        scms = data.get("sustainability_cms")
-        if scms:
-            existing = SustainabilityCMS.objects.first()
-            if existing:
-                if do_update:
-                    for k, v in scms.items():
-                        setattr(existing, k, v)
-                    existing.save()
-                    self.stdout.write(self.style.SUCCESS("Updated SustainabilityCMS."))
-            else:
-                SustainabilityCMS.objects.create(**scms)
-                self.stdout.write(self.style.SUCCESS("Created SustainabilityCMS."))
+                for item_data in data.get("dining_items", []):
+                    cat_identifier = item_data.pop("category", None)
+                    cat_obj = None
+                    if cat_identifier:
+                        cat_obj = DiningCategory.objects.filter(slug=cat_identifier).first() or DiningCategory.objects.filter(name=cat_identifier).first()
 
-        if do_update:
-            SustainabilityPillar.objects.all().delete()
-        for pillar in data.get("sustainability_pillars", []):
-            title = pillar.get("title")
-            if not title:
-                continue
-            SustainabilityPillar.objects.get_or_create(
-                title=title,
-                defaults={k: v for k, v in pillar.items() if k != "title"}
-            )
+                    if not cat_obj:
+                        continue
 
-        # -- 12. Testimonials
-        from testimonials.models.testimonial import Testimonial
-        if do_update:
-            Testimonial.objects.all().delete()
-        for t in data.get("testimonials", []):
-            guest_name = t.get("guest_name")
-            source = t.get("source")
-            if not guest_name:
-                continue
-            Testimonial.objects.get_or_create(
-                guest_name=guest_name, source=source,
-                defaults={k: v for k, v in t.items() if k not in ("guest_name", "source")}
-            )
+                    prices_data = item_data.pop("prices", [])
+                    title = item_data.get("title")
+                    if not title:
+                        continue
 
-        # -- 13. Branches
-        from contact.models.branch import Branch
-        if do_update:
-            Branch.objects.all().delete()
-        for b in data.get("branches", []):
-            name = b.get("name")
-            if not name:
-                continue
-            Branch.objects.get_or_create(
-                name=name,
-                defaults={k: v for k, v in b.items() if k != "name"}
-            )
+                    slug = item_data.get("slug") or slugify(title)
+                    valid_fields = filter_model_fields(DiningItem, item_data)
+                    valid_fields["category"] = cat_obj
 
-        self.stdout.write(self.style.SUCCESS("\nPrem Durbar database seeding completed successfully!"))
+                    item_obj, created = DiningItem.objects.update_or_create(
+                        slug=slug,
+                        defaults=valid_fields
+                    )
+
+                    for p_data in prices_data:
+                        ccode = p_data.get("currency")
+                        c_obj = Currency.objects.filter(iso_code=ccode).first()
+                        if c_obj:
+                            DiningItemBasePrice.objects.update_or_create(
+                                item=item_obj,
+                                currency=c_obj,
+                                defaults={'base_price': p_data.get("base_price")}
+                            )
+
+                    self.stdout.write(self.style.SUCCESS(f"  - Processed dining item: {item_obj.title}"))
+
+        self.stdout.write(self.style.SUCCESS("\nAll data import tasks completed successfully!"))

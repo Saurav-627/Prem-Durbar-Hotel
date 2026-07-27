@@ -1,0 +1,90 @@
+dining_items:
+- title: Authentic Nepali Mutton Thali Set
+  slug: authentic-nepali-mutton-thali-set
+  category: authentic-nepali-specialties
+  description: Organic local rice served with tender mountain mutton curry, black lentil dal, saag, gundruk pickle, papad, and fresh curd.
+  base_price: 850.00
+  is_vegetarian: false
+  is_spicy: true
+  is_chef_special: true
+  is_published: true
+  order: 1
+  prices:
+  - currency: NPR
+    base_price: 850.00
+  - currency: USD
+    base_price: 7.00
+  - currency: EUR
+    base_price: 6.50
+  - currency: GBP
+    base_price: 5.50
+  - currency: INR
+    base_price: 530.00
+
+- title: Traditional Newari Haasko Chhoyela
+  slug: traditional-newari-haasko-chhoyela
+  category: starters-khaja-sets
+  description: Spiced flame-marinated duck meat tossed in mustard oil, garlic, green chilies, and roasted fenugreek seeds.
+  base_price: 650.00
+  is_vegetarian: false
+  is_spicy: true
+  is_chef_special: true
+  is_published: true
+  order: 2
+  prices:
+  - currency: NPR
+    base_price: 650.00
+  - currency: USD
+    base_price: 5.50
+  - currency: EUR
+    base_price: 5.00
+  - currency: GBP
+    base_price: 4.20
+  - currency: INR
+    base_price: 400.00
+
+- title: Organic Kodo Nachos Salsa
+  slug: organic-kodo-nachos-salsa
+  category: starters-khaja-sets
+  description: Crispy indigenous millet (kodo) chips served with fresh Himalayan tomato salsa, melted yak cheese, and avocado dip.
+  base_price: 450.00
+  is_vegetarian: true
+  is_vegan: false
+  is_spicy: false
+  is_chef_special: false
+  is_published: true
+  order: 3
+  prices:
+  - currency: NPR
+    base_price: 450.00
+  - currency: USD
+    base_price: 3.80
+  - currency: EUR
+    base_price: 3.50
+  - currency: GBP
+    base_price: 3.00
+  - currency: INR
+    base_price: 280.00
+
+- title: Nagarkot Wild Himalayan Herbal Tea
+  slug: nagarkot-wild-himalayan-herbal-tea
+  category: beverages-mountain-teas
+  description: Handpicked wild herbs, ginger, lemongrass, and honey harvested from Changunarayan hills.
+  base_price: 250.00
+  is_vegetarian: true
+  is_vegan: true
+  is_spicy: false
+  is_chef_special: true
+  is_published: true
+  order: 4
+  prices:
+  - currency: NPR
+    base_price: 250.00
+  - currency: USD
+    base_price: 2.00
+  - currency: EUR
+    base_price: 1.80
+  - currency: GBP
+    base_price: 1.50
+  - currency: INR
+    base_price: 160.00

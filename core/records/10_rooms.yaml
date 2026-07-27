@@ -1,0 +1,193 @@
+rooms:
+- title: Standard Room Jungle View
+  slug: standard-room-jungle-view
+  category: standard
+  description: Experience understated elegance with natural brick and wood tones throughout your sanctuary overlooking Nagarkot's lush pine forests.
+  room_size: 280
+  bed_type: Queen Size Bed
+  max_adults: 2
+  max_children: 0
+  is_featured: true
+  is_published: true
+  facilities:
+  - Air Conditioning
+  - High-Speed Wi-Fi
+  - Hot Water
+  - Shampoo & Toiletries
+  - Artisanal Wooden Furniture
+  - Tea / Coffee Maker
+  prices:
+  - currency: NPR
+    base_price: 3500.00
+    discount_price: 3200.00
+  - currency: USD
+    base_price: 30.00
+    discount_price: 26.00
+  - currency: EUR
+    base_price: 28.00
+    discount_price: 24.00
+  - currency: GBP
+    base_price: 24.00
+    discount_price: 21.00
+  - currency: INR
+    base_price: 2200.00
+    discount_price: 2000.00
+  images: []
+  policies:
+  - title: Check-in / Check-out
+    description: Check-in from 14:00 PM, Check-out by 12:00 PM.
+
+- title: Standard Room City View
+  slug: standard-room-city-view
+  category: standard
+  description: Enjoy breathtaking morning light and scenic valley views of Kathmandu basin from your hand-carved balcony window.
+  room_size: 290
+  bed_type: Queen Size Bed
+  max_adults: 2
+  max_children: 0
+  is_featured: false
+  is_published: true
+  facilities:
+  - Air Conditioning
+  - High-Speed Wi-Fi
+  - Hot Water
+  - Shampoo & Toiletries
+  - Artisanal Wooden Furniture
+  prices:
+  - currency: NPR
+    base_price: 3800.00
+    discount_price: 3400.00
+  - currency: USD
+    base_price: 32.00
+    discount_price: 28.00
+  images: []
+  policies:
+  - title: Check-in / Check-out
+    description: Check-in from 14:00 PM, Check-out by 12:00 PM.
+
+- title: Family Room Jungle View
+  slug: family-room-jungle-view
+  category: family
+  description: Spacious dual-bed suite designed for families, featuring hand-carved Newari wood frames and direct views of the lotus pond.
+  room_size: 450
+  bed_type: 1 King + 1 Queen Bed
+  max_adults: 4
+  max_children: 2
+  is_featured: true
+  is_published: true
+  facilities:
+  - Air Conditioning
+  - High-Speed Wi-Fi
+  - Hot Water
+  - Hair Dryer
+  - Bathroom Robe
+  - Shampoo & Toiletries
+  - Artisanal Wooden Furniture
+  - Handcrafted Bed Linens
+  - Tea / Coffee Maker
+  prices:
+  - currency: NPR
+    base_price: 6500.00
+    discount_price: 5900.00
+  - currency: USD
+    base_price: 55.00
+    discount_price: 49.00
+  images: []
+  policies:
+  - title: Check-in / Check-out
+    description: Check-in from 14:00 PM, Check-out by 12:00 PM.
+
+- title: Family Room City View
+  slug: family-room-city-view
+  category: family
+  description: Panoramic valley-facing family sanctuary equipped with private dining nook, high-speed Wi-Fi, and plush organic bedding.
+  room_size: 480
+  bed_type: 2 King Beds
+  max_adults: 4
+  max_children: 2
+  is_featured: false
+  is_published: true
+  facilities:
+  - Air Conditioning
+  - High-Speed Wi-Fi
+  - Hot Water
+  - Hair Dryer
+  - Shampoo & Toiletries
+  - Artisanal Wooden Furniture
+  prices:
+  - currency: NPR
+    base_price: 7000.00
+    discount_price: 6400.00
+  - currency: USD
+    base_price: 60.00
+    discount_price: 54.00
+  images: []
+  policies:
+  - title: Check-in / Check-out
+    description: Check-in from 14:00 PM, Check-out by 12:00 PM.
+
+- title: Deluxe Room Jungle View
+  slug: deluxe-room-jungle-view
+  category: deluxe
+  description: Our flagship luxury suite featuring a private balcony, custom terracotta stone decor, and unobstructed views of Nagarkot Zipline flight line.
+  room_size: 520
+  bed_type: Emperor King Bed
+  max_adults: 2
+  max_children: 1
+  is_featured: true
+  is_published: true
+  facilities:
+  - Air Conditioning
+  - High-Speed Wi-Fi
+  - Hot Water
+  - Hair Dryer
+  - Bathroom Robe
+  - Shampoo & Toiletries
+  - Artisanal Wooden Furniture
+  - Handcrafted Bed Linens
+  - Carved Windows & Lotus Pond View
+  - Tea / Coffee Maker
+  prices:
+  - currency: NPR
+    base_price: 8500.00
+    discount_price: 7800.00
+  - currency: USD
+    base_price: 75.00
+    discount_price: 68.00
+  images: []
+  policies:
+  - title: Check-in / Check-out
+    description: Check-in from 14:00 PM, Check-out by 12:00 PM.
+
+- title: Deluxe Room City View
+  slug: deluxe-room-city-view
+  category: deluxe
+  description: Ultra-premium suite with panoramic mountain ridge views, private lounge seating, and hand-woven Bhaktapur tapestries.
+  room_size: 550
+  bed_type: Emperor King Bed
+  max_adults: 2
+  max_children: 1
+  is_featured: true
+  is_published: true
+  facilities:
+  - Air Conditioning
+  - High-Speed Wi-Fi
+  - Hot Water
+  - Hair Dryer
+  - Bathroom Robe
+  - Shampoo & Toiletries
+  - Artisanal Wooden Furniture
+  - Handcrafted Bed Linens
+  - Carved Windows & Lotus Pond View
+  - Tea / Coffee Maker
+  prices:
+  - currency: NPR
+    base_price: 9000.00
+    discount_price: 8200.00
+  - currency: USD
+    base_price: 80.00
+    discount_price: 72.00
+  images: []
+  policies:
+  - title: Check-in / Check-out
+    description: Check-in from 14:00 PM, Check-out by 12:00 PM.

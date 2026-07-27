@@ -1,0 +1,29 @@
+hero_slides:
+- title: 'Nagarkot Zipline: Soaring Through The Himalayas'
+  subtitle: "The Superman Zip Line — Best & Longest Zipline in Nepal"
+  cta_text: Book Zipline Adventure
+  cta_url: /rooms/
+  order: 1
+  overlay_opacity: 0.6
+  is_active: true
+- title: Traditional Newari Comfort & Contemporary Elegance
+  subtitle: Handcrafted Brick & Artisanal Wooden Furniture
+  cta_text: Explore Chambers
+  cta_url: /rooms/
+  order: 2
+  overlay_opacity: 0.6
+  is_active: true
+- title: Organic Farm-to-Table Culinary Experience
+  subtitle: Nepali Khaja Sets, Signature Dishes & Himalayan Views
+  cta_text: View Dining Menu
+  cta_url: /dining/
+  order: 3
+  overlay_opacity: 0.6
+  is_active: true
+- title: Kamal Pokhari Lotus Pond & Sunrise Mountain Views
+  subtitle: Relax & Rejuvenate in Nagarkot's Tranquil Hills
+  cta_text: Contact Us
+  cta_url: /contact/
+  order: 4
+  overlay_opacity: 0.6
+  is_active: true

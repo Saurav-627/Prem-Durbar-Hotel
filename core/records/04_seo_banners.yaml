@@ -1,0 +1,47 @@
+seo_banners:
+- path: /
+  meta_title: Prem Durbar Hotel & Nagarkot Zipline | Nagarkot, Nepal
+  meta_description: Experience traditional Newari brick luxury rooms, organic farm-to-table dining, and Himalayan views at Prem Durbar Hotel in Nagarkot.
+  twitter_card: summary_large_image
+- path: /about/
+  meta_title: Our Story & Team | Prem Durbar Hotel Nagarkot
+  meta_description: Learn about our Newari brick and wood architecture, Lotus Pond view, authentic hospitality team, and high-altitude adventure in Nagarkot.
+  header_subtitle: Heritage & Hospitality
+  header_title: Our Story & Team
+  header_description: Blending traditional Kathmandu valley craftsmanship with Himalayan hospitality.
+- path: /rooms/
+  meta_title: Rooms & Accommodation | Prem Durbar Hotel
+  meta_description: Browse our Standard, Family, and Deluxe rooms with jungle and city views, featuring natural stone bathrooms and handcrafted Newari decor.
+  header_subtitle: Chambers & Suites
+  header_title: Rooms & Accommodation
+  header_description: Designed with natural brick, handcrafted wooden furniture, and views of Nagarkot's valleys.
+- path: /dining/
+  meta_title: Gastronomy & Dining Menu | Prem Durbar Hotel
+  meta_description: Enjoy authentic Nepali Khaja sets, Mutton & Chicken Thalis, Kodo Nachos Salsa, Haasko Chhoyela, and continental delicacies.
+  header_subtitle: Culinary Experiences
+  header_title: Gastronomy & Dining
+  header_description: Indulge in organic farm-to-table dining and Nepali culinary delights in Nagarkot.
+- path: /zipline/
+  meta_title: Nagarkot Zipline | The Superman Zip Line Adventure
+  meta_description: Nepal's longest and most adventurous Superman Zip Line in Nagarkot. Certified international safety and soaring Himalayan flights.
+  header_subtitle: High Altitude Flying
+  header_title: Nagarkot Zipline
+  header_description: Soar above pine forests with panoramic views of Mount Everest and Nagarkot valleys.
+- path: /sustainability/
+  meta_title: Sustainability & Eco Policies | Prem Durbar Hotel
+  meta_description: "Discover our environmental commitments: solar heating, water conservation, local organic sourcing, and community policies."
+  header_subtitle: Responsible Tourism
+  header_title: Sustainability & Eco Policy
+  header_description: Preserving Nagarkot's natural ecology and empowering local mountain communities.
+- path: /gallery/
+  meta_title: Photo & Video Gallery | Prem Durbar Hotel
+  meta_description: View photos of Prem Durbar Hotel, dining, rooms, and natural surroundings.
+  header_subtitle: Visual Tour
+  header_title: Resort Gallery
+  header_description: Explore our rooms, dining lounge, and panoramic mountain views.
+- path: /contact/
+  meta_title: Contact & Location | Prem Durbar Hotel Nagarkot
+  meta_description: Get in touch with Prem Durbar Hotel in Nagarkot for room reservations and inquiries.
+  header_subtitle: Get In Touch
+  header_title: Contact & Location
+  header_description: Located at Changunarayan-7, Zipline Marga-Hawelli, Nagarkot, Nepal.

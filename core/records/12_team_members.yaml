@@ -1,0 +1,16 @@
+team_members:
+- name: Prem Durbar Management
+  role: Executive Hospitality Leadership
+  bio: Dedicated to preserving Newari heritage craftsmanship, sustainable tourism, and delivering high-altitude Himalayan hospitality in Nagarkot.
+  order: 1
+  is_published: true
+- name: Adventure Zipline Crew
+  role: Certified Flight & Safety Instructors
+  bio: Internationally trained zip line flight operators ensuring 100% safety standards on Nepal’s longest Superman Zip Line.
+  order: 2
+  is_published: true
+- name: Culinary & Dining Team
+  role: Farm-to-Table Master Chefs
+  bio: Crafting authentic Nepali Khaja sets, Mutton & Chicken Thalis, Kodo Salsa, and continental gourmets with organic local produce.
+  order: 3
+  is_published: true

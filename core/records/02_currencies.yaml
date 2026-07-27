@@ -1,0 +1,31 @@
+currencies:
+- iso_code: NPR
+  name: Nepalese Rupee
+  symbol: Rs.
+  is_published: true
+  sequence: 1
+  is_custom: false
+- iso_code: USD
+  name: US Dollar
+  symbol: $
+  is_published: true
+  sequence: 2
+  is_custom: false
+- iso_code: EUR
+  name: Euro
+  symbol: €
+  is_published: true
+  sequence: 3
+  is_custom: false
+- iso_code: GBP
+  name: British Pound
+  symbol: £
+  is_published: true
+  sequence: 4
+  is_custom: false
+- iso_code: INR
+  name: Indian Rupee
+  symbol: ₹
+  is_published: true
+  sequence: 5
+  is_custom: false

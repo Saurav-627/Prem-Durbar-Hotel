@@ -1,0 +1,13 @@
+room_categories:
+- name: Standard Rooms
+  slug: standard
+  order: 1
+  is_published: true
+- name: Family Rooms
+  slug: family
+  order: 2
+  is_published: true
+- name: Deluxe Rooms
+  slug: deluxe
+  order: 3
+  is_published: true

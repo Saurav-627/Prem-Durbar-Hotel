@@ -1,0 +1,81 @@
+navigation_menus:
+- name: About Us
+  url: /about/
+  position: header
+  order: 1
+  is_published: true
+- name: Rooms
+  url: /rooms/
+  position: header
+  order: 2
+  is_published: true
+- name: Dining Items
+  url: /dining/
+  position: header
+  order: 3
+  is_published: true
+- name: Zipline
+  url: /zipline/
+  position: header
+  order: 4
+  is_published: true
+- name: Sustainability
+  url: /sustainability/
+  position: header
+  order: 5
+  is_published: true
+- name: Gallery
+  url: /gallery/
+  position: header
+  order: 6
+  is_published: true
+- name: Contact
+  url: /contact/
+  position: header
+  order: 7
+  is_published: true
+- name: About Our Story
+  url: /about/
+  position: footer_links
+  order: 1
+  is_published: true
+- name: Book A Room
+  url: /rooms/
+  position: footer_links
+  order: 2
+  is_published: true
+- name: Food & Dining Menu
+  url: /dining/
+  position: footer_links
+  order: 3
+  is_published: true
+- name: Nagarkot Zipline
+  url: /zipline/
+  position: footer_links
+  order: 4
+  is_published: true
+- name: Eco Sustainability
+  url: /sustainability/
+  position: footer_links
+  order: 5
+  is_published: true
+- name: Contact Desk
+  url: /contact/
+  position: footer_links
+  order: 6
+  is_published: true
+- name: Booking.com
+  url: https://booking.com
+  position: footer_ota
+  order: 1
+  is_published: true
+- name: Agoda Partner
+  url: https://agoda.com
+  position: footer_ota
+  order: 2
+  is_published: true
+- name: Tripadvisor Reviews
+  url: https://tripadvisor.com
+  position: footer_ota
+  order: 3
+  is_published: true

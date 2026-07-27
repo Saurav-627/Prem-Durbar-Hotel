@@ -1,0 +1,19 @@
+testimonials:
+- guest_name: Rohan Sharma
+  rating: 5
+  review_text: The Nagarkot zipline experience was thrilling! Combined with the traditional Newari brick room and hot fresh Nepali thali, Prem Durbar exceeded all expectations.
+  source: tripadvisor
+  is_featured: true
+  is_published: true
+- guest_name: Sarah Jenkins
+  rating: 5
+  review_text: Stunning mountain views, wonderful farm-to-table breakfast, and peaceful room overlooking the jungle. Will definitely return!
+  source: google
+  is_featured: true
+  is_published: true
+- guest_name: Anil & Family
+  rating: 5
+  review_text: Our family room was clean, spacious, and beautifully crafted with wooden furniture. The kids loved the zipline!
+  source: booking
+  is_featured: true
+  is_published: true

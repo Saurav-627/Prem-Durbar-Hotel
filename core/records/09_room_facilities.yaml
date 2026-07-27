@@ -1,0 +1,21 @@
+room_facilities:
+- name: Air Conditioning
+  icon_class: fa-solid fa-wind
+- name: High-Speed Wi-Fi
+  icon_class: fa-solid fa-wifi
+- name: Hot Water
+  icon_class: fa-solid fa-shower
+- name: Hair Dryer
+  icon_class: fa-solid fa-fan
+- name: Bathroom Robe
+  icon_class: fa-solid fa-vest
+- name: Shampoo & Toiletries
+  icon_class: fa-solid fa-pump-soap
+- name: Artisanal Wooden Furniture
+  icon_class: fa-solid fa-couch
+- name: Handcrafted Bed Linens
+  icon_class: fa-solid fa-bed
+- name: Carved Windows & Lotus Pond View
+  icon_class: fa-solid fa-mountain
+- name: Tea / Coffee Maker
+  icon_class: fa-solid fa-mug-hot
