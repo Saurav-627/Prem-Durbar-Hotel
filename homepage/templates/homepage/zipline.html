@@ -6,19 +6,19 @@
 
 {% block content %}
 <!-- Zipline Hero Banner -->
-<div class="relative py-28 md:py-36 bg-adventureGradient text-white overflow-hidden shadow-luxury">
+<div class="relative py-16 sm:py-28 md:py-36 bg-adventureGradient text-white overflow-hidden shadow-luxury">
     <div class="absolute inset-0 bg-cover bg-center opacity-30 scale-105 transition-transform duration-1000"
          style="background-image: url('{% if seo_raw and seo_raw.header_image %}{{ seo_raw.header_image.url }}{% else %}https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?q=80&w=1920&auto=format&fit=crop{% endif %}');"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
     
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <span class="animate__animated animate__fadeInDown inline-block px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest bg-white/20 text-brand-champagne border border-white/30 mb-4 backdrop-blur-md shadow-glow">
+        <span class="animate__animated animate__fadeInDown inline-block px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-widest bg-white/20 text-brand-champagne border border-white/30 mb-3 sm:mb-4 backdrop-blur-md shadow-glow">
             <i class="fa-solid fa-bolt mr-1 animate__animated animate__flash animate__infinite animate__slower"></i> {{ seo_raw.header_subtitle|default:zipline_cms.hero_subtitle }}
         </span>
-        <h1 class="animate__animated animate__zoomIn font-heading text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white mb-6">
+        <h1 class="animate__animated animate__zoomIn font-heading text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white mb-4 sm:mb-6">
             {{ seo_raw.header_title|default:zipline_cms.hero_title }}
         </h1>
-        <p class="animate__animated animate__fadeInUp animate__delay-1s max-w-3xl mx-auto text-base sm:text-lg text-brand-champagne/95 font-light leading-relaxed">
+        <p class="animate__animated animate__fadeInUp animate__delay-1s max-w-3xl mx-auto text-sm sm:text-lg text-brand-champagne/95 font-light leading-relaxed">
             {{ seo_raw.header_description|default:zipline_cms.hero_description }}
         </p>
     </div>
@@ -26,10 +26,10 @@
 
 <!-- Video Preview Showcase Section -->
 {% if zipline_cms.video_file or zipline_cms.video_url %}
-<section class="py-12 text-white relative">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+<section class="py-8 sm:py-12 text-white relative">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3 sm:space-y-4">
         <span class="text-xs font-bold uppercase tracking-widest text-brand-gold"><i class="fa-solid fa-play-circle mr-1"></i> Live Action Video Preview</span>
-        <h3 class="font-heading text-2xl sm:text-3xl font-bold text-brand-gold">Experience the Nagarkot Zipline Flight</h3>
+        <h3 class="font-heading text-xl sm:text-3xl font-bold text-brand-gold">Experience the Nagarkot Zipline Flight</h3>
         <div class="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-brand-gold/30 bg-black">
             {% if zipline_cms.video_file %}
             <video controls autoplay loop muted class="w-full h-full object-cover">
@@ -45,51 +45,51 @@
 {% endif %}
 
 <!-- Main Zipline Content & Specs -->
-<section class="py-20 md:py-28"
+<section class="py-12 sm:py-20 md:py-28"
          :class="{ 'bg-brand-light text-brand-text': currentTheme === 'light', 'bg-brand-forestDark text-brand-champagne': currentTheme !== 'light' }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
             
-            <div class="space-y-6 animate__animated animate__fadeInLeft">
+            <div class="space-y-4 sm:space-y-6 animate__animated animate__fadeInLeft">
                 <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-brand-gold">
                     <span class="w-8 h-[2px] bg-brand-gold"></span>
                     <span>{{ zipline_cms.overview_subtitle }}</span>
                 </div>
-                <h2 class="font-heading text-3xl sm:text-4xl font-bold tracking-tight">
+                <h2 class="font-heading text-2xl sm:text-4xl font-bold tracking-tight">
                     {{ zipline_cms.overview_title }}
                 </h2>
-                <p class="text-base leading-relaxed opacity-85 whitespace-pre-line">
+                <p class="text-sm sm:text-base leading-relaxed opacity-85 whitespace-pre-line">
                     {{ zipline_cms.overview_content }}
                 </p>
 
                 <!-- Spec List -->
-                <div class="grid grid-cols-2 gap-4 pt-4 text-center">
-                    <div class="p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
+                <div class="grid grid-cols-2 gap-3 sm:gap-4 pt-2 sm:pt-4 text-center">
+                    <div class="p-3 sm:p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
                          :class="{ 'bg-white border-brand-lightgray': currentTheme === 'light', 'bg-brand-forest border-brand-gold/20': currentTheme !== 'light' }">
-                        <span class="block text-xl font-bold text-brand-gold">{{ zipline_cms.spec_length }}</span>
-                        <span class="text-xs opacity-75">{{ zipline_cms.spec_length_label|default:"Flight Length" }}</span>
+                        <span class="block text-lg sm:text-xl font-bold text-brand-gold">{{ zipline_cms.spec_length }}</span>
+                        <span class="text-[11px] sm:text-xs opacity-75">{{ zipline_cms.spec_length_label|default:"Flight Length" }}</span>
                     </div>
-                    <div class="p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
+                    <div class="p-3 sm:p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
                          :class="{ 'bg-white border-brand-lightgray': currentTheme === 'light', 'bg-brand-forest border-brand-gold/20': currentTheme !== 'light' }">
-                        <span class="block text-xl font-bold text-brand-gold">{{ zipline_cms.spec_speed }}</span>
-                        <span class="text-xs opacity-75">{{ zipline_cms.spec_speed_label|default:"Top Speed" }}</span>
+                        <span class="block text-lg sm:text-xl font-bold text-brand-gold">{{ zipline_cms.spec_speed }}</span>
+                        <span class="text-[11px] sm:text-xs opacity-75">{{ zipline_cms.spec_speed_label|default:"Top Speed" }}</span>
                     </div>
-                    <div class="p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
+                    <div class="p-3 sm:p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
                          :class="{ 'bg-white border-brand-lightgray': currentTheme === 'light', 'bg-brand-forest border-brand-gold/20': currentTheme !== 'light' }">
-                        <span class="block text-xl font-bold text-brand-gold">{{ zipline_cms.spec_safety }}</span>
-                        <span class="text-xs opacity-75">{{ zipline_cms.spec_safety_label|default:"Safety Standard" }}</span>
+                        <span class="block text-lg sm:text-xl font-bold text-brand-gold">{{ zipline_cms.spec_safety }}</span>
+                        <span class="text-[11px] sm:text-xs opacity-75">{{ zipline_cms.spec_safety_label|default:"Safety Standard" }}</span>
                     </div>
-                    <div class="p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
+                    <div class="p-3 sm:p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
                          :class="{ 'bg-white border-brand-lightgray': currentTheme === 'light', 'bg-brand-forest border-brand-gold/20': currentTheme !== 'light' }">
-                        <span class="block text-xl font-bold text-brand-gold">{{ zipline_cms.spec_elevation }}</span>
-                        <span class="text-xs opacity-75">{{ zipline_cms.spec_elevation_label|default:"Altitude Elevation" }}</span>
+                        <span class="block text-lg sm:text-xl font-bold text-brand-gold">{{ zipline_cms.spec_elevation }}</span>
+                        <span class="text-[11px] sm:text-xs opacity-75">{{ zipline_cms.spec_elevation_label|default:"Altitude Elevation" }}</span>
                     </div>
                 </div>
 
-                <div class="pt-4">
+                <div class="pt-2 sm:pt-4">
                     <a href="{{ zipline_cms.booking_url|default:'https://www.facebook.com/ziplinenagarkot' }}" target="_blank" 
-                       class="btn-gold-gradient inline-flex items-center gap-2 px-8 py-4 text-brand-forestDark font-bold rounded-xl text-sm transition transform hover:scale-105 shadow-glow">
+                       class="btn-gold-gradient w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 text-brand-forestDark font-bold rounded-xl text-xs sm:text-sm transition transform hover:scale-105 shadow-glow text-center">
                         <i class="fa-solid fa-external-link mr-1"></i>
                         <span>{{ zipline_cms.booking_button_text|default:"Book Zipline Flight / Facebook Page" }}</span>
                     </a>
@@ -100,13 +100,13 @@
             <div class="relative animate__animated animate__fadeInRight">
                 <img src="{% if zipline_cms.overview_image %}{{ zipline_cms.overview_image.url }}{% else %}https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?q=80&w=800&auto=format&fit=crop{% endif %}" 
                      alt="Nagarkot Zipline Flight" 
-                     class="rounded-3xl shadow-luxury w-full h-[450px] object-cover hover:scale-[1.02] transition-transform duration-500">
-                <div class="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-black/80 backdrop-blur-md border border-white/20 text-white flex items-center justify-between">
+                     class="rounded-3xl shadow-luxury w-full h-64 sm:h-[400px] md:h-[450px] object-cover hover:scale-[1.02] transition-transform duration-500">
+                <div class="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 right-3 sm:right-6 p-3 sm:p-4 rounded-2xl bg-black/80 backdrop-blur-md border border-white/20 text-white flex items-center justify-between">
                     <div>
-                        <h4 class="font-heading font-bold text-sm">{{ zipline_cms.image_caption_title|default:"Superman Flying Harness" }}</h4>
-                        <p class="text-xs text-brand-champagne">{{ zipline_cms.image_caption_subtitle|default:"Head-first aerial view of Everest range" }}</p>
+                        <h4 class="font-heading font-bold text-xs sm:text-sm">{{ zipline_cms.image_caption_title|default:"Superman Flying Harness" }}</h4>
+                        <p class="text-[10px] sm:text-xs text-brand-champagne">{{ zipline_cms.image_caption_subtitle|default:"Head-first aerial view of Everest range" }}</p>
                     </div>
-                    <span class="px-3 py-1 bg-brand-adventure rounded-lg text-xs font-bold uppercase">Popular</span>
+                    <span class="px-2.5 py-1 bg-brand-adventure rounded-lg text-[10px] sm:text-xs font-bold uppercase shrink-0">Popular</span>
                 </div>
             </div>
 

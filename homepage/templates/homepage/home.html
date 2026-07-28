@@ -2,7 +2,7 @@
 
 {% block content %}
 <!-- HERO SLIDESHOW SECTION -->
-<section class="relative h-[90vh] overflow-hidden" x-data="{ 
+<section class="relative h-[65vh] sm:h-[80vh] md:h-[90vh] min-h-[460px] overflow-hidden" x-data="{ 
     activeSlide: 0, 
     slidesCount: {{ hero_slides|length|default:3 }},
     next() { this.activeSlide = (this.activeSlide + 1) % this.slidesCount },
@@ -19,29 +19,29 @@
          x-transition:leave-start="opacity-100 scale-100"
          x-transition:leave-end="opacity-0 scale-95"
          class="absolute inset-0 w-full h-full bg-cover bg-center"
-         style="background-image: url('{% if slide.background_image %}{{ slide.background_image.url }}{% else %}https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1920{% endif %}'); display: none;">
+         style="background-image: url('{% if slide.background_image %}{{ slide.background_image.url }}{% else %}https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920{% endif %}'); display: none;">
         
         <!-- Overlay -->
         <div class="absolute inset-0 bg-black" style="opacity: {{ slide.overlay_opacity|default:0.50 }};"></div>
         
         <!-- Hero Caption -->
         <div class="absolute inset-0 flex items-center justify-center text-center p-4">
-            <div class="max-w-4xl space-y-6">
-                <span class="animate__animated animate__fadeInDown text-xs sm:text-sm font-semibold uppercase tracking-widest text-luxuryGold-300">
+            <div class="max-w-4xl space-y-4 sm:space-y-6">
+                <span class="animate__animated animate__fadeInDown text-[10px] sm:text-sm font-semibold uppercase tracking-widest text-luxuryGold-300">
                     {{ slide.subtitle }}
                 </span>
-                <h1 class="animate__animated animate__fadeInUp font-luxury-title text-4xl sm:text-6xl md:text-7xl font-bold text-white leading-tight">
+                <h1 class="animate__animated animate__fadeInUp font-luxury-title text-3xl sm:text-6xl md:text-7xl font-bold text-white leading-tight">
                     {{ slide.title }}
                 </h1>
                 
-                <div class="flex items-center justify-center gap-4 pt-6 animate__animated animate__zoomIn">
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-4 sm:pt-6 animate__animated animate__zoomIn">
                     <a href="{{ slide.cta_url }}" 
-                       class="btn-gold-gradient px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-brand-forestDark rounded-full shadow-glow transition-all">
+                       class="btn-gold-gradient w-full sm:w-auto px-8 py-3.5 text-xs font-bold uppercase tracking-wider text-brand-forestDark rounded-full shadow-glow transition-all text-center">
                         {{ slide.cta_text }}
                     </a>
                     {% if slide.cta2_text %}
                     <a href="{{ slide.cta2_url }}" 
-                       class="px-8 py-3.5 text-xs font-semibold uppercase tracking-wider rounded-full border border-white text-white hover:bg-white hover:text-black transition-all duration-300">
+                       class="w-full sm:w-auto px-8 py-3.5 text-xs font-semibold uppercase tracking-wider rounded-full border border-white text-white hover:bg-white hover:text-black transition-all duration-300 text-center">
                         {{ slide.cta2_text }}
                     </a>
                     {% endif %}
@@ -51,14 +51,14 @@
     </div>
     {% empty %}
     <!-- Default Fallback Slide if no database record exists -->
-    <div class="absolute inset-0 w-full h-full bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1920');">
+    <div class="absolute inset-0 w-full h-full bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920');">
         <div class="absolute inset-0 bg-black/60"></div>
         <div class="absolute inset-0 flex items-center justify-center text-center p-4">
-            <div class="max-w-4xl space-y-6">
-                <span class="text-sm font-semibold uppercase tracking-widest text-luxuryGold-300">Welcome to Paradise</span>
-                <h1 class="font-luxury-title text-5xl sm:text-7xl font-bold text-white">Experience Elite Sanctuary</h1>
-                <p class="text-lg text-white/80 max-w-xl mx-auto">Unparalleled luxury and state-of-the-art service in Bara, Nepal.</p>
-                <div class="pt-6">
+            <div class="max-w-4xl space-y-4 sm:space-y-6">
+                <span class="text-xs sm:text-sm font-semibold uppercase tracking-widest text-luxuryGold-300">Welcome to Paradise</span>
+                <h1 class="font-luxury-title text-3xl sm:text-7xl font-bold text-white">Experience Elite Sanctuary</h1>
+                <p class="text-sm sm:text-lg text-white/80 max-w-xl mx-auto">Unparalleled luxury and state-of-the-art service in Nagarkot, Nepal.</p>
+                <div class="pt-4 sm:pt-6">
                     <a href="{% url 'rooms:room_list' %}" class="btn-gold-gradient inline-block px-8 py-3.5 text-xs font-bold uppercase tracking-wider rounded-full text-white shadow-md">Explore Rooms</a>
                 </div>
             </div>
@@ -68,17 +68,17 @@
 
     <!-- Carousel Controls -->
     {% if hero_slides %}
-    <button @click="prev()" class="absolute left-6 top-1/2 -translate-y-1/2 p-3 rounded-full border border-white/20 hover:bg-white/10 text-white transition-all">
+    <button @click="prev()" class="absolute left-2 sm:left-6 top-1/2 -translate-y-1/2 p-2 sm:p-3 rounded-full border border-white/20 hover:bg-white/10 text-white transition-all text-xs sm:text-base">
         <i class="fa-solid fa-chevron-left"></i>
     </button>
-    <button @click="next()" class="absolute right-6 top-1/2 -translate-y-1/2 p-3 rounded-full border border-white/20 hover:bg-white/10 text-white transition-all">
+    <button @click="next()" class="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 p-2 sm:p-3 rounded-full border border-white/20 hover:bg-white/10 text-white transition-all text-xs sm:text-base">
         <i class="fa-solid fa-chevron-right"></i>
     </button>
     {% endif %}
 </section>
 
-<!-- REAL-TIME BOOKING SEARCH WIDGET -->
-<section class="relative max-w-6xl mx-auto px-4 -mt-16 z-30 animate__animated animate__fadeInUp">
+<!-- REAL-TIME BOOKING SEARCH WIDGET (Hidden on Mobile) -->
+<section class="hidden md:block relative max-w-6xl mx-auto px-4 -mt-16 z-30 animate__animated animate__fadeInUp">
     <div class="rounded-2xl p-6 sm:p-8 border shadow-2xl backdrop-blur-xl"
          :class="{
              'bg-white border-gray-200': currentTheme === 'light',
@@ -136,8 +136,8 @@
 
 <!-- ABOUT PREVIEW SECTION -->
 {% if about_preview %}
-<section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+<section class="py-12 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
         <!-- Visuals Column -->
         <div class="relative group" data-animate="fadeInLeft">
            <div class="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-brand-gold/30 bg-black"> 
@@ -151,18 +151,18 @@
                 {% else %}
                 <div class="overflow-hidden rounded-2xl border border-amber-900/10">
                     <img src="{% if about_preview.image %}{{ about_preview.image.url }}{% else %}https://images.unsplash.com/photo-1571896349842-33c89424de2d?q=80&w=800{% endif %}" 
-                         alt="About hotel" class="w-full h-[450px] object-cover hover:scale-105 duration-700">
+                          alt="About hotel" class="w-full h-64 sm:h-[450px] object-cover hover:scale-105 duration-700">
                 </div>
                 {% endif %}
             </div>
         </div>
 
         <!-- Text Details Column -->
-        <div class="space-y-6" data-animate="fadeInRight">
+        <div class="space-y-4 sm:space-y-6" data-animate="fadeInRight">
             <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-500">
                 {{ about_preview.subtitle }}
             </span>
-            <h2 class="font-luxury-title text-4xl sm:text-4xl font-bold leading-tight">
+            <h2 class="font-luxury-title text-3xl sm:text-4xl font-bold leading-tight">
                 {{ about_preview.title }}
             </h2>
             <div class="text-sm opacity-80 leading-relaxed space-y-4">
@@ -170,22 +170,22 @@
             </div>
 
             <!-- Statistics Counters with Micro-animations -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-6 pt-6 border-t border-amber-900/10">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 pt-6 border-t border-amber-900/10">
                 <div class="text-center hover:scale-105 duration-300">
-                    <h4 class="font-luxury-title text-3xl font-bold text-luxuryGold-400">{{ about_preview.stat1_value }}</h4>
-                    <p class="text-xs uppercase tracking-wider opacity-75 mt-1">{{ about_preview.stat1_label }}</p>
+                    <h4 class="font-luxury-title text-2xl sm:text-3xl font-bold text-luxuryGold-400">{{ about_preview.stat1_value }}</h4>
+                    <p class="text-[10px] sm:text-xs uppercase tracking-wider opacity-75 mt-1">{{ about_preview.stat1_label }}</p>
                 </div>
                 <div class="text-center hover:scale-105 duration-300">
-                    <h4 class="font-luxury-title text-3xl font-bold text-luxuryGold-400">{{ about_preview.stat2_value }}</h4>
-                    <p class="text-xs uppercase tracking-wider opacity-75 mt-1">{{ about_preview.stat2_label }}</p>
+                    <h4 class="font-luxury-title text-2xl sm:text-3xl font-bold text-luxuryGold-400">{{ about_preview.stat2_value }}</h4>
+                    <p class="text-[10px] sm:text-xs uppercase tracking-wider opacity-75 mt-1">{{ about_preview.stat2_label }}</p>
                 </div>
                 <div class="text-center hover:scale-105 duration-300">
-                    <h4 class="font-luxury-title text-3xl font-bold text-luxuryGold-400">{{ about_preview.stat3_value }}</h4>
-                    <p class="text-xs uppercase tracking-wider opacity-75 mt-1">{{ about_preview.stat3_label }}</p>
+                    <h4 class="font-luxury-title text-2xl sm:text-3xl font-bold text-luxuryGold-400">{{ about_preview.stat3_value }}</h4>
+                    <p class="text-[10px] sm:text-xs uppercase tracking-wider opacity-75 mt-1">{{ about_preview.stat3_label }}</p>
                 </div>
                 <div class="text-center hover:scale-105 duration-300">
-                    <h4 class="font-luxury-title text-3xl font-bold text-luxuryGold-400">{{ about_preview.stat4_value }}</h4>
-                    <p class="text-xs uppercase tracking-wider opacity-75 mt-1">{{ about_preview.stat4_label }}</p>
+                    <h4 class="font-luxury-title text-2xl sm:text-3xl font-bold text-luxuryGold-400">{{ about_preview.stat4_value }}</h4>
+                    <p class="text-[10px] sm:text-xs uppercase tracking-wider opacity-75 mt-1">{{ about_preview.stat4_label }}</p>
                 </div>
             </div>
         </div>
@@ -194,17 +194,17 @@
 {% endif %}
 
 <!-- FEATURED ROOMS SHOWCASE -->
-<section class="py-24 border-t border-brand-primary/10"
+<section class="py-12 sm:py-24 border-t border-brand-primary/10"
          :class="{ 'bg-[#EEF5F0]': currentTheme === 'light', 'bg-[#0A2017]': currentTheme !== 'light' }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div class="text-center max-w-2xl mx-auto space-y-4 mb-16" data-animate="fadeInUp">
+        <div class="text-center max-w-2xl mx-auto space-y-4 mb-10 sm:mb-16" data-animate="fadeInUp">
             <span class="text-xs font-semibold tracking-widest uppercase text-brand-primaryLight">Premium Sanctuary</span>
-            <h2 class="font-luxury-title text-4xl sm:text-5xl font-bold">Rooms & Suites</h2>
+            <h2 class="font-luxury-title text-3xl sm:text-5xl font-bold">Rooms & Suites</h2>
             <p class="text-sm opacity-80">Explore our signature guest chambers designed for ultimate relaxation and comfort.</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             {% for room in featured_rooms %}
             <div class="rounded-2xl overflow-hidden border shadow-lg group hover:translate-y-[-8px] duration-500 flex flex-col"
                  data-animate="fadeInUp"
@@ -213,8 +213,8 @@
                      'bg-[#1A3A32] border-brand-primary/20 text-white': currentTheme !== 'light'
                  }">
                 <!-- Room Image cover -->
-                <div class="relative h-64 overflow-hidden">
-                    <img src="{% if room.images.first and room.images.first.image %}{{ room.images.first.image.url }}{% else %}https://images.unsplash.com/photo-1618773928121-c32242e63f39?q=80&w=600{% endif %}" 
+                <div class="relative h-56 sm:h-64 overflow-hidden">
+                    <img src="{% if room.images.first and room.images.first.image %}{{ room.images.first.image.url }}{% else %}https://images.unsplash.com/photo-1590490360182-c33d57733427?q=80&w=600{% endif %}" 
                           alt="{{ room.title }}" class="w-full h-full object-cover group-hover:scale-105 duration-700">
                     <span class="absolute top-4 right-4 px-4 py-1 text-xs font-semibold bg-black/70 text-luxuryGold-300 rounded-full">
                         {{ room.get_category_display }}
@@ -222,13 +222,13 @@
                 </div>
 
                 <!-- Room Details -->
-                <div class="p-6 flex-grow flex flex-col justify-between">
+                <div class="p-5 sm:p-6 flex-grow flex flex-col justify-between">
                     <div class="space-y-4">
-                        <div class="flex items-start justify-between gap-4">
+                        <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-1 sm:gap-4">
                             <h3 class="font-luxury-title text-xl font-bold tracking-wide">{{ room.title }}</h3>
-                            <div class="text-right flex-shrink-0 whitespace-nowrap">
+                            <div class="sm:text-right flex-shrink-0 whitespace-nowrap">
                                 <span class="text-xs uppercase opacity-75 font-semibold text-gray-500">From</span>
-                                <p class="text-2xl font-extrabold text-luxuryGold-800 font-luxury-title whitespace-nowrap">{{ room.currency.iso_code }} {{ room.current_price }}</p>
+                                <p class="text-xl sm:text-2xl font-extrabold text-luxuryGold-800 font-luxury-title whitespace-nowrap">{{ room.currency.iso_code }} {{ room.current_price }}</p>
                                 {% if room.active_seasonal %}
                                 <span class="text-[10px] text-green-600 font-semibold uppercase tracking-wide">🏷 {{ room.active_seasonal.name }}</span>
                                 {% endif %}
@@ -237,16 +237,16 @@
                         <p class="text-sm opacity-85 line-clamp-3 leading-relaxed">{{ room.description }}</p>
                         
                         <!-- Specs -->
-                        <div class="flex items-center gap-6 text-xs opacity-75 pt-2">
+                        <div class="flex items-center gap-4 sm:gap-6 text-xs opacity-75 pt-2">
                             <span><i class="fa-solid fa-maximize text-luxuryGold-400 mr-1.5"></i>{{ room.room_size }} sq.ft.</span>
                             <span><i class="fa-solid fa-user-group text-luxuryGold-400 mr-1.5"></i>Max {{ room.max_adults }} Guest(s)</span>
                         </div>
                     </div>
 
-                    <div class="pt-6 mt-6 border-t border-amber-900/10 flex items-center justify-between gap-4">
-                        <a href="{% url 'rooms:room_detail' room.slug %}" class="text-xs font-semibold uppercase tracking-wider hover:text-luxuryGold-400 transition-colors">Details & Specs</a>
+                    <div class="pt-4 sm:pt-6 mt-6 border-t border-amber-900/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
+                        <a href="{% url 'rooms:room_detail' room.slug %}" class="text-xs font-semibold uppercase tracking-wider hover:text-luxuryGold-400 transition-colors text-center sm:text-left">Details & Specs</a>
                         <a href="{% url 'rooms:room_detail' room.slug %}" 
-                           class="btn-gold-gradient px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-white shadow-md">
+                           class="btn-gold-gradient px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-white shadow-md text-center">
                             Reserve Chamber
                         </a>
                     </div>
@@ -263,82 +263,82 @@
 </section>
 
 <!-- SIGNATURE HOTEL FACILITIES SECTION -->
-<section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="text-center max-w-2xl mx-auto space-y-4 mb-16" data-animate="fadeInUp">
+<section class="py-12 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center max-w-2xl mx-auto space-y-4 mb-10 sm:mb-16" data-animate="fadeInUp">
         <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-500">Elite Hospitality</span>
-        <h2 class="font-luxury-title text-4xl sm:text-5xl font-bold">Resort Services & Facilities</h2>
+        <h2 class="font-luxury-title text-3xl sm:text-5xl font-bold">Resort Services & Facilities</h2>
         <p class="text-sm opacity-80">Indulge in our carefully curated amenities, designed to elevate your stay to a world-class level.</p>
     </div>
 
-    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-8">
         {% for fac in facilities %}
-        <div class="p-6 rounded-2xl border text-center space-y-3 hover:translate-y-[-4px] duration-300"
+        <div class="p-4 sm:p-6 rounded-2xl border text-center space-y-3 hover:translate-y-[-4px] duration-300"
              data-animate="fadeInUp"
              :class="{
                  'bg-white border-gray-200': currentTheme === 'light',
                  'bg-[#1A3A32] border-brand-primary/20 text-white': currentTheme !== 'light'
              }">
-            <div class="text-3xl text-luxuryGold-500">
+            <div class="text-2xl sm:text-3xl text-luxuryGold-500">
                 {% if fac.icon_class %}
                     <i class="{{ fac.icon_class }}"></i>
                 {% else %}
                     <i class="fa-solid fa-bell-concierge"></i>
                 {% endif %}
             </div>
-            <h4 class="font-semibold text-sm tracking-wide">{{ fac.name }}</h4>
+            <h4 class="font-semibold text-xs sm:text-sm tracking-wide">{{ fac.name }}</h4>
             {% if fac.description %}
-            <p class="text-xs opacity-75 leading-relaxed">{{ fac.description }}</p>
+            <p class="text-[11px] sm:text-xs opacity-75 leading-relaxed">{{ fac.description }}</p>
             {% endif %}
         </div>
         {% empty %}
         <!-- Defaults fallback -->
-        <div class="p-6 rounded-2xl border text-center space-y-3" data-animate="fadeInUp">
-            <div class="text-3xl text-luxuryGold-500"><i class="fa-solid fa-wifi"></i></div>
-            <h4 class="font-semibold text-sm">Ultra High-Speed Wifi</h4>
+        <div class="p-4 sm:p-6 rounded-2xl border text-center space-y-3" data-animate="fadeInUp">
+            <div class="text-2xl sm:text-3xl text-luxuryGold-500"><i class="fa-solid fa-wifi"></i></div>
+            <h4 class="font-semibold text-xs sm:text-sm">Ultra High-Speed Wifi</h4>
         </div>
-        <div class="p-6 rounded-2xl border text-center space-y-3" data-animate="fadeInUp">
-            <div class="text-3xl text-luxuryGold-500"><i class="fa-solid fa-bell-concierge"></i></div>
-            <h4 class="font-semibold text-sm">24/7 Concierge</h4>
+        <div class="p-4 sm:p-6 rounded-2xl border text-center space-y-3" data-animate="fadeInUp">
+            <div class="text-2xl sm:text-3xl text-luxuryGold-500"><i class="fa-solid fa-bell-concierge"></i></div>
+            <h4 class="font-semibold text-xs sm:text-sm">24/7 Concierge</h4>
         </div>
-        <div class="p-6 rounded-2xl border text-center space-y-3" data-animate="fadeInUp">
-            <div class="text-3xl text-luxuryGold-500"><i class="fa-solid fa-spa"></i></div>
-            <h4 class="font-semibold text-sm">Luxury Wellness Spa</h4>
+        <div class="p-4 sm:p-6 rounded-2xl border text-center space-y-3" data-animate="fadeInUp">
+            <div class="text-2xl sm:text-3xl text-luxuryGold-500"><i class="fa-solid fa-spa"></i></div>
+            <h4 class="font-semibold text-xs sm:text-sm">Luxury Wellness Spa</h4>
         </div>
-        <div class="p-6 rounded-2xl border text-center space-y-3" data-animate="fadeInUp">
-            <div class="text-3xl text-luxuryGold-500"><i class="fa-solid fa-square-parking"></i></div>
-            <h4 class="font-semibold text-sm">Valet Parking</h4>
+        <div class="p-4 sm:p-6 rounded-2xl border text-center space-y-3" data-animate="fadeInUp">
+            <div class="text-2xl sm:text-3xl text-luxuryGold-500"><i class="fa-solid fa-square-parking"></i></div>
+            <h4 class="font-semibold text-xs sm:text-sm">Valet Parking</h4>
         </div>
-        <div class="p-6 rounded-2xl border text-center space-y-3" data-animate="fadeInUp">
-            <div class="text-3xl text-luxuryGold-500"><i class="fa-solid fa-swimming-pool"></i></div>
-            <h4 class="font-semibold text-sm">Infinity Pool</h4>
+        <div class="p-4 sm:p-6 rounded-2xl border text-center space-y-3" data-animate="fadeInUp">
+            <div class="text-2xl sm:text-3xl text-luxuryGold-500"><i class="fa-solid fa-swimming-pool"></i></div>
+            <h4 class="font-semibold text-xs sm:text-sm">Infinity Pool</h4>
         </div>
-        <div class="p-6 rounded-2xl border text-center space-y-3" data-animate="fadeInUp">
-            <div class="text-3xl text-luxuryGold-500"><i class="fa-solid fa-utensils"></i></div>
-            <h4 class="font-semibold text-sm">Elite Restaurant</h4>
+        <div class="p-4 sm:p-6 rounded-2xl border text-center space-y-3" data-animate="fadeInUp">
+            <div class="text-2xl sm:text-3xl text-luxuryGold-500"><i class="fa-solid fa-utensils"></i></div>
+            <h4 class="font-semibold text-xs sm:text-sm">Elite Restaurant</h4>
         </div>
         {% endfor %}
     </div>
 </section>
 
-<section class="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden" x-data="{ 
+<section class="py-12 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-hidden" x-data="{ 
     activeIndex: 0, 
     itemsCount: {{ testimonials|length|default:1 }},
     next() { this.activeIndex = (this.activeIndex + 1) % this.itemsCount },
     prev() { this.activeIndex = (this.activeIndex - 1 + this.itemsCount) % this.itemsCount }
 }" x-init="if (itemsCount > 1) setInterval(() => next(), 6000)">
-    <div class="text-center max-w-2xl mx-auto space-y-4 mb-16" data-animate="fadeInUp">
+    <div class="text-center max-w-2xl mx-auto space-y-4 mb-10 sm:mb-16" data-animate="fadeInUp">
         <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-500">Guest Memoirs</span>
-        <h2 class="font-luxury-title text-4xl sm:text-5xl font-bold">What Our Guests Say</h2>
+        <h2 class="font-luxury-title text-3xl sm:text-5xl font-bold">What Our Guests Say</h2>
     </div>
 
     <!-- Review Slides -->
-    <div class="relative h-[300px] flex items-center justify-center max-w-4xl mx-auto" data-animate="zoomIn">
+    <div class="relative min-h-[260px] sm:min-h-[300px] flex items-center justify-center max-w-4xl mx-auto" data-animate="zoomIn">
         {% for test in testimonials %}
         <div x-show="activeIndex === {{ forloop.counter0 }}" 
              x-transition:enter="transition ease-out duration-500"
              x-transition:enter-start="opacity-0 scale-95"
              x-transition:enter-end="opacity-100 scale-100"
-             class="text-center space-y-6"
+             class="text-center space-y-6 w-full"
              style="display: none;">
             
             <div class="flex items-center justify-center gap-1.5 text-luxuryGold-500">
@@ -347,7 +347,7 @@
                 {% endfor %}
             </div>
             
-            <blockquote class="font-luxury-title text-lg sm:text-2xl leading-relaxed italic opacity-90 max-w-3xl">
+            <blockquote class="font-luxury-title text-base sm:text-2xl leading-relaxed italic opacity-90 max-w-3xl mx-auto px-2">
                 "{{ test.review_text }}"
             </blockquote>
             
@@ -363,7 +363,7 @@
         </div>
         {% empty %}
         <!-- Fallback testimonial -->
-        <div class="text-center space-y-6">
+        <div class="text-center space-y-6 w-full">
             <div class="flex items-center justify-center gap-1.5 text-luxuryGold-500">
                 <i class="fa-solid fa-star"></i>
                 <i class="fa-solid fa-star"></i>
@@ -371,7 +371,7 @@
                 <i class="fa-solid fa-star"></i>
                 <i class="fa-solid fa-star"></i>
             </div>
-            <blockquote class="font-luxury-title text-xl leading-relaxed italic opacity-95">
+            <blockquote class="font-luxury-title text-base sm:text-xl leading-relaxed italic opacity-95 max-w-3xl mx-auto px-2">
                 "An absolute sanctuary in Nepal. The service was top-tier, dining was immaculate, and the rooms were a dream of luxury."
             </blockquote>
             <h4 class="font-semibold text-sm">Lord Alistair Sterling (United Kingdom)</h4>
@@ -381,7 +381,7 @@
 
     <!-- Navigation dots -->
     {% if testimonials %}
-    <div class="flex items-center justify-center gap-3 pt-12">
+    <div class="flex items-center justify-center gap-3 pt-8 sm:pt-12">
         {% for t in testimonials %}
         <button @click="activeIndex = {{ forloop.counter0 }}" 
                 class="w-2.5 h-2.5 rounded-full transition-all duration-300"
@@ -391,21 +391,19 @@
     {% endif %}
 </section>
 
-
-
 <!-- NEWSLETTER / CTA APP MODULE -->
-<section class="py-24 border-t border-amber-900/10 text-center relative overflow-hidden bg-cover bg-center"
+<section class="py-12 sm:py-24 border-t border-amber-900/10 text-center relative overflow-hidden bg-cover bg-center"
          style="background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?q=80&w=1200');">
     <!-- Overlay -->
     <div class="absolute inset-0 bg-black/85"></div>
     <div class="relative max-w-4xl mx-auto px-4 space-y-6 z-10 text-white" data-animate="fadeInUp">
         <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-300">Newsletter Subscription</span>
-        <h2 class="font-luxury-title text-4xl sm:text-5xl font-bold text-white">Join The Elite Guild</h2>
+        <h2 class="font-luxury-title text-3xl sm:text-5xl font-bold text-white">Join The Elite Guild</h2>
         <p class="text-sm text-white/80 max-w-xl mx-auto leading-relaxed">
             Subscribe to receive exclusive offers, luxury travel logs, seasonal booking discounts, and resort news.
         </p>
         
-        <form class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto pt-6" x-data="{ success: false }" @submit.prevent="success = true">
+        <form class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto pt-4 sm:pt-6" x-data="{ success: false }" @submit.prevent="success = true">
             <input type="email" placeholder="Your Email Address" required
                    class="flex-grow px-4 py-3.5 rounded-full border border-white/20 bg-black/40 text-sm text-white focus:outline-none focus:ring-1 focus:ring-luxuryGold-400">
             <button type="submit" 

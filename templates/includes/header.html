@@ -16,16 +16,22 @@
             </div>
 
             <!-- Desktop Mega Menu Navigation -->
-            <nav class="hidden md:flex space-x-8 items-center">
+            <nav class="hidden md:flex space-x-8 items-center" x-data="{ currentPath: window.location.pathname }">
                 <!-- Home -->
-                <a href="{% url 'homepage:home' %}" data-nav class="text-sm font-medium tracking-wide uppercase hover:text-brand-primaryLight transition-colors pb-1">Home</a>
+                <a href="{% url 'homepage:home' %}" 
+                   class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                   :class="(currentPath === '/' || currentPath === '/home/') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
+                   {% if request.path == '/' or request.path == '/home/' %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase pb-1"{% endif %}>
+                    Home
+                </a>
                 
                 <!-- Dynamic Navigation Items -->
                 {% for item in header_menu %}
                     {% if item.children.all %}
                         <!-- Dropdown / Mega Menu -->
                         <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
-                            <button class="flex items-center gap-1 text-sm font-medium tracking-wide uppercase hover:text-brand-primaryLight transition-colors focus:outline-none">
+                            <button class="flex items-center gap-1 text-sm font-medium tracking-wide uppercase transition-colors focus:outline-none pb-1"
+                                    :class="(currentPath !== '/' && currentPath.includes('{{ item.url }}')) ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'">
                                 <span>{{ item.name }}</span>
                                 <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
                             </button>
@@ -43,23 +49,52 @@
                                  }">
                                 <div class="py-1">
                                     {% for child in item.children.all %}
-                                        <a href="{{ child.url }}" class="block px-4 py-3 text-sm tracking-wide hover:bg-brand-primary/20 hover:text-brand-secondary transition-colors">{{ child.name }}</a>
+                                        <a href="{{ child.url }}" 
+                                           class="block px-4 py-3 text-sm tracking-wide transition-colors"
+                                           :class="currentPath.includes('{{ child.url }}') ? (currentTheme === 'light' ? 'text-brand-primary font-bold bg-brand-primary/10' : 'text-brand-primaryLight font-bold bg-brand-primary/20') : 'hover:bg-brand-primary/20 hover:text-brand-secondary'">
+                                            {{ child.name }}
+                                        </a>
                                     {% endfor %}
                                 </div>
                             </div>
                         </div>
                     {% else %}
-                        <a href="{{ item.url }}" data-nav class="text-sm font-medium tracking-wide uppercase hover:text-brand-primaryLight transition-colors pb-1">{{ item.name }}</a>
+                        <a href="{{ item.url }}" 
+                           class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                           :class="((currentPath === '/' && '{{ item.url }}' === '/') || (currentPath !== '/' && '{{ item.url }}' !== '/' && currentPath.includes('{{ item.url }}'))) ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'">
+                            {{ item.name }}
+                        </a>
                     {% endif %}
                 {% empty %}
                     <!-- Fallback menus if database is empty -->
-                    <a href="{% url 'homepage:about' %}" class="text-sm font-medium tracking-wide uppercase hover:text-brand-primaryLight transition-colors">About Us</a>
-                    <a href="{% url 'rooms:room_list' %}" class="text-sm font-medium tracking-wide uppercase hover:text-brand-primaryLight transition-colors">Rooms & Suites</a>
-                    <a href="{% url 'dining:dining_list' %}" class="text-sm font-medium tracking-wide uppercase hover:text-brand-primaryLight transition-colors">Dining</a>
-                    <a href="{% url 'homepage:zipline' %}" class="text-sm font-medium tracking-wide uppercase hover:text-brand-primaryLight transition-colors">Zipline</a>
-                    <a href="{% url 'homepage:sustainability' %}" class="text-sm font-medium tracking-wide uppercase hover:text-brand-primaryLight transition-colors">Sustainability</a>
-                    <a href="{% url 'gallery:gallery_list' %}" class="text-sm font-medium tracking-wide uppercase hover:text-brand-primaryLight transition-colors">Gallery</a>
-                    <a href="{% url 'contact:contact_page' %}" class="text-sm font-medium tracking-wide uppercase hover:text-brand-primaryLight transition-colors">Contact</a>
+                    <a href="{% url 'homepage:about' %}" 
+                       class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                       :class="currentPath.includes('/about') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
+                       {% if '/about' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase pb-1"{% endif %}>About Us</a>
+                    <a href="{% url 'rooms:room_list' %}" 
+                       class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                       :class="currentPath.includes('/rooms') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
+                       {% if '/rooms' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase pb-1"{% endif %}>Rooms & Suites</a>
+                    <a href="{% url 'dining:dining_list' %}" 
+                       class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                       :class="currentPath.includes('/dining') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
+                       {% if '/dining' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase pb-1"{% endif %}>Dining</a>
+                    <a href="{% url 'homepage:zipline' %}" 
+                       class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                       :class="currentPath.includes('/zipline') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
+                       {% if '/zipline' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase pb-1"{% endif %}>Zipline</a>
+                    <a href="{% url 'homepage:sustainability' %}" 
+                       class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                       :class="currentPath.includes('/sustainability') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
+                       {% if '/sustainability' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase pb-1"{% endif %}>Sustainability</a>
+                    <a href="{% url 'gallery:gallery_list' %}" 
+                       class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                       :class="currentPath.includes('/gallery') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
+                       {% if '/gallery' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase pb-1"{% endif %}>Gallery</a>
+                    <a href="{% url 'contact:contact_page' %}" 
+                       class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                       :class="currentPath.includes('/contact') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
+                       {% if '/contact' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase pb-1"{% endif %}>Contact</a>
                 {% endfor %}
             </nav>
 
@@ -127,9 +162,59 @@
                 </a>
             </div>
 
-            <!-- Mobile Burger Menu Trigger -->
-            <div class="md:hidden flex items-center space-x-4">
-                <button @click="mobileMenuOpen = true" class="p-2 rounded-lg hover:bg-brand-primary/10 focus:outline-none transition-colors">
+            <!-- Mobile Currency Dropdown & Burger Menu Trigger -->
+            <div class="md:hidden flex items-center space-x-2">
+                <!-- Mobile Currency Switcher Dropdown (Left side of Hamburger) -->
+                <div class="relative" x-data="{ open: false }" @click.away="open = false">
+                    <button @click="open = !open" 
+                            class="p-2 rounded-full focus:outline-none transition-colors flex items-center gap-1 text-xs font-semibold"
+                            :class="currentTheme === 'light' ? 'hover:bg-gray-100 text-gray-800' : 'hover:bg-brand-primary/20 text-white'"
+                            title="Switch Currency">
+                        <i class="fa-solid fa-coins text-sm text-brand-primaryLight"></i>
+                        <span x-text="currentCurrency">{{ selected_currency }}</span>
+                        <i class="fa-solid fa-chevron-down text-[10px] opacity-70"></i>
+                    </button>
+                    
+                    <!-- Dropdown Menu -->
+                    <div x-show="open" 
+                         x-transition:enter="transition ease-out duration-150"
+                         x-transition:enter-start="opacity-0 translate-y-1"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-100"
+                         x-transition:leave-start="opacity-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 translate-y-1"
+                         class="absolute right-0 mt-2 w-48 rounded-xl shadow-xl border z-50 focus:outline-none py-1.5"
+                         :class="{
+                             'bg-white border-gray-200 text-gray-800': currentTheme === 'light',
+                             'bg-[#1A3A32] border-brand-primary/30 text-white': currentTheme !== 'light'
+                         }"
+                         style="display: none;">
+                        {% for c in published_currencies %}
+                        <button @click="setCurrency('{{ c.iso_code }}'); open = false" 
+                                class="flex w-full items-center justify-between px-3.5 py-2 text-left transition-colors text-xs"
+                                :class="currentTheme === 'light' ? 'hover:bg-gray-100' : 'hover:bg-brand-primary/20'">
+                            <div class="flex items-center gap-2">
+                                <span class="font-serif font-bold text-xs opacity-75 w-4 text-center">{{ c.symbol }}</span>
+                                <span>{{ c.name }} ({{ c.iso_code }})</span>
+                            </div>
+                            <span class="text-xs font-bold text-brand-primaryLight" x-show="currentCurrency === '{{ c.iso_code }}'">✓</span>
+                        </button>
+                        {% empty %}
+                        <button @click="setCurrency('USD'); open = false" 
+                                class="flex w-full items-center justify-between px-3.5 py-2 text-left transition-colors text-xs"
+                                :class="currentTheme === 'light' ? 'hover:bg-gray-100' : 'hover:bg-brand-primary/20'">
+                            <div class="flex items-center gap-2">
+                                <span class="font-serif font-bold text-xs opacity-75 w-4 text-center">$</span>
+                                <span>US Dollar (USD)</span>
+                            </div>
+                            <span class="text-xs font-bold text-brand-primaryLight" x-show="currentCurrency === 'USD'">✓</span>
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Mobile Hamburger Button -->
+                <button @click="mobileMenuOpen = true" class="p-2 rounded-lg hover:bg-brand-primary/10 focus:outline-none transition-colors" title="Toggle Navigation">
                     <i class="fa-solid fa-bars text-xl"></i>
                 </button>
             </div>

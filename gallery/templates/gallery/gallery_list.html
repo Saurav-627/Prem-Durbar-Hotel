@@ -1,18 +1,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<section class="py-20 border-b border-amber-900/10 text-center relative overflow-hidden bg-cover bg-center"
+<!-- HERO BANNER -->
+<section class="py-12 sm:py-20 border-b border-amber-900/10 text-center relative overflow-hidden bg-cover bg-center"
          style="background-image: url('{% if seo_raw and seo_raw.header_image %}{{ seo_raw.header_image.url }}{% else %}https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=1200{% endif %}');">
     <div class="absolute inset-0 bg-black/75"></div>
-    <div class="relative z-10 space-y-4">
-        <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-300">{{ seo_raw.header_subtitle|default:"Visual Tour" }}</span>
-        <h1 class="font-luxury-title text-4xl sm:text-6xl font-bold text-white leading-tight">{{ seo_raw.header_title|default:"Resort Photo Gallery" }}</h1>
-        <p class="text-sm text-white/80 max-w-xl mx-auto">{{ seo_raw.header_description|default:"Take a visual tour through our luxury suites, fine restaurants, and natural landscapes." }}</p>
+    <div class="relative z-10 space-y-3 sm:space-y-4 px-4">
+        <span class="text-[10px] sm:text-xs font-semibold tracking-widest uppercase text-luxuryGold-300">{{ seo_raw.header_subtitle|default:"Visual Tour" }}</span>
+        <h1 class="font-luxury-title text-3xl sm:text-6xl font-bold text-white leading-tight">{{ seo_raw.header_title|default:"Resort Photo Gallery" }}</h1>
+        <p class="text-xs sm:text-sm text-white/80 max-w-xl mx-auto">{{ seo_raw.header_description|default:"Take a visual tour through our luxury suites, fine restaurants, and natural landscapes." }}</p>
     </div>
 </section>
 
 <!-- GALLERY CONTROLLER -->
-<section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" 
+<section class="py-8 sm:py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" 
          x-data="{ 
              activeCategory: 'all',
              lightboxOpen: false,
@@ -25,24 +26,24 @@
              }
          }">
     
-    <!-- Category Filter Tabs -->
-    <div class="flex flex-wrap justify-center gap-3 mb-12">
+    <!-- Category Filter Tabs (Scrollable on Mobile) -->
+    <div class="flex items-center sm:justify-center gap-1.5 sm:gap-3 overflow-x-auto pb-3 sm:pb-0 mb-8 sm:mb-12 no-scrollbar scroll-smooth">
         <button @click="activeCategory = 'all'" 
-                class="px-5 py-2 text-xs font-semibold uppercase tracking-wider rounded-full border transition-all cursor-pointer"
-                :class="activeCategory === 'all' ? 'btn-gold-gradient text-white border-[#2D5A4A]' : 'border-brand-primary/20 hover:bg-brand-primary/10'">
+                class="px-4 sm:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold uppercase tracking-wider rounded-full border transition-all cursor-pointer shrink-0"
+                :class="activeCategory === 'all' ? 'btn-gold-gradient text-white border-[#2D5A4A] shadow-md' : 'border-brand-primary/20 hover:bg-brand-primary/10 opacity-80'">
             All Media
         </button>
         {% for cat in categories %}
         <button @click="activeCategory = '{{ cat.slug }}'" 
-                class="px-5 py-2 text-xs font-semibold uppercase tracking-wider rounded-full border transition-all cursor-pointer"
-                :class="activeCategory === '{{ cat.slug }}' ? 'btn-gold-gradient text-white border-[#2D5A4A]' : 'border-brand-primary/20 hover:bg-brand-primary/10'">
+                class="px-4 sm:px-5 py-1.5 sm:py-2 text-[11px] sm:text-xs font-semibold uppercase tracking-wider rounded-full border transition-all cursor-pointer shrink-0"
+                :class="activeCategory === '{{ cat.slug }}' ? 'btn-gold-gradient text-white border-[#2D5A4A] shadow-md' : 'border-brand-primary/20 hover:bg-brand-primary/10 opacity-80'">
             {{ cat.name }}
         </button>
         {% endfor %}
     </div>
 
-    <!-- MASONRY GRID -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    <!-- MASONRY / GALLERY GRID -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
         {% for item in items %}
         <div x-show="activeCategory === 'all' || activeCategory === '{{ item.category.slug }}'"
              x-transition:enter="transition ease-out duration-300"
@@ -55,12 +56,12 @@
                  alt="{{ item.caption }}" class="w-full h-full object-cover group-hover:scale-105 duration-700">
             
             <!-- Hover Overlay info -->
-            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4 sm:p-6">
                 <span class="text-[10px] font-semibold uppercase tracking-widest text-luxuryGold-300 mb-1">
                     {{ item.category.name }}
                 </span>
-                <p class="text-sm font-semibold text-white leading-snug">{{ item.caption }}</p>
-                <div class="flex items-center gap-4 text-white/70 text-xs pt-3 mt-3 border-t border-white/10">
+                <p class="text-xs sm:text-sm font-semibold text-white leading-snug">{{ item.caption }}</p>
+                <div class="flex items-center gap-3 text-white/70 text-xs pt-2 sm:pt-3 mt-2 sm:mt-3 border-t border-white/10">
                     {% if item.is_video %}
                         <span><i class="fa-solid fa-circle-play text-luxuryGold-500 mr-1.5"></i>Watch Video</span>
                     {% endif %}
@@ -71,20 +72,22 @@
             </div>
         </div>
         {% empty %}
-        <div class="col-span-3 text-center py-16">
+        <div class="col-span-1 sm:col-span-2 md:col-span-3 text-center py-16">
             <p class="text-sm opacity-60">No photos or videos registered in the gallery yet.</p>
         </div>
         {% endfor %}
     </div>
 
     <!-- LIGHTBOX MODAL -->
-    <div x-show="lightboxOpen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95" style="display: none;">
-        <button @click="lightboxOpen = false" class="absolute top-6 right-6 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-xl">
+    <div x-show="lightboxOpen" 
+         x-effect="document.body.style.overflow = lightboxOpen ? 'hidden' : ''"
+         class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/95 backdrop-blur-sm animate__animated animate__fadeIn" style="display: none;">
+        <button @click="lightboxOpen = false" class="absolute top-4 right-4 sm:top-6 sm:right-6 p-2 sm:p-3 rounded-full bg-white/10 hover:bg-white/20 text-white text-lg sm:text-xl transition-colors">
             <i class="fa-solid fa-xmark"></i>
         </button>
-        <div class="max-w-4xl w-full flex flex-col items-center justify-center gap-4 animate__animated animate__zoomIn">
-            <img :src="lightboxImage" class="max-h-[80vh] w-auto rounded-xl object-contain border border-white/10">
-            <p class="text-white text-sm font-medium tracking-wide text-center" x-text="lightboxCaption"></p>
+        <div class="max-w-4xl w-full flex flex-col items-center justify-center gap-3 sm:gap-4 animate__animated animate__zoomIn my-auto">
+            <img :src="lightboxImage" class="max-h-[75vh] sm:max-h-[80vh] w-auto rounded-xl object-contain border border-white/10 shadow-2xl">
+            <p class="text-white text-xs sm:text-sm font-medium tracking-wide text-center px-4" x-text="lightboxCaption"></p>
         </div>
     </div>
 

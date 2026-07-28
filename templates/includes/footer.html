@@ -1,53 +1,53 @@
 {% load static %}
 <!-- DYNAMIC CMS FOOTER -->
-<footer class="border-t py-16 transition-colors duration-300"
+<footer class="border-t py-10 sm:py-16 transition-colors duration-300"
         :class="{
             'bg-[#EEF5F0] border-[#EEF5F0] text-[#24332A]': currentTheme === 'light',
             'bg-[#0A2017] border-brand-primary/30 text-white': currentTheme !== 'light'
         }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
             
             <!-- About Column -->
             <div class="space-y-4">
                 <a href="{% url 'homepage:home' %}" class="block">
                     {% if hotel_settings.logo_dark %}
-                    <img src="{{ hotel_settings.logo_dark.url }}" alt="{{ hotel_settings.site_name }}" class="h-14 w-auto object-contain">
+                    <img src="{{ hotel_settings.logo_dark.url }}" alt="{{ hotel_settings.site_name }}" class="h-12 sm:h-14 w-auto object-contain">
                     {% elif hotel_settings.logo %}
-                    <img src="{{ hotel_settings.logo.url }}" alt="{{ hotel_settings.site_name }}" class="h-14 w-auto object-contain">
+                    <img src="{{ hotel_settings.logo.url }}" alt="{{ hotel_settings.site_name }}" class="h-12 sm:h-14 w-auto object-contain">
                     {% else %}
-                    <img src="{% static 'images/hotel-logo.png' %}" alt="{{ hotel_settings.site_name }}" class="h-14 w-auto object-contain">
+                    <img src="{% static 'images/hotel-logo.png' %}" alt="{{ hotel_settings.site_name }}" class="h-12 sm:h-14 w-auto object-contain">
                     {% endif %}
                 </a>
-                <p class="text-sm leading-relaxed opacity-85">
+                <p class="text-xs sm:text-sm leading-relaxed opacity-85">
                     {{ hotel_settings.about_text }}
                 </p>
                 <div class="flex space-x-4 pt-2">
                     {% if hotel_settings.facebook_url %}
-                        <a href="{{ hotel_settings.facebook_url }}" target="_blank" class="hover:text-luxuryGold-400 transition-colors"><i class="fa-brands fa-facebook text-lg"></i></a>
+                        <a href="{{ hotel_settings.facebook_url }}" target="_blank" class="hover:text-luxuryGold-400 transition-colors"><i class="fa-brands fa-facebook text-base sm:text-lg"></i></a>
                     {% endif %}
                     {% if hotel_settings.instagram_url %}
-                        <a href="{{ hotel_settings.instagram_url }}" target="_blank" class="hover:text-luxuryGold-400 transition-colors"><i class="fa-brands fa-instagram text-lg"></i></a>
+                        <a href="{{ hotel_settings.instagram_url }}" target="_blank" class="hover:text-luxuryGold-400 transition-colors"><i class="fa-brands fa-instagram text-base sm:text-lg"></i></a>
                     {% endif %}
                     {% if hotel_settings.twitter_url %}
-                        <a href="{{ hotel_settings.twitter_url }}" target="_blank" class="hover:text-luxuryGold-400 transition-colors"><i class="fa-brands fa-twitter text-lg"></i></a>
+                        <a href="{{ hotel_settings.twitter_url }}" target="_blank" class="hover:text-luxuryGold-400 transition-colors"><i class="fa-brands fa-twitter text-base sm:text-lg"></i></a>
                     {% endif %}
                     {% if hotel_settings.youtube_url %}
-                        <a href="{{ hotel_settings.youtube_url }}" target="_blank" class="hover:text-luxuryGold-400 transition-colors"><i class="fa-brands fa-youtube text-lg"></i></a>
+                        <a href="{{ hotel_settings.youtube_url }}" target="_blank" class="hover:text-luxuryGold-400 transition-colors"><i class="fa-brands fa-youtube text-base sm:text-lg"></i></a>
                     {% endif %}
                     {% if hotel_settings.tripadvisor_url %}
-                        <a href="{{ hotel_settings.tripadvisor_url }}" target="_blank" class="hover:text-luxuryGold-400 transition-colors"><i class="fa-brands fa-tripadvisor text-lg"></i></a>
+                        <a href="{{ hotel_settings.tripadvisor_url }}" target="_blank" class="hover:text-luxuryGold-400 transition-colors"><i class="fa-brands fa-tripadvisor text-base sm:text-lg"></i></a>
                     {% endif %}
                 </div>
             </div>
 
             <!-- Quick Links Column -->
             <div>
-                <h4 class="font-luxury-title text-sm font-semibold uppercase tracking-widest mb-6"
+                <h4 class="font-luxury-title text-xs sm:text-sm font-semibold uppercase tracking-widest mb-4 sm:mb-6"
                     :class="{ 'text-amber-800': currentTheme === 'light', 'text-luxuryGold-300': currentTheme !== 'light' }">
                     Quick Links
                 </h4>
-                <ul class="space-y-3 text-sm">
+                <ul class="space-y-2.5 sm:space-y-3 text-xs sm:text-sm">
                     {% for link in footer_quick_links %}
                         <li><a href="{{ link.url }}" class="hover:text-luxuryGold-400 transition-colors">{{ link.name }}</a></li>
                     {% empty %}
@@ -64,11 +64,11 @@
 
             <!-- OTA Partners Column -->
             <div>
-                <h4 class="font-luxury-title text-sm font-semibold uppercase tracking-widest mb-6"
+                <h4 class="font-luxury-title text-xs sm:text-sm font-semibold uppercase tracking-widest mb-4 sm:mb-6"
                     :class="{ 'text-amber-800': currentTheme === 'light', 'text-luxuryGold-300': currentTheme !== 'light' }">
                     OTA Partners
                 </h4>
-                <ul class="space-y-3 text-sm">
+                <ul class="space-y-2.5 sm:space-y-3 text-xs sm:text-sm">
                     {% for link in footer_ota_links %}
                         <li><a href="{{ link.url }}" target="_blank" class="hover:text-luxuryGold-400 transition-colors">{{ link.name }}</a></li>
                     {% empty %}
@@ -80,8 +80,8 @@
             </div>
 
             <!-- Contact & Map Column -->
-            <div class="space-y-4 text-sm">
-                <h4 class="font-luxury-title text-sm font-semibold uppercase tracking-widest mb-6"
+            <div class="space-y-3 sm:space-y-4 text-xs sm:text-sm">
+                <h4 class="font-luxury-title text-xs sm:text-sm font-semibold uppercase tracking-widest mb-4 sm:mb-6"
                     :class="{ 'text-amber-800': currentTheme === 'light', 'text-luxuryGold-300': currentTheme !== 'light' }">
                     Address & Contact
                 </h4>
@@ -102,13 +102,13 @@
         </div>
 
         <!-- Awards / Payment methods / Copyright -->
-        <div class="mt-16 pt-8 border-t border-amber-900/10 flex flex-col md:flex-row items-center justify-between gap-6 text-xs opacity-75">
+        <div class="mt-10 sm:mt-16 pt-6 sm:pt-8 border-t border-amber-900/10 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 text-xs opacity-75 text-center sm:text-left">
             <div>
                 {{ hotel_settings.copyright_text|safe }}
             </div>
-            <div class="flex items-center gap-6">
+            <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-6">
                 <span>Awards: World Luxury Hotel Winner 2026</span>
-                <div class="flex items-center gap-3 text-lg opacity-80">
+                <div class="flex items-center gap-3 text-base sm:text-lg opacity-80">
                     <i class="fa-brands fa-cc-visa"></i>
                     <i class="fa-brands fa-cc-mastercard"></i>
                     <i class="fa-brands fa-cc-stripe"></i>

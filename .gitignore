@@ -23,3 +23,4 @@ media/
 
 # Generated staticfiles (collected static assets)
 staticfiles/
+db.sqlite3

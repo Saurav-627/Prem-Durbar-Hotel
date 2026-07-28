@@ -2,11 +2,11 @@
 
 {% block content %}
 <!-- ROOM DETAILS CONTAINER -->
-<section class="py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+<section class="py-8 sm:py-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
         
         <!-- MAIN GALLERY & ROOM INFORMATION (LEFT 2 COLS) -->
-        <div class="lg:col-span-2 space-y-12">
+        <div class="lg:col-span-2 space-y-8 sm:space-y-12">
             
             <!-- Gallery Slider (Alpine.js) -->
             <div x-data="{ 
@@ -15,13 +15,13 @@
                     {% for img in room.images.all %}
                         {% if img.image %}'{{ img.image.url }}',{% endif %}
                     {% empty %}
-                        'https://images.unsplash.com/photo-1618773928121-c32242e63f39?q=80&w=1200',
+                        'https://images.unsplash.com/photo-1590490360182-c33d57733427?q=80&w=1200',
                     {% endfor %}
                 ],
                 next() { this.activeSlide = (this.activeSlide + 1) % this.slides.length }
             }" 
             x-init="if (slides.length > 1) setInterval(() => next(), 5000)"
-            class="relative h-[450px] overflow-hidden rounded-2xl border border-amber-900/10">
+            class="relative h-64 sm:h-[400px] md:h-[450px] overflow-hidden rounded-2xl border border-amber-900/10">
                 <template x-for="(slide, index) in slides" :key="index">
                     <div x-show="activeSlide === index" 
                          x-transition:enter="transition ease-out duration-500"
@@ -33,38 +33,38 @@
 
                 <!-- Navigation -->
                 <button @click="activeSlide = (activeSlide - 1 + slides.length) % slides.length" 
-                        class="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors">
+                        class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors">
                     <i class="fa-solid fa-chevron-left text-xs"></i>
                 </button>
                 <button @click="activeSlide = (activeSlide + 1) % slides.length" 
-                        class="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors">
+                        class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-black/60 text-white hover:bg-black/80 transition-colors">
                     <i class="fa-solid fa-chevron-right text-xs"></i>
                 </button>
 
                 <!-- Dots indicator -->
-                <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                <div class="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 sm:gap-2">
                     <template x-for="(slide, index) in slides" :key="index">
                         <button @click="activeSlide = index" 
-                                class="w-2.5 h-2.5 rounded-full transition-colors"
+                                class="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-colors"
                                 :class="activeSlide === index ? 'bg-luxuryGold-500' : 'bg-white/50'"></button>
                     </template>
                 </div>
             </div>
 
             <!-- Core Specs -->
-            <div class="space-y-4">
+            <div class="space-y-3 sm:space-y-4">
                 <div class="flex items-center gap-3">
                     <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-500">{{ room.category.name|default:"Luxury Suite" }}</span>
                 </div>
-                <h1 class="font-luxury-title text-4xl sm:text-5xl font-bold tracking-wide">{{ room.title }}</h1>
+                <h1 class="font-luxury-title text-2xl sm:text-5xl font-bold tracking-wide">{{ room.title }}</h1>
                 <p class="text-sm leading-relaxed opacity-85">{{ room.description }}</p>
             </div>
 
             <!-- Room Highlights list -->
             {% if room.highlights %}
-            <div class="space-y-4">
-                <h3 class="font-luxury-title text-xl font-semibold">Chamber Highlights</h3>
-                <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm opacity-85">
+            <div class="space-y-3 sm:space-y-4">
+                <h3 class="font-luxury-title text-lg sm:text-xl font-semibold">Chamber Highlights</h3>
+                <ul class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-3 text-xs sm:text-sm opacity-85">
                     {% for highlight in room.highlights.splitlines %}
                         {% if highlight %}
                         <li class="flex items-center gap-3">
@@ -78,13 +78,13 @@
             {% endif %}
 
             <!-- Room Facilities Checklist -->
-            <div class="space-y-4">
-                <h3 class="font-luxury-title text-xl font-semibold">Amenities & Comforts</h3>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-6">
+            <div class="space-y-3 sm:space-y-4">
+                <h3 class="font-luxury-title text-lg sm:text-xl font-semibold">Amenities & Comforts</h3>
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-6">
                     {% for fac in room.facilities.all %}
-                    <div class="flex items-center gap-3 p-3 rounded-lg border"
+                    <div class="flex items-center gap-2.5 sm:gap-3 p-2.5 sm:p-3 rounded-lg border"
                          :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#1A3A32] border-brand-primary/20 text-white': currentTheme !== 'light' }">
-                        <div class="text-xl text-luxuryGold-500">
+                        <div class="text-lg sm:text-xl text-luxuryGold-500">
                             {% if fac.icon_class %}
                                 <i class="{{ fac.icon_class }}"></i>
                             {% else %}
@@ -99,9 +99,9 @@
 
             <!-- Virtual 3D Tour Embed -->
             {% if room.virtual_tour_url %}
-            <div class="space-y-4">
-                <h3 class="font-luxury-title text-xl font-semibold">Virtual 3D Space Tour</h3>
-                <div class="relative overflow-hidden rounded-2xl border border-amber-900/10 h-96">
+            <div class="space-y-3 sm:space-y-4">
+                <h3 class="font-luxury-title text-lg sm:text-xl font-semibold">Virtual 3D Space Tour</h3>
+                <div class="relative overflow-hidden rounded-2xl border border-amber-900/10 h-64 sm:h-96">
                     <iframe src="{{ room.virtual_tour_url }}" class="absolute inset-0 w-full h-full border-0" allowfullscreen></iframe>
                 </div>
             </div>
@@ -109,9 +109,9 @@
 
             <!-- Video Highlight Tour -->
             {% if room.video_url %}
-            <div class="space-y-4">
-                <h3 class="font-luxury-title text-xl font-semibold">Video Overview</h3>
-                <div class="relative overflow-hidden rounded-2xl border border-amber-900/10 h-96">
+            <div class="space-y-3 sm:space-y-4">
+                <h3 class="font-luxury-title text-lg sm:text-xl font-semibold">Video Overview</h3>
+                <div class="relative overflow-hidden rounded-2xl border border-amber-900/10 h-64 sm:h-96">
                     <iframe src="{{ room.video_url }}" class="absolute inset-0 w-full h-full border-0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
             </div>
@@ -119,11 +119,11 @@
 
             <!-- Room Policies -->
             {% if room.policies.all %}
-            <div class="space-y-4">
-                <h3 class="font-luxury-title text-xl font-semibold">Suite Policies & Regs</h3>
-                <div class="space-y-4">
+            <div class="space-y-3 sm:space-y-4">
+                <h3 class="font-luxury-title text-lg sm:text-xl font-semibold">Suite Policies & Regs</h3>
+                <div class="space-y-3 sm:space-y-4">
                     {% for policy in room.policies.all %}
-                    <div class="p-4 rounded-xl border" :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#1A3A32] border-brand-primary/20 text-white': currentTheme !== 'light' }">
+                    <div class="p-3.5 sm:p-4 rounded-xl border" :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#1A3A32] border-brand-primary/20 text-white': currentTheme !== 'light' }">
                         <h4 class="font-semibold text-sm mb-1 text-brand-primaryLight">{{ policy.title }}</h4>
                         <p class="text-xs opacity-75 leading-relaxed">{{ policy.description }}</p>
                     </div>
@@ -293,7 +293,7 @@
                 initPickers();
             }
         }">
-            <div class="rounded-2xl p-6 border shadow-xl sticky top-28"
+            <div class="rounded-2xl p-5 sm:p-6 border shadow-xl lg:sticky lg:top-28"
                  :class="{
                      'bg-white border-gray-200': currentTheme === 'light',
                      'bg-[#1A3A32] border-brand-primary/20 text-white': currentTheme !== 'light'

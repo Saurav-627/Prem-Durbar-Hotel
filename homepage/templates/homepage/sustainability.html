@@ -6,59 +6,59 @@
 
 {% block content %}
 <!-- Sustainability Hero Banner -->
-<div class="relative py-28 md:py-36 bg-forestGradient text-brand-champagne overflow-hidden shadow-luxury">
+<div class="relative py-16 sm:py-28 md:py-36 bg-forestGradient text-brand-champagne overflow-hidden shadow-luxury">
     <div class="absolute inset-0 bg-cover bg-center opacity-30 scale-105 transition-transform duration-1000"
          style="background-image: url('{% if seo_raw and seo_raw.header_image %}{{ seo_raw.header_image.url }}{% else %}https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?q=80&w=1920&auto=format&fit=crop{% endif %}');"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-brand-forestDark via-brand-forest/60 to-transparent"></div>
     
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <span class="animate__animated animate__fadeInDown inline-block px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-widest bg-brand-gold/20 border border-brand-gold/30 mb-4 backdrop-blur-md shadow-glow">
+        <span class="animate__animated animate__fadeInDown inline-block px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-widest bg-brand-gold/20 border border-brand-gold/30 mb-3 sm:mb-4 backdrop-blur-md shadow-glow">
             <i class="fa-solid fa-leaf mr-1"></i> {{ seo_raw.header_subtitle|default:sustainability_cms.hero_subtitle }}
         </span>
-        <h1 class="animate__animated animate__zoomIn font-heading text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white mb-6">
+        <h1 class="animate__animated animate__zoomIn font-heading text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white mb-4 sm:mb-6">
             {{ seo_raw.header_title|default:sustainability_cms.hero_title }}
         </h1>
-        <p class="animate__animated animate__fadeInUp animate__delay-1s max-w-3xl mx-auto text-base sm:text-lg text-brand-champagne/90 font-light leading-relaxed">
+        <p class="animate__animated animate__fadeInUp animate__delay-1s max-w-3xl mx-auto text-sm sm:text-lg text-brand-champagne/90 font-light leading-relaxed">
             {{ seo_raw.header_description|default:sustainability_cms.hero_description }}
         </p>
     </div>
 </div>
 
 <!-- Sustainability Policies Grid -->
-<section class="py-20 md:py-28"
+<section class="py-12 sm:py-20 md:py-28"
          :class="{ 'bg-brand-light text-brand-text': currentTheme === 'light', 'bg-brand-forestDark text-brand-champagne': currentTheme !== 'light' }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div class="text-center max-w-3xl mx-auto mb-16 space-y-4 animate__animated animate__fadeInDown">
+        <div class="text-center max-w-3xl mx-auto mb-10 sm:mb-16 space-y-4 animate__animated animate__fadeInDown">
             <span class="text-xs font-semibold uppercase tracking-widest text-brand-gold">{{ sustainability_cms.intro_subtitle }}</span>
-            <h2 class="font-heading text-3xl sm:text-4xl font-bold tracking-tight">{{ sustainability_cms.intro_title }}</h2>
+            <h2 class="font-heading text-2xl sm:text-4xl font-bold tracking-tight">{{ sustainability_cms.intro_title }}</h2>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {% for item in pillars %}
-            <div class="animate__animated animate__fadeInUp p-8 rounded-2xl border transition-all duration-500 hover:-translate-y-2 hover:border-brand-gold hover:shadow-card space-y-4"
+            <div class="animate__animated animate__fadeInUp p-6 sm:p-8 rounded-2xl border transition-all duration-500 hover:-translate-y-2 hover:border-brand-gold hover:shadow-card space-y-3 sm:space-y-4"
                  style="animation-delay: {% if forloop.counter == 1 %}0.1s{% elif forloop.counter == 2 %}0.2s{% elif forloop.counter == 3 %}0.3s{% elif forloop.counter == 4 %}0.4s{% else %}0.5s{% endif %};"
                  :class="{ 'bg-white border-brand-lightgray': currentTheme === 'light', 'bg-brand-forest border-brand-gold/20': currentTheme !== 'light' }">
                 
-                <div class="w-14 h-14 rounded-xl bg-brand-forestLight/20 flex items-center justify-center text-brand-gold text-2xl">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-brand-forestLight/20 flex items-center justify-center text-brand-gold text-xl sm:text-2xl">
                     <i class="{{ item.icon_class }}"></i>
                 </div>
                 
-                <h3 class="font-heading text-xl font-bold">{{ item.title }}</h3>
-                <p class="text-sm opacity-80 leading-relaxed">{{ item.description }}</p>
+                <h3 class="font-heading text-lg sm:text-xl font-bold">{{ item.title }}</h3>
+                <p class="text-xs sm:text-sm opacity-80 leading-relaxed">{{ item.description }}</p>
             </div>
             {% endfor %}
         </div>
 
         <!-- Callout Banner -->
-        <div class="mt-16 p-8 md:p-12 rounded-3xl bg-sunriseGradient text-brand-forestDark flex flex-col md:flex-row items-center justify-between gap-8 shadow-luxury animate__animated animate__fadeInUp">
+        <div class="mt-12 sm:mt-16 p-6 sm:p-8 md:p-12 rounded-3xl bg-sunriseGradient text-brand-forestDark flex flex-col md:flex-row items-center justify-between gap-6 sm:gap-8 shadow-luxury animate__animated animate__fadeInUp">
             <div class="space-y-2 text-center md:text-left">
-                <h3 class="font-heading text-2xl md:text-3xl font-bold">Have Questions About Our Eco Policies?</h3>
-                <p class="text-sm font-medium text-brand-forestDark/80">Get in touch with our Nagarkot team for corporate sustainability inquiries.</p>
+                <h3 class="font-heading text-xl sm:text-2xl md:text-3xl font-bold">Have Questions About Our Eco Policies?</h3>
+                <p class="text-xs sm:text-sm font-medium text-brand-forestDark/80">Get in touch with our Nagarkot team for corporate sustainability inquiries.</p>
             </div>
-            <div>
+            <div class="w-full md:w-auto">
                 <a href="{% url 'contact:contact_page' %}" 
-                   class="btn-gold-gradient inline-flex items-center gap-2 px-8 py-4 text-brand-forestDark font-bold rounded-xl text-sm transition transform hover:scale-105 shadow-glow">
+                   class="btn-gold-gradient w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 text-brand-forestDark font-bold rounded-xl text-xs sm:text-sm transition transform hover:scale-105 shadow-glow text-center">
                     <span>Contact Us</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
