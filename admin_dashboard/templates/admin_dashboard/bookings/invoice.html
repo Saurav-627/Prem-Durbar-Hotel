@@ -21,7 +21,7 @@
         .logo {
             font-size: 24px;
             font-weight: bold;
-            color: #b47825;
+            color: #2D5A4A;
             float: left;
         }
         .invoice-title {
@@ -48,11 +48,12 @@
             margin-bottom: 35px;
         }
         .items-table th {
-            background-color: #f8f8f8;
+            background-color: #EEF5F0;
             border-bottom: 1px solid #ddd;
             padding: 10px;
             text-align: left;
             font-weight: bold;
+            color: #2D5A4A;
         }
         .items-table td {
             padding: 12px 10px;
@@ -69,8 +70,8 @@
         .total-row {
             font-weight: bold;
             font-size: 16px;
-            border-top: 1px solid #ddd;
-            color: #b47825;
+            border-top: 2px solid #2D5A4A;
+            color: #2D5A4A;
         }
         .footer {
             margin-top: 60px;
@@ -81,15 +82,22 @@
             color: #777;
         }
         .print-btn {
-            background-color: #b47825;
+            background-color: #2D5A4A;
             color: #fff;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 24px;
             font-size: 14px;
             font-weight: bold;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             margin-bottom: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(45, 90, 74, 0.25);
+        }
+        .print-btn:hover {
+            background-color: #1A3A32;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(45, 90, 74, 0.35);
         }
         @media print {
             .print-btn {
@@ -100,7 +108,7 @@
 </head>
 <body>
 
-    <button class="print-btn" onclick="window.print()">Print Invoice</button>
+    <button class="print-btn" onclick="window.print()">🖨️ Print Invoice / Receipt</button>
 
     <div class="header">
         <div class="logo">
@@ -111,7 +119,7 @@
             {% else %}
             <img src="{% static 'images/hotel-logo.png' %}" alt="Logo" style="height: 90px; width: auto; vertical-align: middle; margin-right: 12px; border-radius: 4px;">
             {% endif %}
-            <span style="vertical-align: middle; font-size: 20px; font-weight: bold; color: #b47825; letter-spacing: 0.5px;">{{ hotel_settings.site_name|upper }}</span>
+            <span style="vertical-align: middle; font-size: 20px; font-weight: bold; color: #2D5A4A; letter-spacing: 0.5px;">{{ hotel_settings.site_name|upper }}</span>
         </div>
         <div class="invoice-title">Official Receipt</div>
         <div class="clear"></div>
@@ -150,7 +158,7 @@
                     <small style="color: #666;">Room Category: {{ booking.room.category.name }}</small>
                     {% with seasonal=booking.active_seasonal_price %}
                         {% if seasonal %}
-                            <div style="margin-top: 6px; font-size: 11px; color: #b47825; font-weight: bold; display: inline-block; padding: 2px 8px; background-color: #fcf6ec; border: 1px solid #ebd7b3; border-radius: 4px;">
+                            <div style="margin-top: 6px; font-size: 11px; color: #2D5A4A; font-weight: bold; display: inline-block; padding: 2px 8px; background-color: #EEF5F0; border: 1px solid #4F8A73/30; border-radius: 4px;">
                                 🏷️ Seasonal Price: {{ seasonal.name }}
                             </div>
                         {% endif %}
@@ -160,7 +168,7 @@
                 <td>
                     {% with seasonal=booking.active_seasonal_price %}
                         {% if seasonal %}
-                            <div style="font-weight: bold; color: #b47825; margin-bottom: 2px;">{{ booking.currency_code }} {{ booking.daily_rate|floatformat:2 }}</div>
+                            <div style="font-weight: bold; color: #2D5A4A; margin-bottom: 2px;">{{ booking.currency_code }} {{ booking.daily_rate|floatformat:2 }}</div>
                             <del style="color: #999; font-size: 11px; display: block;">Base: {{ booking.currency_code }} {{ booking.room.base_price|floatformat:2 }}</del>
                         {% else %}
                             {{ booking.currency_code }} {{ booking.room.base_price|floatformat:2 }}
