@@ -72,30 +72,127 @@
                 <!-- HTMX Response feedback -->
                 <div id="contact-response" class="mb-6"></div>
 
-                <form hx-post="{% url 'contact:submit_inquiry_ajax' %}" hx-target="#contact-response" hx-swap="innerHTML" class="space-y-4 sm:space-y-5">
+                <form hx-post="{% url 'contact:submit_inquiry_ajax' %}" 
+                      hx-target="#contact-response" 
+                      hx-swap="innerHTML" 
+                      x-data="{
+                          name: '',
+                          email: '',
+                          phone: '',
+                          subject: '',
+                          message: '',
+                          errors: { name: '', email: '', phone: '', subject: '', message: '' },
+                          validateName() {
+                              const trimmed = (this.name || '').trim();
+                              if (!trimmed) return 'Full name is required.';
+                              if (trimmed.length < 2) return 'Full name must be at least 2 characters.';
+                              if (!/^[a-zA-Z\s'.-]+$/.test(trimmed)) return 'Please enter a valid name using letters and spaces.';
+                              return '';
+                          },
+                          validateEmail() {
+                              const trimmed = (this.email || '').trim();
+                              if (!trimmed) return 'Email address is required.';
+                              if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return 'Please enter a valid email address.';
+                              return '';
+                          },
+                          validatePhone() {
+                              const trimmed = (this.phone || '').trim();
+                              if (!trimmed) return ''; // Phone is optional in contact form
+                              const digits = trimmed.replace(/\D/g, '');
+                              if (digits.length < 10) return 'Phone number must contain at least 10 digits.';
+                              if (digits.length > 10) return 'Phone number cannot exceed 10 digits.';
+                              if (!/^[\d\s().+-]+$/.test(trimmed)) return 'Please enter a valid phone number.';
+                              return '';
+                          },
+                          validateSubject() {
+                              const trimmed = (this.subject || '').trim();
+                              if (!trimmed) return 'Subject is required.';
+                              if (trimmed.length < 3) return 'Subject must be at least 3 characters.';
+                              return '';
+                          },
+                          validateMessage() {
+                              const trimmed = (this.message || '').trim();
+                              if (!trimmed) return 'Message is required.';
+                              if (trimmed.length < 10) return 'Message must be at least 10 characters.';
+                              return '';
+                          },
+                          validateForm(e) {
+                              this.errors = {
+                                  name: this.validateName(),
+                                  email: this.validateEmail(),
+                                  phone: this.validatePhone(),
+                                  subject: this.validateSubject(),
+                                  message: this.validateMessage()
+                              };
+                              if (this.errors.name || this.errors.email || this.errors.phone || this.errors.subject || this.errors.message) {
+                                  if (e) e.preventDefault();
+                                  return false;
+                              }
+                              return true;
+                          }
+                      }"
+                      @submit="validateForm($event)"
+                      class="space-y-4 sm:space-y-5" 
+                      novalidate>
                     {% csrf_token %}
                     <div>
                         <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Full Name *</label>
-                        <input type="text" name="name" required class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
-                               :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                        <input type="text" name="name" x-model="name" @blur="errors.name = validateName()" @input="if(errors.name) errors.name = validateName()"
+                               placeholder="e.g. Jane Doe"
+                               class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 transition-colors"
+                               :class="{
+                                   'border-red-500 focus:ring-red-500': errors.name,
+                                   'border-gray-300 focus:ring-brand-primaryLight': currentTheme === 'light' && !errors.name,
+                                   'border-amber-900/40 focus:ring-brand-primaryLight': currentTheme !== 'light' && !errors.name
+                               }">
+                        <template x-if="errors.name">
+                            <p class="text-red-500 text-[11px] mt-1.5 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                                <span x-text="errors.name"></span>
+                            </p>
+                        </template>
                     </div>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                         <div>
                             <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Email *</label>
-                            <input type="email" name="email" required class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
-                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                            <input type="email" name="email" x-model="email" @blur="errors.email = validateEmail()" @input="if(errors.email) errors.email = validateEmail()"
+                                   placeholder="jane@example.com"
+                                   class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 transition-colors"
+                                   :class="{
+                                       'border-red-500 focus:ring-red-500': errors.email,
+                                       'border-gray-300 focus:ring-brand-primaryLight': currentTheme === 'light' && !errors.email,
+                                       'border-amber-900/40 focus:ring-brand-primaryLight': currentTheme !== 'light' && !errors.email
+                                   }">
+                            <template x-if="errors.email">
+                                <p class="text-red-500 text-[11px] mt-1.5 flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-exclamation"></i>
+                                    <span x-text="errors.email"></span>
+                                </p>
+                            </template>
                         </div>
                         <div>
                             <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Phone</label>
-                            <input type="tel" name="phone" class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
-                                   :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                            <input type="tel" name="phone" x-model="phone" @blur="errors.phone = validatePhone()" @input="if(errors.phone) errors.phone = validatePhone()"
+                                   placeholder="+977 9800000000"
+                                   class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 transition-colors"
+                                   :class="{
+                                       'border-red-500 focus:ring-red-500': errors.phone,
+                                       'border-gray-300 focus:ring-brand-primaryLight': currentTheme === 'light' && !errors.phone,
+                                       'border-amber-900/40 focus:ring-brand-primaryLight': currentTheme !== 'light' && !errors.phone
+                                   }">
+                            <template x-if="errors.phone">
+                                <p class="text-red-500 text-[11px] mt-1.5 flex items-center gap-1">
+                                    <i class="fa-solid fa-circle-exclamation"></i>
+                                    <span x-text="errors.phone"></span>
+                                </p>
+                            </template>
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Inquiry Category</label>
-                        <select name="category" class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                        <select name="category" class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-brand-primaryLight transition-all"
                                 :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
                             <option value="general">General Inquiry</option>
                             <option value="booking">Room Booking</option>
@@ -107,17 +204,41 @@
 
                     <div>
                         <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Subject *</label>
-                        <input type="text" name="subject" required class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
-                               :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                        <input type="text" name="subject" x-model="subject" @blur="errors.subject = validateSubject()" @input="if(errors.subject) errors.subject = validateSubject()"
+                               placeholder="e.g. Room Reservation Inquiry"
+                               class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 transition-colors"
+                               :class="{
+                                   'border-red-500 focus:ring-red-500': errors.subject,
+                                   'border-gray-300 focus:ring-brand-primaryLight': currentTheme === 'light' && !errors.subject,
+                                   'border-amber-900/40 focus:ring-brand-primaryLight': currentTheme !== 'light' && !errors.subject
+                               }">
+                        <template x-if="errors.subject">
+                            <p class="text-red-500 text-[11px] mt-1.5 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                                <span x-text="errors.subject"></span>
+                            </p>
+                        </template>
                     </div>
 
                     <div>
                         <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1.5 opacity-80">Message *</label>
-                        <textarea name="message" rows="4" required class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
-                                  :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }"></textarea>
+                        <textarea name="message" x-model="message" @blur="errors.message = validateMessage()" @input="if(errors.message) errors.message = validateMessage()" rows="4"
+                                  placeholder="Please provide details regarding your query or request..."
+                                  class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 transition-colors"
+                                  :class="{
+                                      'border-red-500 focus:ring-red-500': errors.message,
+                                      'border-gray-300 focus:ring-brand-primaryLight': currentTheme === 'light' && !errors.message,
+                                      'border-amber-900/40 focus:ring-brand-primaryLight': currentTheme !== 'light' && !errors.message
+                                  }"></textarea>
+                        <template x-if="errors.message">
+                            <p class="text-red-500 text-[11px] mt-1.5 flex items-center gap-1">
+                                <i class="fa-solid fa-circle-exclamation"></i>
+                                <span x-text="errors.message"></span>
+                            </p>
+                        </template>
                     </div>
 
-                    <button type="submit" class="btn-gold-gradient w-full py-3.5 sm:py-4 mt-2 rounded-lg text-xs font-bold uppercase tracking-wider text-center cursor-pointer text-white shadow-md">
+                    <button type="submit" class="btn-gold-gradient w-full py-3.5 sm:py-4 mt-2 rounded-lg text-xs font-bold uppercase tracking-wider text-center cursor-pointer text-white shadow-md transition-all">
                         Submit Inquiry Message
                     </button>
                 </form>

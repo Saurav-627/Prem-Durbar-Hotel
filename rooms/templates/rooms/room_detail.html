@@ -148,6 +148,47 @@
             checkingAvailability: false,
             isAvailable: true,
             errorMessage: '',
+            guestName: '',
+            guestEmail: '',
+            guestPhone: '',
+            promoCode: '',
+            specialRequests: '',
+            guestErrors: { name: '', email: '', phone: '' },
+            validateGuestName() {
+                const trimmed = (this.guestName || '').trim();
+                if (!trimmed) return 'Full name is required.';
+                if (trimmed.length < 2) return 'Full name must be at least 2 characters.';
+                if (!/^[a-zA-Z\s'.-]+$/.test(trimmed)) return 'Full name should contain valid letters and spaces.';
+                return '';
+            },
+            validateGuestEmail() {
+                const trimmed = (this.guestEmail || '').trim();
+                if (!trimmed) return 'Email address is required.';
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!re.test(trimmed)) return 'Please enter a valid email address.';
+                return '';
+            },
+            validateGuestPhone() {
+                const trimmed = (this.guestPhone || '').trim();
+                if (!trimmed) return 'Contact phone number is required.';
+                const digits = trimmed.replace(/\D/g, '');
+                if (digits.length < 10) return 'Phone number must contain at least 10 digits.';
+                if (digits.length > 10) return 'Phone number cannot exceed 10 digits.';
+                if (!/^[\d\s().+-]+$/.test(trimmed)) return 'Please enter a valid phone number.';
+                return '';
+            },
+            validateGuestForm(e) {
+                this.guestErrors = {
+                    name: this.validateGuestName(),
+                    email: this.validateGuestEmail(),
+                    phone: this.validateGuestPhone()
+                };
+                if (this.guestErrors.name || this.guestErrors.email || this.guestErrors.phone) {
+                    if (e) e.preventDefault();
+                    return false;
+                }
+                return true;
+            },
             async updateMaxRooms() {
                 if (!this.checkIn || !this.checkOut) {
                     this.maxRooms = {{ room.total_rooms }};
@@ -185,17 +226,34 @@
                 return this.subtotal + this.tax;
             },
             validateDates() {
+                this.errorMessage = '';
+                if (!this.checkIn) {
+                    this.errorMessage = 'Please select an arrival check-in date.';
+                    return false;
+                }
+                if (!this.checkOut) {
+                    this.errorMessage = 'Please select a departure check-out date.';
+                    return false;
+                }
                 const start = new Date(this.checkIn);
                 const end = new Date(this.checkOut);
                 const today = new Date();
                 today.setHours(0,0,0,0);
                 
+                if (isNaN(start.getTime())) {
+                    this.errorMessage = 'Please enter a valid arrival date.';
+                    return false;
+                }
+                if (isNaN(end.getTime())) {
+                    this.errorMessage = 'Please enter a valid departure date.';
+                    return false;
+                }
                 if (start < today) {
-                    alert('Arrival date cannot be in the past.');
+                    this.errorMessage = 'Arrival date cannot be in the past.';
                     return false;
                 }
                 if (end <= start) {
-                    alert('Departure date must be at least one day after arrival date.');
+                    this.errorMessage = 'Departure date must be at least one day after arrival date.';
                     return false;
                 }
                 return true;
@@ -442,7 +500,7 @@
                                         <p class="font-semibold">Draft booking only</p>
                                         <p>Your room is not reserved yet. It becomes confirmed only after payment succeeds.</p>
                                     </div>
-                                    <form method="POST" action="{% url 'booking:create_booking' room.id %}" class="space-y-5 sm:space-y-6">
+                                    <form method="POST" action="{% url 'booking:create_booking' room.id %}" @submit="validateGuestForm($event)" class="space-y-5 sm:space-y-6" novalidate>
                                         {% csrf_token %}
                                         <!-- Hidden stay inputs -->
                                         <input type="hidden" name="check_in" :value="checkIn">
@@ -454,28 +512,58 @@
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                                             <div>
                                                 <label class="block text-xs font-semibold uppercase tracking-wider mb-1.5 opacity-80">Full Name *</label>
-                                                <input type="text" name="name" required placeholder="John Doe"
-                                                       class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight"
-                                                       :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }">
+                                                <input type="text" name="name" x-model="guestName" @blur="guestErrors.name = validateGuestName()" @input="if(guestErrors.name) guestErrors.name = validateGuestName()" placeholder="John Doe"
+                                                       class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 transition-colors"
+                                                       :class="{
+                                                           'border-red-500 focus:ring-red-500': guestErrors.name,
+                                                           'border-gray-300 focus:ring-brand-primaryLight': currentTheme === 'light' && !guestErrors.name,
+                                                           'border-brand-primary/40 focus:ring-brand-primaryLight': currentTheme !== 'light' && !guestErrors.name
+                                                       }">
+                                                <template x-if="guestErrors.name">
+                                                    <p class="text-red-500 text-[11px] mt-1.5 flex items-center gap-1">
+                                                        <i class="fa-solid fa-circle-exclamation"></i>
+                                                        <span x-text="guestErrors.name"></span>
+                                                    </p>
+                                                </template>
                                             </div>
                                             <div>
                                                 <label class="block text-xs font-semibold uppercase tracking-wider mb-1.5 opacity-80">Email Address *</label>
-                                                <input type="email" name="email" required placeholder="john.doe@example.com"
-                                                       class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight"
-                                                       :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }">
+                                                <input type="email" name="email" x-model="guestEmail" @blur="guestErrors.email = validateGuestEmail()" @input="if(guestErrors.email) guestErrors.email = validateGuestEmail()" placeholder="john.doe@example.com"
+                                                       class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 transition-colors"
+                                                       :class="{
+                                                           'border-red-500 focus:ring-red-500': guestErrors.email,
+                                                           'border-gray-300 focus:ring-brand-primaryLight': currentTheme === 'light' && !guestErrors.email,
+                                                           'border-brand-primary/40 focus:ring-brand-primaryLight': currentTheme !== 'light' && !guestErrors.email
+                                                       }">
+                                                <template x-if="guestErrors.email">
+                                                    <p class="text-red-500 text-[11px] mt-1.5 flex items-center gap-1">
+                                                        <i class="fa-solid fa-circle-exclamation"></i>
+                                                        <span x-text="guestErrors.email"></span>
+                                                    </p>
+                                                </template>
                                             </div>
                                         </div>
                                         
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                                             <div>
                                                 <label class="block text-xs font-semibold uppercase tracking-wider mb-1.5 opacity-80">Contact Phone Number *</label>
-                                                <input type="tel" name="phone" required placeholder="+1 555-0199"
-                                                       class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight"
-                                                       :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }">
+                                                <input type="tel" name="phone" x-model="guestPhone" @blur="guestErrors.phone = validateGuestPhone()" @input="if(guestErrors.phone) guestErrors.phone = validateGuestPhone()" placeholder="+977 9800000000"
+                                                       class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 transition-colors"
+                                                       :class="{
+                                                           'border-red-500 focus:ring-red-500': guestErrors.phone,
+                                                           'border-gray-300 focus:ring-brand-primaryLight': currentTheme === 'light' && !guestErrors.phone,
+                                                           'border-brand-primary/40 focus:ring-brand-primaryLight': currentTheme !== 'light' && !guestErrors.phone
+                                                       }">
+                                                <template x-if="guestErrors.phone">
+                                                    <p class="text-red-500 text-[11px] mt-1.5 flex items-center gap-1">
+                                                        <i class="fa-solid fa-circle-exclamation"></i>
+                                                        <span x-text="guestErrors.phone"></span>
+                                                    </p>
+                                                </template>
                                             </div>
                                             <div>
                                                 <label class="block text-xs font-semibold uppercase tracking-wider mb-1.5 opacity-80">Promo / Coupon Code</label>
-                                                <input type="text" name="promo_code" placeholder="ENTER CODE"
+                                                <input type="text" name="promo_code" x-model="promoCode" maxlength="30" placeholder="ENTER CODE"
                                                        class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight font-mono uppercase"
                                                        :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }">
                                             </div>
@@ -483,7 +571,7 @@
                                         
                                         <div>
                                             <label class="block text-xs font-semibold uppercase tracking-wider mb-1.5 opacity-80">Special Requests / Notes</label>
-                                            <textarea name="special_requests" rows="3" placeholder="Airport pickup, dietary restrictions, extra bed requests..."
+                                            <textarea name="special_requests" x-model="specialRequests" rows="3" maxlength="500" placeholder="Airport pickup, dietary restrictions, extra bed requests..."
                                                       class="w-full px-4 py-2.5 sm:py-3 rounded-lg border bg-transparent text-sm focus:outline-none focus:ring-1 focus:ring-brand-primaryLight"
                                                       :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }"></textarea>
                                         </div>

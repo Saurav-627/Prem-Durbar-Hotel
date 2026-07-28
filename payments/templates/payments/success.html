@@ -1,88 +1,88 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<section class="py-20 max-w-2xl mx-auto px-4 sm:px-6">
-    <div class="rounded-2xl p-6 sm:p-10 border shadow-xl text-center space-y-8 animate__animated animate__zoomIn"
+<section class="py-8 sm:py-16 max-w-2xl mx-auto px-3.5 sm:px-6">
+    <div class="rounded-2xl p-4 sm:p-8 border shadow-xl text-center space-y-6 sm:space-y-8 animate__animated animate__zoomIn"
          :class="{
              'bg-white border-gray-200': currentTheme === 'light',
              'bg-[#1A3A32] border-brand-primary/30 text-white': currentTheme !== 'light'
          }">
         
         {% if payment.status == 'success' %}
-        <div class="space-y-3">
-            <div class="w-16 h-16 rounded-full bg-emerald-900/20 text-emerald-400 flex items-center justify-center text-3xl mx-auto border border-emerald-900/30">
+        <div class="space-y-2 sm:space-y-3">
+            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-emerald-900/20 text-emerald-400 flex items-center justify-center text-2xl sm:text-3xl mx-auto border border-emerald-900/30">
                 <i class="fa-solid fa-circle-check"></i>
             </div>
-            <h1 class="font-luxury-title text-3xl font-bold tracking-wide text-emerald-500">Reservation Confirmed</h1>
-            <p class="text-xs opacity-75">Thank you! Your stay at {{ hotel_settings.site_name }} has been successfully booked.</p>
+            <h1 class="font-luxury-title text-2xl sm:text-3xl font-bold tracking-wide text-emerald-500">Reservation Confirmed</h1>
+            <p class="text-xs sm:text-sm opacity-75 leading-relaxed">Thank you! Your stay at {{ hotel_settings.site_name }} has been successfully booked.</p>
         </div>
         {% elif payment.status == 'pending' %}
-        <div class="space-y-3">
-            <div class="w-16 h-16 rounded-full bg-amber-900/20 text-luxuryGold-500 flex items-center justify-center text-3xl mx-auto border border-amber-900/30">
+        <div class="space-y-2 sm:space-y-3">
+            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-amber-900/20 text-luxuryGold-500 flex items-center justify-center text-2xl sm:text-3xl mx-auto border border-amber-900/30">
                 <i class="fa-solid fa-circle-exclamation animate-pulse"></i>
             </div>
-            <h1 class="font-luxury-title text-3xl font-bold tracking-wide text-luxuryGold-500">Payment Pending</h1>
-            <p class="text-xs opacity-75">Your transaction is currently pending verification. The booking remains a draft until payment is complete.</p>
+            <h1 class="font-luxury-title text-2xl sm:text-3xl font-bold tracking-wide text-luxuryGold-500">Payment Pending</h1>
+            <p class="text-xs sm:text-sm opacity-75 leading-relaxed">Your transaction is currently pending verification. The booking remains a draft until payment is complete.</p>
         </div>
         {% else %}
-        <div class="space-y-3">
-            <div class="w-16 h-16 rounded-full bg-red-900/20 text-red-500 flex items-center justify-center text-3xl mx-auto border border-red-900/30">
+        <div class="space-y-2 sm:space-y-3">
+            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-red-900/20 text-red-500 flex items-center justify-center text-2xl sm:text-3xl mx-auto border border-red-900/30">
                 <i class="fa-solid fa-circle-xmark"></i>
             </div>
-            <h1 class="font-luxury-title text-3xl font-bold tracking-wide text-red-500">Payment Failed</h1>
-            <p class="text-xs opacity-75">We were unable to verify your payment. The booking remains a draft and the room has not been reserved.</p>
+            <h1 class="font-luxury-title text-2xl sm:text-3xl font-bold tracking-wide text-red-500">Payment Failed</h1>
+            <p class="text-xs sm:text-sm opacity-75 leading-relaxed">We were unable to verify your payment. The booking remains a draft and the room has not been reserved.</p>
         </div>
         {% endif %}
 
         <!-- Prominent Paid Amount Section -->
-        <div class="py-6 border-y border-dashed" :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/20': currentTheme !== 'light' }">
+        <div class="py-4 sm:py-6 border-y border-dashed" :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/20': currentTheme !== 'light' }">
             {% if payment.status == 'success' %}
-                <span class="text-xs uppercase tracking-widest opacity-60 block mb-1">Total Amount Paid</span>
+                <span class="text-[10px] sm:text-xs uppercase tracking-widest opacity-60 block mb-1">Total Amount Paid</span>
             {% elif payment.status == 'pending' %}
-                <span class="text-xs uppercase tracking-widest opacity-60 block mb-1">Pending Amount</span>
+                <span class="text-[10px] sm:text-xs uppercase tracking-widest opacity-60 block mb-1">Pending Amount</span>
             {% else %}
-                <span class="text-xs uppercase tracking-widest opacity-60 block mb-1">Unpaid Amount</span>
+                <span class="text-[10px] sm:text-xs uppercase tracking-widest opacity-60 block mb-1">Unpaid Amount</span>
             {% endif %}
-            <span class="text-4xl sm:text-5xl font-extrabold tracking-wide text-luxuryGold-500 font-luxury-title block">
+            <span class="text-3xl sm:text-5xl font-extrabold tracking-wide text-luxuryGold-500 font-luxury-title block">
                 {% if payment.currency %}{{ payment.currency.symbol }}{% else %}{{ payment.booking.room.currency }}{% endif %} {{ payment.amount|floatformat:2 }}
             </span>
             {% if payment.gateway %}
-            <span class="inline-block mt-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider 
-                {% if payment.status == 'success' %}bg-emerald-500/10 text-emerald-400 border border-emerald-500/20
-                {% elif payment.status == 'pending' %}bg-amber-500/10 text-luxuryGold-400 border border-amber-500/20
-                {% else %}bg-red-500/10 text-red-400 border border-red-500/20{% endif %}">
+            <span class="inline-block mt-2.5 sm:mt-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider 
+                {% if payment.status == 'success' %}bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 border border-emerald-500/20
+                {% elif payment.status == 'pending' %}bg-amber-500/10 text-luxuryGold-500 dark:text-luxuryGold-400 border border-amber-500/20
+                {% else %}bg-red-500/10 text-red-500 dark:text-red-400 border border-red-500/20{% endif %}">
                 Payment Method: {{ payment.gateway|upper }}
             </span>
             {% endif %}
         </div>
 
         <!-- Receipt Table -->
-        <div class="border rounded-xl overflow-hidden text-sm" :class="{ 'border-gray-200': currentTheme === 'light', 'border-brand-primary/10': currentTheme !== 'light' }">
-            <div class="grid grid-cols-2 p-4 border-b opacity-85" :class="{ 'border-gray-100 bg-[#EEF5F0]': currentTheme === 'light', 'border-brand-primary/10 bg-[#0A2017] text-white': currentTheme !== 'light' }">
+        <div class="border rounded-xl overflow-hidden text-xs sm:text-sm" :class="{ 'border-gray-200': currentTheme === 'light', 'border-brand-primary/10': currentTheme !== 'light' }">
+            <div class="grid grid-cols-2 p-3 sm:p-4 border-b opacity-85" :class="{ 'border-gray-100 bg-[#EEF5F0]': currentTheme === 'light', 'border-brand-primary/10 bg-[#0A2017] text-white': currentTheme !== 'light' }">
                 <span class="text-left font-semibold">Detail</span>
                 <span class="text-right font-semibold">Value</span>
             </div>
-            <div class="grid grid-cols-2 p-4 border-b" :class="{ 'border-gray-100': currentTheme === 'light', 'border-amber-900/5': currentTheme !== 'light' }">
+            <div class="grid grid-cols-2 p-3 sm:p-4 border-b gap-2" :class="{ 'border-gray-100': currentTheme === 'light', 'border-amber-900/5': currentTheme !== 'light' }">
                 <span class="text-left opacity-75">Booking Reference</span>
-                <span class="text-right font-mono">{{ booking.booking_uid }}</span>
+                <span class="text-right font-mono text-[11px] sm:text-xs break-all">{{ booking.booking_uid }}</span>
             </div>
-            <div class="grid grid-cols-2 p-4 border-b" :class="{ 'border-gray-100': currentTheme === 'light', 'border-amber-900/5': currentTheme !== 'light' }">
+            <div class="grid grid-cols-2 p-3 sm:p-4 border-b gap-2" :class="{ 'border-gray-100': currentTheme === 'light', 'border-amber-900/5': currentTheme !== 'light' }">
                 <span class="text-left opacity-75">{% if payment.status == 'success' %}Room Booked{% else %}Room Selected{% endif %}</span>
                 <span class="text-right font-semibold">{{ booking.room.title }}</span>
             </div>
             {% if payment.tax_amount > 0 %}
-            <div class="grid grid-cols-2 p-4 border-b" :class="{ 'border-gray-100': currentTheme === 'light', 'border-amber-900/5': currentTheme !== 'light' }">
+            <div class="grid grid-cols-2 p-3 sm:p-4 border-b gap-2" :class="{ 'border-gray-100': currentTheme === 'light', 'border-amber-900/5': currentTheme !== 'light' }">
                 <span class="text-left opacity-75">Tax</span>
                 <span class="text-right font-semibold">{% if payment.currency %}{{ payment.currency.symbol }}{% else %}{{ payment.booking.room.currency }}{% endif %} {{ payment.tax_amount|floatformat:2 }}</span>
             </div>
             {% if booking.num_rooms > 1 %}
-            <div class="grid grid-cols-2 p-4 border-b" :class="{ 'border-gray-100': currentTheme === 'light', 'border-amber-900/5': currentTheme !== 'light' }">
+            <div class="grid grid-cols-2 p-3 sm:p-4 border-b gap-2" :class="{ 'border-gray-100': currentTheme === 'light', 'border-amber-900/5': currentTheme !== 'light' }">
                 <span class="text-left opacity-75">Tax per room</span>
                 <span class="text-right font-semibold">{% if payment.currency %}{{ payment.currency.symbol }}{% else %}{{ payment.booking.room.currency }}{% endif %} {{ payment.tax_per_room|floatformat:2 }}</span>
             </div>
             {% endif %}
             {% endif %}
-            <div class="grid grid-cols-2 p-4 border-b transition-all" 
+            <div class="grid grid-cols-2 p-3 sm:p-4 border-b gap-2 transition-all" 
                  :class="{ 
                      'border-gray-200 bg-amber-500/5': currentTheme === 'light', 
                      'border-amber-900/20 bg-luxuryGold-500/5': currentTheme !== 'light' 
@@ -91,30 +91,30 @@
                       :class="{ 'text-amber-900': currentTheme === 'light', 'text-luxuryGold-300': currentTheme !== 'light' }">
                     {% if payment.status == 'success' %}Total Paid{% else %}Total Price{% endif %}
                 </span>
-                <span class="text-right font-bold text-luxuryGold-500 font-luxury-title text-base sm:text-lg">
+                <span class="text-right font-bold text-luxuryGold-500 font-luxury-title text-sm sm:text-lg">
                     {% if payment.currency %}{{ payment.currency.symbol }}{% else %}{{ payment.booking.room.currency }}{% endif %} {{ payment.amount|floatformat:2 }}
                 </span>
             </div>
-            <div class="grid grid-cols-2 p-4" :class="{ 'border-gray-100': currentTheme === 'light', 'border-amber-900/5': currentTheme !== 'light' }">
+            <div class="grid grid-cols-2 p-3 sm:p-4 gap-2" :class="{ 'border-gray-100': currentTheme === 'light', 'border-amber-900/5': currentTheme !== 'light' }">
                 <span class="text-left opacity-75">Transaction reference</span>
-                <span class="text-right font-mono text-xs">{{ payment.transaction_id }}</span>
+                <span class="text-right font-mono text-[11px] sm:text-xs break-all">{{ payment.transaction_id }}</span>
             </div>
         </div>
 
-        <div class="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+        <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 pt-2 sm:pt-4">
             {% if payment.status == 'success' %}
             <a href="{% url 'payments:view_invoice' booking.booking_uid %}" 
-               class="px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wider border border-luxuryGold-400 text-luxuryGold-500 hover:bg-luxuryGold-900/10 transition-all text-center">
+               class="w-full sm:w-auto px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wider border border-luxuryGold-400 text-luxuryGold-500 hover:bg-luxuryGold-900/10 transition-all text-center">
                 Print Invoice / Receipt
             </a>
             {% else %}
             <a href="{% url 'rooms:room_detail' booking.room.slug %}" 
-               class="px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wider border border-luxuryGold-400 text-luxuryGold-500 hover:bg-luxuryGold-900/10 transition-all text-center">
+               class="w-full sm:w-auto px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wider border border-luxuryGold-400 text-luxuryGold-500 hover:bg-luxuryGold-900/10 transition-all text-center">
                 Try Booking Again
             </a>
             {% endif %}
             <a href="{% url 'homepage:home' %}" 
-               class="btn-gold-gradient px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wider text-center cursor-pointer text-white shadow-md">
+               class="btn-gold-gradient w-full sm:w-auto px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wider text-center cursor-pointer text-white shadow-md">
                 Back To Homepage
             </a>
         </div>

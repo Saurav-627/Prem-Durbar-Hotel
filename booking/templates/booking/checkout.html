@@ -1,55 +1,55 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<section class="py-16 max-w-4xl mx-auto px-4 sm:px-6" x-data="{ showModal: false, gatewayName: '', redirectUrl: '', statusText: 'Initializing secure handshake...' }">
-    <div class="rounded-2xl p-6 sm:p-10 border shadow-xl text-center space-y-8 animate__animated animate__fadeIn"
+<section class="py-8 sm:py-16 max-w-4xl mx-auto px-3.5 sm:px-6" x-data="{ showModal: false, gatewayName: '', redirectUrl: '', statusText: 'Initializing secure handshake...' }">
+    <div class="rounded-2xl p-4 sm:p-10 border shadow-xl text-center space-y-6 sm:space-y-8 animate__animated animate__fadeIn"
          :class="{
             'bg-white border-gray-200': currentTheme === 'light',
             'bg-[#1A3A32] border-brand-primary/30 text-white': currentTheme !== 'light'
         }">
         
         <div class="space-y-3">
-            <div class="w-16 h-16 rounded-full bg-brand-primary/20 text-brand-primaryLight flex items-center justify-center text-2xl mx-auto border border-brand-primary/30">
+            <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-brand-primary/20 text-brand-primaryLight flex items-center justify-center text-xl sm:text-2xl mx-auto border border-brand-primary/30">
                 <i class="fa-solid fa-lock animate__animated animate__pulse animate__infinite"></i>
             </div>
-            <h1 class="font-luxury-title text-3xl font-bold tracking-wide animate__animated animate__fadeInDown">Secure Check-out</h1>
-            <p class="text-xs opacity-75">Booking Reference: <span class="font-mono font-semibold">{{ booking.booking_uid }}</span></p>
+            <h1 class="font-luxury-title text-2xl sm:text-3xl font-bold tracking-wide animate__animated animate__fadeInDown">Secure Check-out</h1>
+            <p class="text-[11px] sm:text-xs opacity-75">Booking Reference: <span class="font-mono font-semibold break-all">{{ booking.booking_uid }}</span></p>
             {% if booking.status == 'draft' %}
-            <div class="mt-4 max-w-md mx-auto rounded-xl border border-brand-primary/20 bg-brand-primary/10 px-4 py-3 text-left text-xs" :class="{ 'border-brand-primary/20 bg-[#EEF5F0] text-brand-primaryDark': currentTheme === 'light', 'border-brand-primary/30 bg-brand-primary/20 text-white': currentTheme !== 'light' }">
+            <div class="mt-3 sm:mt-4 max-w-md mx-auto rounded-xl border border-brand-primary/20 bg-brand-primary/10 px-3.5 sm:px-4 py-2.5 sm:py-3 text-left text-xs" :class="{ 'border-brand-primary/20 bg-[#EEF5F0] text-brand-primaryDark': currentTheme === 'light', 'border-brand-primary/30 bg-brand-primary/20 text-white': currentTheme !== 'light' }">
                 <p class="font-semibold mb-1">Draft booking</p>
-                <p>This stay is not reserved yet. It becomes confirmed only after payment succeeds.</p>
+                <p class="opacity-90">This stay is not reserved yet. It becomes confirmed only after payment succeeds.</p>
             </div>
             {% endif %}
         </div>
 
         <!-- Price block -->
-        <div class="p-6 rounded-xl border max-w-md mx-auto animate__animated animate__zoomIn" 
+        <div class="p-4 sm:p-6 rounded-xl border max-w-md mx-auto animate__animated animate__zoomIn" 
              :class="{ 'bg-[#EEF5F0] border-gray-200': currentTheme === 'light', 'bg-[#0A2017] border-brand-primary/20 text-white': currentTheme !== 'light' }">
-            <span class="text-xs uppercase opacity-75">Payable Amount</span>
-            <h2 class="font-luxury-title text-4xl font-bold text-luxuryGold-500 mt-1">{{ booking.room.currency.iso_code }} {{ booking.total|floatformat:2 }}</h2>
+            <span class="text-[10px] sm:text-xs uppercase tracking-wider opacity-75">Payable Amount</span>
+            <h2 class="font-luxury-title text-2xl sm:text-4xl font-bold text-luxuryGold-500 mt-1">{{ booking.room.currency.iso_code }} {{ booking.total|floatformat:2 }}</h2>
             {% if booking.discount > 0 %}
-                <p class="text-xs text-green-400 mt-2"><i class="fa-solid fa-tags mr-1"></i>Saved <span>{{ booking.room.currency.iso_code }} {{ booking.discount|floatformat:2 }}</span> via Promo Code!</p>
+                <p class="text-[11px] sm:text-xs text-green-500 dark:text-green-400 mt-2 font-medium"><i class="fa-solid fa-tags mr-1"></i>Saved <span>{{ booking.room.currency.iso_code }} {{ booking.discount|floatformat:2 }}</span> via Promo Code!</p>
             {% endif %}
         </div>
 
         <!-- Gateways lists -->
-        <div class="space-y-4 max-w-md mx-auto">
-            <h3 class="text-xs font-semibold tracking-widest uppercase opacity-75">Choose Payment Gateway</h3>
+        <div class="space-y-3 sm:space-y-4 max-w-md mx-auto">
+            <h3 class="text-[10px] sm:text-xs font-semibold tracking-widest uppercase opacity-75">Choose Payment Gateway</h3>
             
             <!-- Stripe -->
             {% if booking.room.currency.iso_code|upper != 'NPR' %}
             <a href="{% url 'payments:process_payment' booking.booking_uid 'stripe' %}" 
                @click.prevent="gatewayName = 'Stripe'; redirectUrl = $el.getAttribute('href'); showModal = true; statusText = 'Initializing secure handshake...'; setTimeout(() => { statusText = 'Establishing PCI-DSS secure connection...'; }, 1000); setTimeout(() => { window.location.href = redirectUrl; }, 2500)"
-               class="flex items-center justify-between p-4 rounded-xl border hover:scale-[1.03] hover:shadow-lg duration-300 transition-all cursor-pointer bg-blue-900/10 border-blue-900/30 group animate__animated animate__fadeInUp"
+               class="flex items-center justify-between p-3.5 sm:p-4 rounded-xl border hover:scale-[1.02] sm:hover:scale-[1.03] hover:shadow-lg duration-300 transition-all cursor-pointer bg-blue-900/10 border-blue-900/30 group animate__animated animate__fadeInUp"
                style="animation-delay: 100ms;">
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="75"
                       height="50"
                       viewBox="0 0 60 45"
                       fill="none"
-                      class="h-8 w-auto object-contain group-hover:scale-110 duration-300 text-[#635BFF]"
+                      class="h-6 sm:h-8 w-auto shrink-0 object-contain group-hover:scale-110 duration-300 text-[#635BFF]"
                     >
                       <g clip-path="url(#clip0_4399_1429)">
                         <path
@@ -68,9 +68,9 @@
                         </clipPath>
                       </defs>
                     </svg>
-                    <span class="text-sm font-semibold">Pay with Stripe / Credit Card</span>
+                    <span class="text-xs sm:text-sm font-semibold text-left">Pay with Stripe / Credit Card</span>
                 </div>
-                <i class="fa-solid fa-chevron-right opacity-60 group-hover:translate-x-1 duration-300"></i>
+                <i class="fa-solid fa-chevron-right text-xs opacity-60 group-hover:translate-x-1 duration-300 ml-2 shrink-0"></i>
             </a>
             {% endif %}
 
@@ -78,16 +78,16 @@
             {% if booking.room.currency.iso_code|upper == 'NPR' %}
             <a href="{% url 'payments:process_payment' booking.booking_uid 'esewa' %}" 
                @click.prevent="gatewayName = 'eSewa Wallet'; redirectUrl = $el.getAttribute('href'); showModal = true; statusText = 'Connecting to eSewa API...'; setTimeout(() => { statusText = 'Verifying merchant wallet handshake...'; }, 1000); setTimeout(() => { window.location.href = redirectUrl; }, 2500)"
-               class="flex items-center justify-between p-4 rounded-xl border hover:scale-[1.03] hover:shadow-lg duration-300 transition-all cursor-pointer bg-green-900/10 border-green-900/30 group animate__animated animate__fadeInUp"
+               class="flex items-center justify-between p-3.5 sm:p-4 rounded-xl border hover:scale-[1.02] sm:hover:scale-[1.03] hover:shadow-lg duration-300 transition-all cursor-pointer bg-green-900/10 border-green-900/30 group animate__animated animate__fadeInUp"
                style="animation-delay: 200ms;">
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
                     <svg
                       width="75"
                       height="45"
                       viewBox="0 0 74 26"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      class="h-8 w-auto object-contain group-hover:scale-110 duration-300 text-[#60BB46]"
+                      class="h-6 sm:h-8 w-auto shrink-0 object-contain group-hover:scale-110 duration-300 text-[#60BB46]"
                     >
                       <path
                         d="M31.9794 15.6485C31.2494 17.3318 29.9824 18.2701 28.1645 18.477C27.9579 18.5046 27.7513 18.5046 27.5447 18.5184C27.5172 18.5184 27.4896 18.5184 27.4621 18.5184C26.8837 18.5184 26.3053 18.4494 25.7544 18.2839C25.052 18.0907 24.4323 17.7595 23.8538 17.318C23.7023 17.2076 23.5508 17.0972 23.3856 17.0145C23.2203 16.9179 23.1239 16.9593 23.0275 17.111C22.9586 17.2214 22.8898 17.3318 22.8209 17.4284C22.7658 17.4974 22.697 17.594 22.6281 17.6216C22.5317 17.663 22.394 17.6768 22.3251 17.6354C22.2563 17.594 22.2012 17.4422 22.2012 17.3594C22.3251 15.8968 22.4766 14.4481 22.6143 12.9855C22.6419 12.7509 22.6419 12.7509 22.876 12.7647C23.2754 12.7785 23.2754 12.7785 23.2892 13.1649C23.3443 14.4343 23.7987 15.5381 24.6801 16.4488C25.7957 17.594 27.6411 17.9113 29.0872 17.2214C30.0513 16.7661 30.6021 15.9934 30.7123 14.9172C30.8225 13.8824 30.6297 12.9027 29.9273 12.0886C29.5279 11.6195 29.0046 11.3022 28.4675 11.0262C28.013 10.7916 27.531 10.6123 27.0352 10.4191C25.9472 10.019 24.8867 9.57744 23.9778 8.83236C23.0688 8.11487 22.6281 7.16282 22.4491 6.059C22.3389 5.31392 22.2838 4.56884 22.5592 3.85135C23.179 2.18182 24.2808 1.0504 26.1124 0.746843C27.3106 0.553674 28.4675 0.691651 29.6106 1.07799C29.7758 1.13318 29.9273 1.20217 30.0788 1.28496C30.2854 1.38154 30.368 1.36774 30.5333 1.21597C30.671 1.09179 30.8225 0.953813 30.9878 0.857228C31.153 0.746846 31.2632 0.802037 31.2908 0.995206C31.3321 1.22977 31.3183 1.47813 31.3458 1.71269C31.4285 2.59575 31.5111 3.47881 31.6075 4.36187C31.6351 4.58264 31.6488 4.8034 31.6626 5.02416C31.6764 5.17594 31.6213 5.25873 31.4698 5.28632C31.1255 5.35531 31.1668 5.39671 31.0566 5.03796C30.7399 4.00313 30.2028 3.09247 29.404 2.34739C28.7842 1.78168 28.0405 1.54712 27.2142 1.53332C26.6358 1.51952 26.0711 1.57471 25.5478 1.85067C24.749 2.2646 24.3221 2.96829 24.1843 3.82376C24.0329 4.76201 24.1568 5.64507 24.8179 6.37635C25.1897 6.79029 25.6717 7.05244 26.1538 7.3008C26.925 7.70094 27.7789 7.92171 28.5914 8.21146C29.1698 8.41843 29.7483 8.63919 30.2854 8.94274C31.6626 9.71542 32.365 10.9434 32.4889 12.5026C32.5302 13.5788 32.4063 14.6412 31.9794 15.6485Z"
@@ -200,16 +200,16 @@
             {% if booking.room.currency.iso_code|upper == 'NPR' %}
             <a href="{% url 'payments:process_payment' booking.booking_uid 'khalti' %}" 
                @click.prevent="gatewayName = 'Khalti SDK'; redirectUrl = $el.getAttribute('href'); showModal = true; statusText = 'Initializing Khalti payment session...'; setTimeout(() => { statusText = 'Authorizing secure transaction portal...'; }, 1000); setTimeout(() => { window.location.href = redirectUrl; }, 2500)"
-               class="flex items-center justify-between p-4 rounded-xl border hover:scale-[1.03] hover:shadow-lg duration-300 transition-all cursor-pointer bg-purple-900/10 border-purple-900/30 group animate__animated animate__fadeInUp"
+               class="flex items-center justify-between p-3.5 sm:p-4 rounded-xl border hover:scale-[1.02] sm:hover:scale-[1.03] hover:shadow-lg duration-300 transition-all cursor-pointer bg-purple-900/10 border-purple-900/30 group animate__animated animate__fadeInUp"
                style="animation-delay: 300ms;">
-                <div class="flex items-center gap-3">
-                    <svg
+                <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                   <svg
                       width="75"
                       height="50"
                       viewBox="0 0 416 206"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      class="h-8 w-auto object-contain group-hover:scale-110 duration-300 text-[#5C2D91]"
+                      class="h-7 sm:h-8 w-auto object-contain group-hover:scale-110 duration-300 text-red-600"
                     >
                       <path
                         d="M65.358 135.572L88.0505 107.279C88.1045 107.212 88.1383 107.131 88.1482 107.045C88.158 106.96 88.1434 106.873 88.1061 106.795C88.0688 106.718 88.0102 106.652 87.9371 106.606C87.8641 106.56 87.7796 106.536 87.6933 106.536H70.4397C70.3709 106.536 70.3031 106.552 70.2411 106.581C70.1792 106.611 70.1248 106.655 70.0819 106.708L44.4804 138.762C44.4212 138.836 44.3404 138.89 44.2493 138.916C44.1581 138.943 44.061 138.94 43.9714 138.909C43.8819 138.877 43.8043 138.819 43.7494 138.742C43.6945 138.664 43.665 138.572 43.665 138.477V83.2702C43.665 83.149 43.6167 83.0328 43.5309 82.9471C43.4451 82.8614 43.3287 82.8132 43.2073 82.8132H26.4576C26.3362 82.8132 26.2199 82.8614 26.134 82.9471C26.0482 83.0328 26 83.149 26 83.2702V174.981C26 175.103 26.0482 175.219 26.134 175.304C26.2199 175.39 26.3362 175.438 26.4576 175.438H43.2077C43.329 175.438 43.4454 175.39 43.5313 175.304C43.6171 175.219 43.6653 175.103 43.6654 174.981V143.669C43.6654 143.548 43.7136 143.432 43.7994 143.346C43.8852 143.26 44.0016 143.212 44.123 143.212H50.9327C51.0055 143.212 51.0771 143.23 51.1418 143.263C51.2065 143.296 51.2624 143.344 51.3047 143.403L74.152 175.247C74.1944 175.306 74.2502 175.354 74.3149 175.388C74.3796 175.421 74.4513 175.438 74.524 175.438H93.3352C93.4198 175.438 93.5027 175.415 93.5748 175.371C93.6469 175.326 93.7053 175.263 93.7435 175.188C93.7817 175.112 93.7983 175.028 93.7913 174.944C93.7844 174.86 93.7542 174.779 93.7542 174.711L65.3458 136.128C65.2863 136.047 65.2552 135.948 65.2575 135.848C65.2597 135.747 65.295 135.65 65.358 135.572Z"
@@ -248,9 +248,9 @@
                         fill="currentColor"
                       ></path>
                     </svg>
-                    <span class="text-sm font-semibold">Pay with Khalti Wallet</span>
+                    <span class="text-xs sm:text-sm font-semibold text-left">Pay with Khalti Wallet</span>
                 </div>
-                <i class="fa-solid fa-chevron-right opacity-60 group-hover:translate-x-1 duration-300"></i>
+                <i class="fa-solid fa-chevron-right text-xs opacity-60 group-hover:translate-x-1 duration-300 ml-2 shrink-0"></i>
             </a>
             {% endif %}
 
@@ -264,7 +264,7 @@
 
     <!-- SECURITY HANDSHAKE MODAL -->
     <div x-show="showModal" 
-         class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md"
+         class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-md"
          x-transition:enter="transition ease-out duration-300"
          x-transition:enter-start="opacity-0"
          x-transition:enter-end="opacity-100"
@@ -273,7 +273,7 @@
          x-transition:leave-end="opacity-0"
          style="display: none;">
         
-        <div class="w-full max-w-md p-8 rounded-2xl border text-center space-y-6 animate__animated"
+        <div class="w-full max-w-md p-6 sm:p-8 rounded-2xl border text-center space-y-6 animate__animated"
              :class="{
                  'bg-white border-gray-200 text-gray-800 animate__zoomIn': currentTheme === 'light',
                  'bg-[#1A3A32] border-brand-primary/30 text-white animate__zoomIn': currentTheme !== 'light'

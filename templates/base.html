@@ -264,6 +264,30 @@
             --navbar-bg: rgba(10, 32, 23, 0.95);
         }
 
+        /* Thin Custom Scrollbar in Primary Brand Color */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(45, 90, 74, 0.08);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2D5A4A;
+            border-radius: 9999px;
+            transition: background 0.3s ease;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1A3A32;
+        }
+
+        /* Firefox thin scrollbar support */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #2D5A4A rgba(45, 90, 74, 0.08);
+        }
+
         html {
             background-color: var(--bg-color);
         }
@@ -399,11 +423,12 @@
     }
 }" class="theme-{{ selected_theme|default:'light' }} min-h-screen flex flex-col" :class="'theme-' + currentTheme">
 
-    <!-- Django Messages / Toast Notification -->
-    {% if messages %}
-    <div class="fixed top-24 right-6 z-50 space-y-4 max-w-sm w-full pointer-events-none" x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" style="display: none;">
+    <!-- Global Toast Notification Container for Django Messages and HTMX Out-Of-Band Notifications -->
+    <div id="toast-container" class="fixed top-24 right-4 sm:right-6 z-[9999] space-y-3 max-w-sm w-full pointer-events-none">
+        {% if messages %}
         {% for message in messages %}
-        <div class="p-4 rounded-xl shadow-2xl border flex items-start gap-3 pointer-events-auto animate__animated animate__fadeInRight bg-black/90 backdrop-blur-md"
+        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+             class="p-4 rounded-xl shadow-2xl border flex items-start gap-3 pointer-events-auto animate__animated animate__fadeInRight bg-black/90 backdrop-blur-md"
              :class="{
                  'border-emerald-500/30 text-emerald-200': '{{ message.tags }}' === 'success',
                  'border-rose-500/30 text-rose-200': '{{ message.tags }}' === 'error',
@@ -426,8 +451,8 @@
             </button>
         </div>
         {% endfor %}
+        {% endif %}
     </div>
-    {% endif %}
 
     {% include 'includes/header.html' %}
 
