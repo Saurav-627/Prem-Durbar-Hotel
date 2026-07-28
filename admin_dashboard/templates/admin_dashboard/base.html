@@ -248,6 +248,10 @@
             border-color: #D3AA5E;
         }
         
+        [x-cloak] {
+            display: none !important;
+        }
+
         /* Hide scrollbars */
         .no-scrollbar::-webkit-scrollbar {
             display: none;
@@ -408,16 +412,24 @@
                 
                 <!-- Rooms & Availability -->
                 <div x-data="{ open: {% if 'rooms' in request.path %}true{% else %}false{% endif %} }">
-                    <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-3 rounded-lg hover:bg-luxuryGold-500/10 hover:text-luxuryGold-600 transition text-neutral-600">
+                    <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-3 rounded-lg hover:bg-luxuryGold-500/10 hover:text-luxuryGold-600 transition {% if 'rooms' in request.path %}bg-luxuryGold-500/10 text-luxuryGold-600 font-semibold{% else %}text-neutral-600{% endif %}">
                         <div class="flex items-center gap-4">
                             <div class="w-5 text-center"><i class="fa-solid fa-bed text-lg"></i></div>
                             <span x-show="sidebarOpen">Rooms Management</span>
                         </div>
-                        <i class="fa-solid fa-chevron-down text-xs transition" :class="open && 'rotate-185'" x-show="sidebarOpen"></i>
+                        <i class="fa-solid fa-chevron-down text-xs transition" :class="open && 'rotate-180'" x-show="sidebarOpen"></i>
                     </button>
-                    <div class="pl-9 mt-1 space-y-1" x-show="open && sidebarOpen" x-collapse>
-                        <a href="{% url 'admin_dashboard:room_dashboard' %}" class="block py-2 text-sm text-neutral-600 hover:text-luxuryGold-600 {% if request.resolver_match.url_name == 'room_dashboard' %}text-luxuryGold-600 font-medium{% endif %}">All Rooms</a>
-                        <a href="{% url 'admin_dashboard:room_availability_calendar' %}" class="block py-2 text-sm text-neutral-600 hover:text-luxuryGold-600 {% if request.resolver_match.url_name == 'room_availability_calendar' %}text-luxuryGold-600 font-medium{% endif %}">Availability Calendar</a>
+                    <div class="pl-7 mt-1.5 space-y-1" x-cloak x-show="open && sidebarOpen" {% if 'rooms' not in request.path %}style="display: none;"{% endif %}>
+                        <a href="{% url 'admin_dashboard:room_dashboard' %}" 
+                           class="flex items-center gap-2.5 text-sm transition-all {% if 'rooms' in request.path and 'availability' not in request.path %}bg-luxuryGold-500/15 text-luxuryGold-600 font-bold border-l-4 border-luxuryGold-500 pl-3.5 pr-3 py-2 rounded-r-lg shadow-sm{% else %}text-neutral-600 hover:text-luxuryGold-600 hover:bg-luxuryGold-500/10 px-3 py-2 rounded-lg{% endif %}">
+                            <i class="fa-solid {% if 'rooms' in request.path and 'availability' not in request.path %}fa-circle text-luxuryGold-500 text-[8px]{% else %}fa-circle-dot text-neutral-400 text-[10px]{% endif %}"></i>
+                            <span>All Rooms</span>
+                        </a>
+                        <a href="{% url 'admin_dashboard:room_availability_calendar' %}" 
+                           class="flex items-center gap-2.5 text-sm transition-all {% if 'availability' in request.path %}bg-luxuryGold-500/15 text-luxuryGold-600 font-bold border-l-4 border-luxuryGold-500 pl-3.5 pr-3 py-2 rounded-r-lg shadow-sm{% else %}text-neutral-600 hover:text-luxuryGold-600 hover:bg-luxuryGold-500/10 px-3 py-2 rounded-lg{% endif %}">
+                            <i class="fa-solid {% if 'availability' in request.path %}fa-circle text-luxuryGold-500 text-[8px]{% else %}fa-circle-dot text-neutral-400 text-[10px]{% endif %}"></i>
+                            <span>Availability Calendar</span>
+                        </a>
                     </div>
                 </div>
                 
