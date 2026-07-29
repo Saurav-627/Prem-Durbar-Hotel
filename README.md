@@ -1,42 +1,54 @@
 # Prem Durbar Hotel & Nagarkot Zipline Platform
 
-A premium, high-performance Django-based hospitality, gastronomy, and adventure management platform designed for Prem Durbar Hotel & Nagarkot Zipline in Nagarkot, Nepal.
+A premium, high-performance Django 6 web application and administrative management platform designed for **Prem Durbar Hotel & Nagarkot Zipline** in Nagarkot, Nepal.
 
 ---
 
-## 🚀 Key Features
+## 🚀 Key Features & Architectural Enhancements
 
-*   **Multi-Currency Pricing Architecture**: Comprehensive multi-currency pricing across both **Rooms (`RoomBasePrice`)** and **Dining Food Items (`DiningItemBasePrice`)**. Staff can specify base rates per currency (NPR, USD, EUR, GBP, INR) with mandatory currency validation in the Admin Panel.
-*   **Real-Time Currency Switcher**: Server-side cookie-driven currency selector (desktop navigation bar dropdown & mobile native selector). Prices across room suites and food dishes update instantly to the guest's selected currency.
-*   **Full White-Label & Dynamic Branding**: Dynamic hotel site identity managed directly from the Admin Panel — including Site Name, Light & Dark Logos, Admin Dashboard Logo, Browser Favicon (.png, .ico, .svg), Admin Tab Title, Admin Sidebar Label, Footer Story, and Contact Details.
-*   **Dedicated Page Content CMS**: Complete CMS control tabs in `/admin-dashboard/` (`CMS Content`) for:
-    *   **About Us Page (`AboutCMS`)**: Hero banners, valley artistry story headers, story body text, and promo tour video links.
-    *   **About Preview (Homepage) (`AboutPreview`)**: Homepage `/` intro text, illustration photos, video link, and 4 statistical counters (Chambers, Longest Zipline, 100% Organic, 5k+ Adventurers).
-    *   **Zipline Adventure Page (`ZiplineCMS`)**: Hero banner, specifications (Length, Speed, Elevation, Safety Certification), overview text, and a **Live Action Video Preview Player** (supporting MP4 file uploads & YouTube/Vimeo embeds).
-    *   **Sustainability Page (`SustainabilityCMS` & `SustainabilityPillar`)**: Environmental & community pillar cards with icon, title, description, and ordering.
-*   **Pure F&B Food Menu Showcase (`DiningItem`)**: Renamed and streamlined Dining section presenting 101 food menu items with dietary badges (Veg, Vegan, Spicy, Chef Special), category filtering, and live multi-currency pricing.
-*   **Air Datepicker & File Upload Widgets**: Modern date inputs with Air Datepicker UI and a custom file uploader widget with live thumbnail image previews and one-click remove buttons.
-*   **Standardized Invoicing Engine**: Unified, print-ready layout (`invoice.html`) showing dynamic hotel header branding, itemized room unit/night tallies, clear payment status tags, and visual callouts.
-*   **Dynamic Theme System**: Dynamic theme-aware layout styling supporting Light, Dark, Luxury Gold, and Festival modes without client-side render flickering.
-*   **Custom Admin Dashboard**: Administrative portal (`/admin-dashboard/`) featuring check-ins/check-outs, occupancy analytics, dynamic 7-day charts, multi-currency revenue tracking, recent activity logs, and manager tabs.
-*   **Responsive Booking Engine**: Full room reservation flow with dynamic calculation, checkout pages, and payment gateway integrations (Stripe, eSewa, Khalti).
-*   **Optimized Performance**: Packaged with `uv` for lightning-fast Python dependency management and compilation.
+### 1. Dual Destination & Zipline Booking Engine
+* **Multicurrency Zipline Pricing (`ZiplinePackageBasePrice`)**: Complete multi-currency support across **Rooms (`RoomBasePrice`)**, **Dining Food Items (`DiningItemBasePrice`)**, and **Zipline Packages (`ZiplinePackageBasePrice`)** in NPR, USD, EUR, GBP, and INR.
+* **Homepage Dual Auto-Swiping Carousels**: Simultaneous 4-second auto-swiping sliders for both the **Hotel Sanctuary (Left Column)** and **Nagarkot Zipline Package Cards (Right Column)**, complete with manual controls and direct booking triggers.
+* **Interactive Zipline Booking Popup**: Modal popup featuring live per-flight ticket calculations (`per_person_rate`), date selection limits (preventing past date selection), body scroll locking, real-time client-side Alpine.js validation, and server-side Django input checks.
+* **Adaptive Single/Multi-Package Layouts**:
+  * **Single Package Mode**: Automatically pairs the single Zipline Package Card and the Live Action Video Preview side-by-side on the exact same row (`grid-cols-1 lg:grid-cols-12`).
+  * **Multi-Package Mode**: Expands seamlessly to a 2 or 3-column responsive package grid.
+* **High-Contrast Flight Category Badges**: Bright, legible category badges (`bg-amber-400 text-neutral-950 font-extrabold`) for flight types (*Classic Seated Harness*, *Superman Flying Harness*, *Tandem Dual Flight*) across light and dark themes.
+
+### 2. Modularized Booking Architecture
+* **Domain-Driven View Modules (`booking/views/`)**:
+  * `booking/views/zipline.py`: Zipline flight creation, coupon discounts, and input validation.
+  * `booking/views/rooms.py`: Room chamber reservations, seasonal rate overrides, and availability checks.
+  * `booking/views/checkout.py`: Unified guest checkout and payment gateway initiation.
+  * `booking/views/api.py`: OTA channel manager synchronization hooks.
+
+### 3. Administrative Workflows & Dashboard Balancing
+* **Balanced 4/4 Top Metrics Grid**:
+  * **Row 1**: Today's Revenue, Occupancy Rate, Check-ins Today, Check-outs Today.
+  * **Row 2**: Confirmed Bookings, Pending Bookings, Contact Messages Today, Zipline Flights Today.
+* **Domain-Aware Administrative Workflows**: Customized status workflows and action buttons tailored for **Zipline Flights** (*Ticket Redeemed*, *Flight Completed*) versus **Room Chambers** (*Checked In*, *Checked Out*).
+* **Confirmed Payment Exclusions**: Excludes abandoned `draft` bookings from daily operational metrics and check-in/out counts.
+* **Zipline Package Formset Editor**: Dedicated admin editor (`admin_dashboard/zipline/package_form.html`) for package specifications, publication status toggling, and inline multi-currency price formsets.
+
+### 4. Resort & Guest Experience Polish
+* **Rooms & Suites Category Display**: Displays exact category names (`room.category.name`) on card image badges and inline detail headers across the homepage.
+* **Dynamic Theme System**: Dynamic theme-aware layout styling supporting Light, Dark, Luxury Gold, and Festival modes without client-side render flickering.
+* **Standardized Invoicing Engine**: Unified, print-ready layout (`invoice.html`) showing dynamic hotel header branding, itemized room unit/night tallies, clear payment status tags, and visual callouts.
 
 ---
 
 ## 🛠️ Tech Stack
 
-*   **Backend**: Django 6, Python 3.14
-*   **Frontend**: Vanilla CSS, TailwindCSS, Alpine.js, FontAwesome Icons
-*   **Database**: SQLite (default local) / PostgreSQL support
-*   **Package Manager**: `uv`
+* **Backend**: Django 6.0, Python 3.14
+* **Frontend**: Vanilla CSS, TailwindCSS, Alpine.js, FontAwesome 6 Icons
+* **Database**: SQLite (default local) / PostgreSQL support
+* **Package Manager**: `uv`
 
 ---
 
 ## ⚙️ Quick Start & Installation
 
 ### Option A: Using Makefile (Recommended)
-If you have `make` installed on your system, execute:
 ```bash
 # 1. Complete one-step setup (installs environment, runs migrations, and seeds data)
 make setup
@@ -47,13 +59,11 @@ make run
 # 3. Collect static files into staticfiles directory
 make collectstatic
 
-# 4. Run the automated test suite
+# 4. Run system checks and test suite
 make test
 ```
 
 ### Option B: Manual Setup
-If `make` is not available, execute the manual setup commands:
-
 ```bash
 # 1. Sync virtual environment and install dependencies
 uv sync
@@ -61,7 +71,7 @@ uv sync
 # 2. Run database migrations
 uv run python manage.py migrate
 
-# 3. Seed Prem Durbar hotel settings, room suites, multi-currency rates, food menu, and CMS data
+# 3. Seed Prem Durbar hotel settings, room suites, zipline packages, and CMS data
 uv run python manage.py seed_data --update
 
 # 4. Start development server
@@ -71,43 +81,35 @@ Visit the homepage at `http://127.0.0.1:8000/` and the custom admin portal at `h
 
 ---
 
-## 📁 Repository Structure & Data Loading
+## 📁 Key Repository Structure
 
-*   `seed_data.yaml`: Stores essential currencies (NPR, USD, EUR, GBP, INR), hotel settings, room categories, food dishes, CMS content for About/Zipline/Sustainability, and branch details.
-*   `core/management/commands/seed_data.py`: Main database seeding command.
-*   `templates/base.html`: Core base template containing dynamic navigation headers, currency selector, theme toggles, and mobile menus.
-
----
-
-## 💾 Database Backup & Cronjob Setup
-
-The project includes an automatic database backup command supporting SQLite and PostgreSQL. It creates timestamped backup files under `backups/`:
-
-### Manual Execution
-```bash
-uv run python manage.py db_backup --keep 10
-```
-
-### Automation via Cronjob
-Run daily at 2:00 AM:
 ```text
-0 2 * * * /home/user/Workflow/Hotel\ Platform/Prem-Durbar-Zipline/scripts/backup.sh
+├── admin_dashboard/           # Custom Admin Portal & Manager Views
+│   ├── templates/admin_dashboard/zipline/  # Zipline dashboard & package formset editor
+│   └── views/zipline.py       # Zipline package CMS & multi-currency price view
+├── booking/                   # Modular Booking Engine
+│   ├── views/                 # Modular Domain Views
+│   │   ├── zipline.py         # Zipline flight creation & multi-currency rates
+│   │   ├── rooms.py           # Room chamber reservations & availability
+│   │   ├── checkout.py        # Guest checkout & payment summary
+│   │   └── api.py             # Channel manager OTA sync
+│   └── models/booking.py      # Booking model helper properties (status_label, per_person_rate)
+├── homepage/                  # Public Homepage & Adventure Listings
+│   ├── models/zipline_package.py # ZiplinePackage & ZiplinePackageBasePrice models
+│   └── templates/homepage/    # Homepage, Zipline page & Zipline booking modal
+└── payments/                  # Multi-Currency Payment Callbacks & Stripe/eSewa/Khalti
 ```
 
 ---
 
-## 🖼️ Dynamic Page Banners (SEO Admin)
-
-Every major listing page has a **customizable hero banner** (subtitle, title, description, and background image) managed directly from the Admin Panel.
-
-### Pages with Dynamic Banners & CMS
+## 🖼️ Dynamic Page Banners & CMS
 
 | Page | URL Path | CMS Control Tab |
 |---|---|---|
 | Rooms & Accommodation | `/rooms/` | SEO Meta tags / Rooms Manager |
 | Gastronomy & Dining | `/dining/` | SEO Meta tags / Dining Items |
 | About Us & Heritage | `/about/` | About Us Page CMS |
-| Zipline Adventure | `/zipline/` | Zipline CMS & Video |
+| Zipline Adventure | `/zipline/` | Zipline CMS & Video / Zipline Packages |
 | Sustainability & Eco | `/sustainability/` | Sustainability CMS |
 | Resort Photo Gallery | `/gallery/` | Gallery Bulk |
 | Concierge & Contact | `/contact/` | Contact Branches |

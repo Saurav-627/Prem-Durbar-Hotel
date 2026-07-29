@@ -52,12 +52,26 @@ class HomeView(TemplateView):
         context['featured_dining'] = DiningItem.objects.filter(is_chef_special=True, is_published=True)[:3]
         context['facilities'] = RoomFacility.objects.filter(is_featured=True)
         context['testimonials'] = Testimonial.objects.filter(is_featured=True, is_published=True)[:5]
+        
+        # Zipline packages with multi-currency pricing
+        from homepage.models.zipline_package import ZiplinePackage, ZiplinePackageBasePrice
+        zipline_packages = list(ZiplinePackage.objects.filter(
+            is_published=True
+        ).prefetch_related(
+            Prefetch(
+                'base_prices',
+                queryset=ZiplinePackageBasePrice.objects.filter(currency__iso_code=selected_currency),
+                to_attr='active_currency_price'
+            )
+        ).order_by('order', 'id'))
+        for pkg in zipline_packages:
+            pkg.set_active_currency(selected_currency)
+        context['zipline_packages'] = zipline_packages
+
         return context
 
 
 from homepage.models import AboutPreview, AboutCMS, ZiplineCMS, SustainabilityCMS, SustainabilityPillar, TeamMember
-
-# (keep HomeView...)
 
 class AboutView(TemplateView):
     template_name = 'homepage/about.html'
@@ -83,6 +97,33 @@ class ZiplineView(TemplateView):
         if not zipline_cms:
             zipline_cms = ZiplineCMS.objects.create()
         context['zipline_cms'] = zipline_cms
+
+        from settings_manager.models.currency import Currency
+        try:
+            published_currencies = list(Currency.objects.filter(is_published=True))
+            default_currency = 'USD'
+            selected_currency = self.request.COOKIES.get('currency', default_currency)
+            valid_codes = [c.iso_code for c in published_currencies]
+            if selected_currency not in valid_codes:
+                selected_currency = default_currency
+        except Exception:
+            selected_currency = 'USD'
+
+        from django.db.models import Prefetch
+        from homepage.models.zipline_package import ZiplinePackage, ZiplinePackageBasePrice
+        zipline_packages = list(ZiplinePackage.objects.filter(
+            is_published=True
+        ).prefetch_related(
+            Prefetch(
+                'base_prices',
+                queryset=ZiplinePackageBasePrice.objects.filter(currency__iso_code=selected_currency),
+                to_attr='active_currency_price'
+            )
+        ).order_by('order', 'id'))
+        for pkg in zipline_packages:
+            pkg.set_active_currency(selected_currency)
+        context['zipline_packages'] = zipline_packages
+
         return context
 
 

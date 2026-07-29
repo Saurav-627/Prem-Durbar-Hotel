@@ -38,9 +38,6 @@ class CmsDashboardView(StaffRequiredMixin, View):
         about_cms_obj, _ = AboutCMS.objects.get_or_create(id=1)
         about_cms_form = AboutCMSForm(instance=about_cms_obj)
 
-        zipline_cms_obj, _ = ZiplineCMS.objects.get_or_create(id=1)
-        zipline_cms_form = ZiplineCMSForm(instance=zipline_cms_obj)
-
         sustainability_cms_obj, _ = SustainabilityCMS.objects.get_or_create(id=1)
         sustainability_cms_form = SustainabilityCMSForm(instance=sustainability_cms_obj)
         sustainability_pillars = SustainabilityPillar.objects.all()
@@ -79,7 +76,6 @@ class CmsDashboardView(StaffRequiredMixin, View):
             'hero_slides': hero_slides,
             'about_form': about_form,
             'about_cms_form': about_cms_form,
-            'zipline_cms_form': zipline_cms_form,
             'sustainability_cms_form': sustainability_cms_form,
             'sustainability_pillars': sustainability_pillars,
             'team_members': team_members,
@@ -334,3 +330,5 @@ class TeamMemberDeleteView(StaffRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, "Team member deleted successfully.")
         return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=about_cms"
+
+

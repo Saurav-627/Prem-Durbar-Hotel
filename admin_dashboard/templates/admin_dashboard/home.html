@@ -103,14 +103,27 @@
         </div>
     </div>
 
-    <!-- Dining Bookings -->
+    <!-- Contact Messages Today -->
     <div class="custom-card rounded-2xl p-5 flex items-center justify-between">
         <div>
-            <p class="text-xs text-neutral-400 uppercase font-semibold">Dining Bookings Today</p>
-            <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">{{ dining_reservations_today_count }}</p>
+            <p class="text-xs text-neutral-400 uppercase font-semibold">Contact Messages Today</p>
+            <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">{{ contact_messages_today_count }}</p>
         </div>
-        <div class="h-10 w-10 bg-pink-500/10 text-pink-500 rounded-lg flex items-center justify-center">
-            <i class="fa-solid fa-utensils"></i>
+        <div class="h-10 w-10 bg-purple-500/10 text-purple-500 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-envelope"></i>
+        </div>
+    </div>
+
+    <!-- Zipline Flights Today -->
+    <div class="custom-card rounded-2xl p-5 flex items-center justify-between">
+        <div>
+            <p class="text-xs text-neutral-400 uppercase font-semibold">Zipline Flights Today</p>
+            <p class="text-xl font-bold text-neutral-900 dark:text-neutral-100 mt-1">
+                {{ zipline_flights_today_count }} <span class="text-xs font-normal text-neutral-400">({{ zipline_flyers_today_count }} flyer{% if zipline_flyers_today_count != 1 %}s{% endif %})</span>
+            </p>
+        </div>
+        <div class="h-10 w-10 bg-amber-500/10 text-amber-500 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-bolt"></i>
         </div>
     </div>
 </div>
@@ -200,7 +213,9 @@
                                 <p class="font-semibold text-neutral-900 dark:text-neutral-200">{{ b.guest_name }}</p>
                                 <p class="text-xs text-neutral-500">{{ b.booking_uid }}</p>
                             </td>
-                            <td class="py-4 text-neutral-600 dark:text-neutral-400">{{ b.room.title }}</td>
+                            <td class="py-4 text-neutral-600 dark:text-neutral-400">
+                                {% if b.room %}{{ b.room.title }}{% elif b.zipline_package %}{{ b.zipline_package.name }}{% else %}-{% endif %}
+                            </td>
                             <td class="py-4 text-neutral-600 dark:text-neutral-400">{{ b.num_rooms }}</td>
                             <td class="py-4">
                                 <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500">
@@ -220,6 +235,60 @@
             </div>
             {% else %}
             <p class="text-sm text-neutral-500 py-4 text-center">No guests checking in today.</p>
+            {% endif %}
+        </div>
+
+        <!-- Today's Zipline Adventure Flights list -->
+        <div class="custom-card rounded-2xl p-6">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 font-serif">Today's Zipline Adventure Flights</h3>
+                <a href="{% url 'admin_dashboard:zipline_dashboard' %}" class="text-xs font-bold text-luxuryGold-500 hover:underline">Manage Ziplines &rarr;</a>
+            </div>
+            {% if zipline_flights_today %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 pb-3">
+                            <th class="py-3 font-semibold">Flyer / Guest</th>
+                            <th class="py-3 font-semibold">Package</th>
+                            <th class="py-3 font-semibold">Slot Time</th>
+                            <th class="py-3 font-semibold">Tickets</th>
+                            <th class="py-3 font-semibold">Status</th>
+                            <th class="py-3 font-semibold text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                        {% for b in zipline_flights_today %}
+                        <tr>
+                            <td class="py-4">
+                                <p class="font-semibold text-neutral-900 dark:text-neutral-200">{{ b.guest_name }}</p>
+                                <p class="text-xs text-neutral-500">{{ b.booking_uid }}</p>
+                            </td>
+                            <td class="py-4 text-neutral-600 dark:text-neutral-400 font-medium">
+                                {{ b.zipline_package.name }}
+                            </td>
+                            <td class="py-4 text-neutral-600 dark:text-neutral-400 text-xs">
+                                {{ b.slot_time|default:"Scheduled Flight" }}
+                            </td>
+                            <td class="py-4 text-neutral-600 dark:text-neutral-400 font-medium">{{ b.num_tickets }} flyer(s)</td>
+                            <td class="py-4">
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500">
+                                    {{ b.status_label }}
+                                </span>
+                            </td>
+                            <td class="py-4 text-right">
+                                <a href="{% url 'admin_dashboard:booking_detail' b.id %}" 
+                                   class="px-3 py-1.5 bg-luxuryGold-500 hover:bg-luxuryGold-400 text-neutral-950 rounded-lg text-xs font-bold transition">
+                                    Details
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-sm text-neutral-500 py-4 text-center">No zipline flights scheduled for today.</p>
             {% endif %}
         </div>
 

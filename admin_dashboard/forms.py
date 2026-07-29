@@ -382,3 +382,47 @@ class TeamMemberForm(TailwindFormMixin, forms.ModelForm):
         model = TeamMember
         fields = '__all__'
 
+
+from homepage.models.zipline_package import ZiplinePackage, ZiplinePackageBasePrice
+
+class ZiplinePackageForm(TailwindFormMixin, forms.ModelForm):
+    class Meta:
+        model = ZiplinePackage
+        exclude = ['created_at', 'updated_at']
+
+
+class ZiplinePackageBasePriceForm(TailwindFormMixin, forms.ModelForm):
+    class Meta:
+        model = ZiplinePackageBasePrice
+        fields = '__all__'
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['currency'].required = False
+        self.fields['base_price'].required = False
+        self.fields['currency'].queryset = Currency.objects.filter(is_published=True)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        currency = cleaned_data.get('currency')
+        base_price = cleaned_data.get('base_price')
+
+        if currency and base_price is None:
+            self.add_error('base_price', 'Base price is required when currency is selected.')
+        elif base_price is not None and not currency:
+            self.add_error('currency', 'Currency is required when base price is entered.')
+
+        return cleaned_data
+
+    def has_changed(self):
+        prefix = self.prefix
+        curr_key = f"{prefix}-currency" if prefix else "currency"
+        price_key = f"{prefix}-base_price" if prefix else "base_price"
+
+        curr_val = self.data.get(curr_key)
+        price_val = self.data.get(price_key)
+
+        if not curr_val and not price_val:
+            return False
+        return super().has_changed()
+

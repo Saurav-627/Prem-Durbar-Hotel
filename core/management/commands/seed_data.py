@@ -24,6 +24,7 @@ GLOBAL_MODEL_REGISTRY = {
     "about_cms": ("homepage", "AboutCMS", None, True),
     "team_members": ("homepage", "TeamMember", ["name"], False),
     "zipline_cms": ("homepage", "ZiplineCMS", None, True),
+    "zipline_packages": ("homepage", "ZiplinePackage", ["slug"], False),
     "sustainability_cms": ("homepage", "SustainabilityCMS", None, True),
     "sustainability_pillars": ("homepage", "SustainabilityPillar", ["title"], False),
 
@@ -344,5 +345,40 @@ class Command(BaseCommand):
                             )
 
                     self.stdout.write(self.style.SUCCESS(f"  - Processed dining item: {item_obj.title}"))
+
+            # -- 5. Zipline Packages with Multi-Currency Base Prices
+            if "zipline_packages" in data:
+                from homepage.models.zipline_package import ZiplinePackage, ZiplinePackageBasePrice
+                from settings_manager.models.currency import Currency
+                from django.utils.text import slugify
+
+                if do_update:
+                    ZiplinePackage.objects.all().delete()
+
+                for item_data in data.get("zipline_packages", []):
+                    prices_data = item_data.pop("prices", [])
+                    name = item_data.get("name")
+                    if not name:
+                        continue
+
+                    slug = item_data.get("slug") or slugify(name)
+                    valid_fields = filter_model_fields(ZiplinePackage, item_data)
+
+                    pkg_obj, created = ZiplinePackage.objects.update_or_create(
+                        slug=slug,
+                        defaults=valid_fields
+                    )
+
+                    for p_data in prices_data:
+                        ccode = p_data.get("currency")
+                        c_obj = Currency.objects.filter(iso_code=ccode).first()
+                        if c_obj:
+                            ZiplinePackageBasePrice.objects.update_or_create(
+                                package=pkg_obj,
+                                currency=c_obj,
+                                defaults={'base_price': p_data.get("base_price")}
+                            )
+
+                    self.stdout.write(self.style.SUCCESS(f"  - Processed zipline package: {pkg_obj.name}"))
 
         self.stdout.write(self.style.SUCCESS("\nAll data import tasks completed successfully!"))

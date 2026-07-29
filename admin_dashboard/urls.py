@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import auth, home, settings, rooms, bookings, payments, dining, contact, cms, users
+from .views import auth, home, settings, rooms, bookings, payments, dining, contact, cms, users, zipline
 
 app_name = 'admin_dashboard'
 
@@ -48,6 +48,13 @@ urlpatterns = [
     path('dining/item/add/', dining.DiningItemCreateView.as_view(), name='dining_item_create'),
     path('dining/item/<int:pk>/edit/', dining.DiningItemUpdateView.as_view(), name='dining_item_edit'),
     path('dining/item/<int:pk>/delete/', dining.DiningItemDeleteView.as_view(), name='dining_item_delete'),
+
+    # Ziplines Management
+    path('zipline/', zipline.ZiplineDashboardView.as_view(), name='zipline_dashboard'),
+    path('zipline/cms/', zipline.ZiplineCMSUpdateView.as_view(), name='zipline_cms_update'),
+    path('zipline/package/add/', zipline.ZiplinePackageCreateView.as_view(), name='zipline_package_create'),
+    path('zipline/package/<int:pk>/edit/', zipline.ZiplinePackageUpdateView.as_view(), name='zipline_package_edit'),
+    path('zipline/package/<int:pk>/delete/', zipline.ZiplinePackageDeleteView.as_view(), name='zipline_package_delete'),
     
     # Contact
     path('contact/', contact.ContactDashboardView.as_view(), name='contact_dashboard'),
@@ -66,7 +73,6 @@ urlpatterns = [
     path('cms/team-member/add/', cms.TeamMemberCreateView.as_view(), name='team_member_create'),
     path('cms/team-member/<int:pk>/edit/', cms.TeamMemberUpdateView.as_view(), name='team_member_edit'),
     path('cms/team-member/<int:pk>/delete/', cms.TeamMemberDeleteView.as_view(), name='team_member_delete'),
-    path('cms/zipline-cms/', cms.ZiplineCMSUpdateView.as_view(), name='zipline_cms_update'),
     path('cms/sustainability-cms/', cms.SustainabilityCMSUpdateView.as_view(), name='sustainability_cms_update'),
     path('cms/sustainability-pillar/add/', cms.SustainabilityPillarCreateView.as_view(), name='sustainability_pillar_create'),
     path('cms/sustainability-pillar/<int:pk>/edit/', cms.SustainabilityPillarUpdateView.as_view(), name='sustainability_pillar_edit'),

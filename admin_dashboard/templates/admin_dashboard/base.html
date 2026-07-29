@@ -445,6 +445,11 @@
                     <span x-show="sidebarOpen">Dining Items</span>
                 </a>
 
+                <!-- Zipline Packages & CMS -->
+                <a href="{% url 'admin_dashboard:zipline_dashboard' %}" class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-luxuryGold-500/10 hover:text-luxuryGold-600 transition group {% if 'zipline' in request.path %}bg-luxuryGold-500/10 text-luxuryGold-600 font-semibold{% else %}text-neutral-600{% endif %}">
+                    <i class="fa-solid fa-bolt text-lg w-5 text-center"></i>
+                    <span x-show="sidebarOpen">Zipline Packages</span>
+                </a>
 
                 <!-- Homepage CMS -->
                 <a href="{% url 'admin_dashboard:cms_dashboard' %}" class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-luxuryGold-500/10 hover:text-luxuryGold-600 transition group {% if 'cms' in request.path %}bg-luxuryGold-500/10 text-luxuryGold-600 font-semibold{% else %}text-neutral-600{% endif %}">
@@ -574,6 +579,26 @@
             autoClose: true,
             buttons: ['today', 'clear'],
             dateFormat: 'yyyy-MM-dd',
+            container: document.body,
+            position({$datepicker, $target}) {
+                if (!$target || !$datepicker) return;
+                const rect = $target.getBoundingClientRect();
+                const pickerHeight = $datepicker.offsetHeight || 310;
+                const windowHeight = window.innerHeight;
+
+                const spaceBelow = windowHeight - rect.bottom;
+                const spaceAbove = rect.top;
+
+                $datepicker.style.position = 'absolute';
+
+                if (spaceBelow < pickerHeight && spaceAbove > spaceBelow) {
+                    $datepicker.style.left = `${rect.left + window.scrollX}px`;
+                    $datepicker.style.top = `${rect.top + window.scrollY - pickerHeight - 6}px`;
+                } else {
+                    $datepicker.style.left = `${rect.left + window.scrollX}px`;
+                    $datepicker.style.top = `${rect.bottom + window.scrollY + 6}px`;
+                }
+            }
         };
 
         document.addEventListener("DOMContentLoaded", function() {
@@ -583,6 +608,7 @@
                 el.type = 'text';
                 el.placeholder = 'YYYY-MM-DD';
                 el.classList.add('cursor-pointer');
+                el.setAttribute('autocomplete', 'off');
 
                 const minDateVal = el.getAttribute('min');
                 const maxDateVal = el.getAttribute('max');

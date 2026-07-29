@@ -21,11 +21,11 @@ class DashboardHomeView(StaffRequiredMixin, TemplateView):
         today = timezone.localdate()
         start_of_month = today.replace(day=1)
         
-        # 1. Today's Check-ins / Check-outs
+        # 1. Today's Check-ins / Check-outs (Excluding abandoned drafts)
         # pyrefly: ignore [missing-attribute]
-        today_checkins = Booking.objects.filter(check_in=today)
+        today_checkins = Booking.objects.filter(check_in=today).exclude(status='draft')
         # pyrefly: ignore [missing-attribute]
-        today_checkouts = Booking.objects.filter(check_out=today)
+        today_checkouts = Booking.objects.filter(check_out=today).exclude(status='draft')
         
         # 2. Room Occupancy
         # pyrefly: ignore [missing-attribute]
@@ -43,7 +43,7 @@ class DashboardHomeView(StaffRequiredMixin, TemplateView):
         
         # 3. Booking Stats
         # pyrefly: ignore [missing-attribute]
-        pending_bookings_count = Booking.objects.filter(status__in=['draft', 'pending']).count()
+        pending_bookings_count = Booking.objects.filter(status='pending').count()
         # pyrefly: ignore [missing-attribute]
         confirmed_bookings_count = Booking.objects.filter(status='confirmed').count()
         
@@ -158,10 +158,17 @@ class DashboardHomeView(StaffRequiredMixin, TemplateView):
         
         activities = []
         for b in recent_bookings:
+            if b.room:
+                item_desc = f"{b.room.title} · {b.num_rooms} room(s)"
+            elif b.zipline_package:
+                item_desc = f"{b.zipline_package.name} · {b.num_tickets} ticket(s)"
+            else:
+                item_desc = f"Booking {b.booking_uid[:8]}"
+
             activities.append({
                 'type': 'booking',
                 'title': f"New booking by {b.guest_name}",
-                'desc': f"{b.room.title} · {b.num_rooms} room(s)",
+                'desc': item_desc,
                 'time': b.created_at,
                 'url': reverse('admin_dashboard:booking_detail', args=[b.id])
             })
@@ -210,6 +217,11 @@ class DashboardHomeView(StaffRequiredMixin, TemplateView):
             
             'contact_messages_today_count': contact_messages_today.count(),
             'coupon_usage_count': coupon_usage_count,
+            
+            # Zipline Stats (Excluding draft/abandoned bookings)
+            'zipline_flights_today': Booking.objects.filter(booking_type='zipline', flight_date=today).exclude(status='draft')[:5],
+            'zipline_flights_today_count': Booking.objects.filter(booking_type='zipline', flight_date=today).exclude(status='draft').count(),
+            'zipline_flyers_today_count': Booking.objects.filter(booking_type='zipline', flight_date=today).exclude(status='draft').aggregate(total=Sum('num_tickets'))['total'] or 0,
             
             # Chart Data
             'chart_data': chart_data,

@@ -327,6 +327,7 @@
 
         /* Premium Custom Air Datepicker Theme styling */
         .air-datepicker {
+            z-index: 99999 !important;
             --ad-background-color: var(--card-bg) !important;
             --ad-text-color: var(--text-color) !important;
             --ad-border-color: var(--border-color) !important;
@@ -475,6 +476,8 @@
             animation-fill-mode: both;
         }
     </style>
+    <!-- Air Datepicker JS -->
+    <script src="https://cdn.jsdelivr.net/npm/air-datepicker@3.5.0/air-datepicker.js"></script>
     <script>
         window.defaultAirDatepickerConfig = {
             locale: {
@@ -492,15 +495,36 @@
             autoClose: true,
             buttons: ['today', 'clear'],
             dateFormat: 'yyyy-MM-dd',
+            container: document.body,
+            position({$datepicker, $target}) {
+                if (!$target || !$datepicker) return;
+                const rect = $target.getBoundingClientRect();
+                const pickerHeight = $datepicker.offsetHeight || 310;
+                const windowHeight = window.innerHeight;
+
+                const spaceBelow = windowHeight - rect.bottom;
+                const spaceAbove = rect.top;
+
+                $datepicker.style.position = 'absolute';
+
+                // Automatically position ABOVE if space below is limited and space above is greater
+                if (spaceBelow < pickerHeight && spaceAbove > spaceBelow) {
+                    $datepicker.style.left = `${rect.left + window.scrollX}px`;
+                    $datepicker.style.top = `${rect.top + window.scrollY - pickerHeight - 6}px`;
+                } else {
+                    $datepicker.style.left = `${rect.left + window.scrollX}px`;
+                    $datepicker.style.top = `${rect.bottom + window.scrollY + 6}px`;
+                }
+            }
         };
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Scroll Animation Observer
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const anim = entry.target.getAttribute('data-animate') || 'fadeInUp';
                         entry.target.classList.add('animate__animated', `animate__${anim}`);
-                        // Custom style cleanup to let transitions take over post-animation
                         entry.target.style.opacity = '1';
                         observer.unobserve(entry.target);
                     }
@@ -511,20 +535,9 @@
                 observer.observe(el);
             });
 
-            // Active navigation highlighting
+            // Active Navigation Highlighting
             const path = window.location.pathname;
-            // Desktop nav
-            document.querySelectorAll('[data-nav]').forEach(a => {
-                const href = a.getAttribute('href');
-                const isHome = href === '/' && path === '/';
-                const isActive = isHome || (href !== '/' && path.startsWith(href));
-                if (isActive) {
-                    a.style.color = '#D3AA5E';
-                    a.style.borderBottom = '2px solid #D3AA5E';
-                }
-            });
-            // Mobile nav
-            document.querySelectorAll('[data-nav-mobile]').forEach(a => {
+            document.querySelectorAll('[data-nav], [data-nav-mobile]').forEach(a => {
                 const href = a.getAttribute('href');
                 const isHome = href === '/' && path === '/';
                 const isActive = isHome || (href !== '/' && path.startsWith(href));
@@ -534,51 +547,49 @@
                 }
             });
 
-            // Automatically upgrade all input[type="date"] elements to Air Datepicker
-            document.querySelectorAll('input[type="date"]').forEach(el => {
-                if (el.id === 'room_check_in' || el.id === 'room_check_out') {
-                    return;
-                }
-                
-                let checkOutEl = null;
-                if (el.name === 'check_in') {
-                    const form = el.closest('form');
-                    if (form) {
-                        checkOutEl = form.querySelector('input[name="check_out"]');
-                    }
-                }
-
-                // Convert to text so native date picker is disabled
-                el.type = 'text';
-                el.placeholder = 'YYYY-MM-DD';
-                el.classList.add('cursor-pointer');
-
-                const minDateVal = el.getAttribute('min');
-                const maxDateVal = el.getAttribute('max');
-
-                const picker = new AirDatepicker(el, {
-                    ...window.defaultAirDatepickerConfig,
-                    minDate: minDateVal ? new Date(minDateVal) : undefined,
-                    maxDate: maxDateVal ? new Date(maxDateVal) : undefined,
-                    onSelect({date}) {
-                        el.dispatchEvent(new Event('input', { bubbles: true }));
-                        el.dispatchEvent(new Event('change', { bubbles: true }));
-                        
-                        if (checkOutEl && checkOutEl.airDatepicker && date) {
-                            checkOutEl.airDatepicker.update({
-                                minDate: date
-                            });
+            // Upgrade all input[type="date"] elements to custom styled AirDatepicker
+            if (typeof AirDatepicker !== 'undefined') {
+                document.querySelectorAll('input[type="date"]').forEach(el => {
+                    let checkOutEl = null;
+                    if (el.name === 'check_in') {
+                        const form = el.closest('form');
+                        if (form) {
+                            checkOutEl = form.querySelector('input[name="check_out"]');
                         }
                     }
+
+                    const minDateVal = el.getAttribute('min');
+                    const maxDateVal = el.getAttribute('max');
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+
+                    // Convert input to text so browser native date picker is disabled
+                    el.type = 'text';
+                    el.placeholder = 'YYYY-MM-DD';
+                    el.classList.add('cursor-pointer');
+                    el.setAttribute('autocomplete', 'off');
+
+                    const picker = new AirDatepicker(el, {
+                        ...window.defaultAirDatepickerConfig,
+                        minDate: minDateVal ? new Date(minDateVal) : today,
+                        maxDate: maxDateVal ? new Date(maxDateVal) : undefined,
+                        onSelect({date}) {
+                            el.dispatchEvent(new Event('input', { bubbles: true }));
+                            el.dispatchEvent(new Event('change', { bubbles: true }));
+
+                            if (checkOutEl && checkOutEl.airDatepicker && date) {
+                                checkOutEl.airDatepicker.update({
+                                    minDate: date
+                                });
+                            }
+                        }
+                    });
+
+                    el.airDatepicker = picker;
                 });
-                
-                el.airDatepicker = picker;
-            });
+            }
         });
     </script>
-
-    <!-- Air Datepicker JS -->
-    <script src="https://cdn.jsdelivr.net/npm/air-datepicker@3.5.0/air-datepicker.js"></script>
 
     {% block extra_js %}{% endblock %}
 </body>

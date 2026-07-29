@@ -1,0 +1,209 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block page_title %}{{ title }}{% endblock %}
+{% block page_subtitle %}Manage Zipline adventure flight package details, images, status, and multi-currency rates.{% endblock %}
+
+{% block breadcrumbs %}
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<a href="{% url 'admin_dashboard:zipline_dashboard' %}" class="hover:text-brand-primary">Zipline Dashboard</a>
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<span class="text-neutral-500">Edit / Add Package</span>
+{% endblock %}
+
+{% block content %}
+<form method="post" enctype="multipart/form-data" class="space-y-8 max-w-[90%] mx-auto mt-6">
+    {% csrf_token %}
+    
+    {% if form.errors or currency_price_formset.errors or currency_price_formset.non_form_errors %}
+    <div class="p-6 rounded-2xl bg-rose-500/10 border border-rose-500/30 text-rose-800 dark:text-rose-300 text-sm space-y-2 shadow-lg">
+        <h4 class="font-bold text-base text-rose-700 dark:text-rose-400">Please correct the following errors:</h4>
+        <ul class="list-disc pl-5 space-y-1">
+            {% if form.non_field_errors %}
+                {% for err in form.non_field_errors %}
+                    <li>{{ err }}</li>
+                {% endfor %}
+            {% endif %}
+            {% for field in form %}
+                {% if field.errors %}
+                    <li><strong>{{ field.label }}:</strong> {{ field.errors|striptags }}</li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if currency_price_formset.non_form_errors %}
+                {% for err in currency_price_formset.non_form_errors %}
+                    <li><strong>Multi-Currency Pricing:</strong> {{ err }}</li>
+                {% endfor %}
+            {% endif %}
+            {% for f in currency_price_formset %}
+                {% if f.errors %}
+                    <li><strong>Multi-Currency Pricing Row {{ forloop.counter }}:</strong> {{ f.errors|striptags }}</li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    
+    <!-- Package Details Card -->
+    <div class="custom-card rounded-2xl p-6 bg-white/50 dark:bg-neutral-900/50 shadow-xl space-y-6">
+        <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 font-serif pb-2 border-b border-neutral-200 dark:border-neutral-800">
+            Package Specifications & Media
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Package Name -->
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2">Package Name <span class="text-rose-500">*</span></label>
+                {{ form.name }}
+                {% if form.name.errors %}<div class="text-rose-500 text-xs mt-1">{{ form.name.errors }}</div>{% endif %}
+            </div>
+
+            <!-- Slug -->
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2">
+                    Slug URL Path
+                    <span class="normal-case font-normal text-neutral-400 ml-1">(auto-generated if empty)</span>
+                </label>
+                {{ form.slug }}
+                {% if form.slug.errors %}<div class="text-rose-500 text-xs mt-1">{{ form.slug.errors }}</div>{% endif %}
+            </div>
+
+            <!-- Flight Type -->
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2">Flight Type / Harness Position <span class="text-rose-500">*</span></label>
+                {{ form.flight_type }}
+                {% if form.flight_type.errors %}<div class="text-rose-500 text-xs mt-1">{{ form.flight_type.errors }}</div>{% endif %}
+            </div>
+
+            <!-- Duration Spec -->
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2">Flight Duration / Distance <span class="text-rose-500">*</span></label>
+                {{ form.duration }}
+                {% if form.duration.errors %}<div class="text-rose-500 text-xs mt-1">{{ form.duration.errors }}</div>{% endif %}
+            </div>
+
+            <!-- Display Order -->
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2">Display Sort Order</label>
+                {{ form.order }}
+                {% if form.order.errors %}<div class="text-rose-500 text-xs mt-1">{{ form.order.errors }}</div>{% endif %}
+            </div>
+
+            <!-- Image Upload -->
+            <div>
+                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2">Upload Package Image</label>
+                {{ form.image }}
+                {% if form.image.errors %}<div class="text-rose-500 text-xs mt-1">{{ form.image.errors }}</div>{% endif %}
+                {% if package and package.image %}
+                <div class="mt-2 flex items-center gap-3">
+                    <img src="{{ package.image.url }}" class="w-12 h-12 rounded object-cover">
+                    <span class="text-xs text-neutral-500">Current uploaded image</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Image URL Fallback -->
+            <div class="md:col-span-2">
+                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2">External Image URL (Fallback)</label>
+                {{ form.image_url }}
+                {% if form.image_url.errors %}<div class="text-rose-500 text-xs mt-1">{{ form.image_url.errors }}</div>{% endif %}
+            </div>
+
+            <!-- Description -->
+            <div class="md:col-span-2">
+                <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2">Full Package Description</label>
+                {{ form.description }}
+                {% if form.description.errors %}<div class="text-rose-500 text-xs mt-1">{{ form.description.errors }}</div>{% endif %}
+            </div>
+
+            <!-- Published Checkbox Toggle -->
+            <div class="md:col-span-2 pt-2">
+                <div class="flex items-center gap-3 py-2">
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        {{ form.is_published }}
+                        <div class="w-11 h-6 bg-neutral-200 peer-focus:outline-none rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-neutral-600 peer-checked:bg-brand-primary"></div>
+                    </label>
+                    <span class="text-sm font-semibold text-neutral-800 dark:text-neutral-200 uppercase tracking-wider">Publish Zipline Package Live</span>
+                </div>
+                {% if form.is_published.errors %}<div class="text-rose-500 text-xs mt-1">{{ form.is_published.errors }}</div>{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Multi-Currency Pricing Card -->
+    <div class="custom-card rounded-2xl p-6 bg-white/50 dark:bg-neutral-900/50 shadow-xl space-y-6">
+        <div>
+            <h3 class="text-lg font-semibold text-neutral-900 dark:text-neutral-100 font-serif">
+                Multi-Currency Ticket Pricing
+            </h3>
+            <p class="text-xs text-neutral-500 mt-1">Set rates per person for different currencies (e.g. NPR, USD, EUR). Enter base rate and optional discount rate.</p>
+        </div>
+
+        {{ currency_price_formset.management_form }}
+        
+        <div class="space-y-4">
+            {% for f in currency_price_formset %}
+            <div class="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white/80 dark:bg-neutral-800/80 flex flex-col sm:flex-row items-center gap-4">
+                {{ f.id }}
+                <div class="w-full sm:w-1/3">
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-1">Currency</label>
+                    {{ f.currency }}
+                    {% if f.currency.errors %}<div class="text-rose-500 text-xs mt-1">{{ f.currency.errors }}</div>{% endif %}
+                </div>
+                <div class="w-full sm:w-1/3">
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-1">Base Rate</label>
+                    {{ f.base_price }}
+                    {% if f.base_price.errors %}<div class="text-rose-500 text-xs mt-1">{{ f.base_price.errors }}</div>{% endif %}
+                </div>
+                <div class="w-full sm:w-1/3">
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase mb-1">Discount Rate (Optional)</label>
+                    {{ f.discount_price }}
+                    {% if f.discount_price.errors %}<div class="text-rose-500 text-xs mt-1">{{ f.discount_price.errors }}</div>{% endif %}
+                </div>
+                {% if currency_price_formset.can_delete and f.instance.pk %}
+                <div class="flex items-center gap-2 pt-4 sm:pt-0">
+                    {{ f.DELETE }}
+                    <span class="text-xs text-rose-500 font-semibold">Delete</span>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Submit Action Bar -->
+    <div class="flex items-center justify-end gap-3 pt-4">
+        <button type="submit" 
+                class="btn-gold-gradient px-8 py-3 text-white font-bold rounded-xl shadow-lg transition hover:scale-105">
+            Save Changes
+        </button>
+        <a href="{% url 'admin_dashboard:zipline_dashboard' %}" 
+           class="px-6 py-3 border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400 font-semibold rounded-xl transition">
+            Cancel
+        </a>
+    </div>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const titleInput = document.getElementById('id_name');
+    const slugInput = document.getElementById('id_slug');
+    if (titleInput && slugInput) {
+        let userEditedSlug = slugInput.value.length > 0;
+        function toSlug(str) {
+            return str.toLowerCase().trim()
+                .replace(/[^a-z0-9\s-]/g, '')
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+        }
+        titleInput.addEventListener('input', function () {
+            if (!userEditedSlug) {
+                slugInput.value = toSlug(this.value);
+            }
+        });
+        slugInput.addEventListener('input', function () {
+            userEditedSlug = this.value.length > 0;
+        });
+    }
+});
+</script>
+{% endblock %}

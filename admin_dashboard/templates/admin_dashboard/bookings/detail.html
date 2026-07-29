@@ -26,7 +26,7 @@
                              {% elif booking.status == 'checked_out' %}bg-neutral-500/10 text-neutral-400
                              {% elif booking.status == 'cancelled' %}bg-rose-500/10 text-rose-500
                              {% else %}bg-neutral-200 text-neutral-600{% endif %}">
-                    {{ booking.get_status_display }}
+                    {{ booking.status_label }}
                 </span>
             </div>
 
@@ -53,6 +53,22 @@
                     <span class="text-xs text-neutral-400 uppercase font-semibold block">Payment Method Choice</span>
                     <strong class="text-neutral-800 dark:text-neutral-200 block mt-1 uppercase">{{ booking.get_payment_method_display }}</strong>
                 </div>
+                {% if booking.booking_type == 'zipline' or booking.zipline_package %}
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">Flight Date</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1"><i class="fa-regular fa-calendar mr-2"></i>{{ booking.flight_date|date:"l, M d, Y" }}</strong>
+                </div>
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">Time Slot</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1"><i class="fa-regular fa-clock mr-2"></i>{{ booking.slot_time|default:"Scheduled Flight" }}</strong>
+                </div>
+                <div>
+                    <span class="text-xs text-neutral-400 uppercase font-semibold block">No. of Flights / Tickets</span>
+                    <strong class="text-neutral-800 dark:text-neutral-200 block mt-1">
+                        {{ booking.num_tickets }} flyer(s)
+                    </strong>
+                </div>
+                {% else %}
                 <div>
                     <span class="text-xs text-neutral-400 uppercase font-semibold block">Check-In Date</span>
                     <strong class="text-neutral-800 dark:text-neutral-200 block mt-1"><i class="fa-regular fa-calendar mr-2"></i>{{ booking.check_in|date:"l, M d, Y" }}</strong>
@@ -73,6 +89,7 @@
                         {{ booking.num_rooms }} room(s)
                     </strong>
                 </div>
+                {% endif %}
             </div>
 
             {% if booking.special_requests %}
@@ -154,10 +171,32 @@
             </div>
         </div>
 
-        <!-- Room Type details -->
+        <!-- Reserved Product details -->
         <div class="custom-card rounded-2xl p-6">
-            <h3 class="text-base font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-4">Assigned Room Type</h3>
+            <h3 class="text-base font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-4">
+                {% if booking.booking_type == 'zipline' or booking.zipline_package %}
+                Reserved Zipline Package
+                {% else %}
+                Assigned Room Type
+                {% endif %}
+            </h3>
             <div class="text-sm">
+                {% if booking.booking_type == 'zipline' or booking.zipline_package %}
+                <strong class="text-neutral-800 dark:text-neutral-200">{{ booking.zipline_package.name }}</strong>
+                <p class="text-xs text-neutral-500 mt-0.5">Flight Type: {{ booking.zipline_package.flight_type }} ({{ booking.zipline_package.duration }})</p>
+                <div class="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-800 text-xs">
+                    <div>
+                        <span class="text-neutral-400 block">Rate Per Person</span>
+                        <strong class="text-neutral-800 dark:text-neutral-200 font-medium">
+                            {{ booking.currency_code }} {{ booking.per_person_rate|floatformat:2 }}
+                        </strong>
+                    </div>
+                    <div>
+                        <span class="text-neutral-400 block">Tickets Booked</span>
+                        <strong class="text-neutral-800 dark:text-neutral-200 font-medium">{{ booking.num_tickets }} flyer(s)</strong>
+                    </div>
+                </div>
+                {% else %}
                 <strong class="text-neutral-800 dark:text-neutral-200">{{ booking.room.title }}</strong>
                 <p class="text-xs text-neutral-500 mt-0.5">Category: {{ booking.room.category.name }}</p>
                 <div class="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-neutral-200 dark:border-neutral-800 text-xs">
@@ -176,6 +215,7 @@
                         <strong class="text-neutral-800 dark:text-neutral-200 font-medium">{{ booking.room.tax_percentage }}%</strong>
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
 
@@ -211,17 +251,27 @@
 
         <!-- Actions Workflows Control Panel -->
         <div class="custom-card rounded-2xl p-6">
-            <h3 class="text-base font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-4">Administrative Workflows</h3>
+            <h3 class="text-base font-semibold text-neutral-900 dark:text-neutral-100 font-serif mb-4">
+                {% if booking.booking_type == 'zipline' or booking.zipline_package %}
+                Zipline Ticket Operations
+                {% else %}
+                Hotel Administrative Workflows
+                {% endif %}
+            </h3>
             
             <div class="space-y-3">
                 {% if booking.status == 'confirmed' or booking.status == 'pending' or booking.status == 'draft' %}
-                <!-- Check-In workflow -->
+                <!-- Check-In / Redeem Flight workflow -->
                 <form action="{% url 'admin_dashboard:booking_update_status' booking.id %}" method="post" class="m-0">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="check_in">
                     <button type="submit" 
-                            class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-600/10 transition text-sm">
-                        Process Guest Check-In
+                            class="w-full py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg shadow-blue-600/10 transition text-sm flex items-center justify-center gap-2">
+                        {% if booking.booking_type == 'zipline' or booking.zipline_package %}
+                        <i class="fa-solid fa-ticket"></i> Redeem Ticket & Board Guest
+                        {% else %}
+                        <i class="fa-solid fa-door-open"></i> Process Guest Check-In
+                        {% endif %}
                     </button>
                 </form>
                 
@@ -230,20 +280,28 @@
                     {% csrf_token %}
                     <input type="hidden" name="action" value="cancel">
                     <button type="submit" 
-                            class="w-full py-3 border border-rose-500/30 text-rose-500 hover:bg-rose-500/5 font-semibold rounded-xl transition text-sm">
-                        Cancel Reservation
+                            class="w-full py-3 border border-rose-500/30 text-rose-500 hover:bg-rose-500/5 font-semibold rounded-xl transition text-sm flex items-center justify-center gap-2">
+                        {% if booking.booking_type == 'zipline' or booking.zipline_package %}
+                        <i class="fa-solid fa-ban"></i> Cancel Zipline Ticket
+                        {% else %}
+                        <i class="fa-solid fa-circle-xmark"></i> Cancel Room Reservation
+                        {% endif %}
                     </button>
                 </form>
                 {% endif %}
 
                 {% if booking.status == 'checked_in' %}
-                <!-- Check-Out workflow -->
+                <!-- Check-Out / Flight Completion workflow -->
                 <form action="{% url 'admin_dashboard:booking_update_status' booking.id %}" method="post" class="m-0">
                     {% csrf_token %}
                     <input type="hidden" name="action" value="check_out">
                     <button type="submit" 
-                            class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/10 transition text-sm">
-                        Process Guest Check-Out
+                            class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl shadow-lg shadow-emerald-600/10 transition text-sm flex items-center justify-center gap-2">
+                        {% if booking.booking_type == 'zipline' or booking.zipline_package %}
+                        <i class="fa-solid fa-flag-checkered"></i> Mark Flight Completed
+                        {% else %}
+                        <i class="fa-solid fa-door-closed"></i> Process Guest Check-Out
+                        {% endif %}
                     </button>
                 </form>
                 {% endif %}
@@ -251,14 +309,22 @@
                 {% if booking.status == 'checked_out' %}
                 <div class="p-4 rounded-xl bg-neutral-100 dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 text-center text-neutral-400 text-xs">
                     <i class="fa-solid fa-circle-check text-emerald-500 text-lg mb-1.5 block"></i>
+                    {% if booking.booking_type == 'zipline' or booking.zipline_package %}
+                    Workflow Completed: Zipline flight finished & ticket closed.
+                    {% else %}
                     Workflow Completed: Guest checked out.
+                    {% endif %}
                 </div>
                 {% endif %}
 
                 {% if booking.status == 'cancelled' %}
                 <div class="p-4 rounded-xl bg-rose-500/5 border border-rose-500/10 text-center text-rose-400 text-xs">
                     <i class="fa-solid fa-circle-xmark text-rose-500 text-lg mb-1.5 block"></i>
+                    {% if booking.booking_type == 'zipline' or booking.zipline_package %}
+                    Zipline Ticket Cancelled.
+                    {% else %}
                     Reservation Cancelled.
+                    {% endif %}
                 </div>
                 {% endif %}
             </div>

@@ -141,9 +141,9 @@
                     </td>
                     <td class="px-6 py-4">
                         <div class="space-y-0.5 text-xs text-neutral-500">
-                            <span class="block">Excl. Tax: {{ p.currency.iso_code|default:p.booking.room.currency.iso_code }} {{ p.amount_ex_tax|floatformat:2 }}</span>
-                            <span class="block">Tax: {{ p.currency.iso_code|default:p.booking.room.currency.iso_code }} {{ p.tax_amount|floatformat:2 }}</span>
-                            <strong class="block text-sm font-bold text-neutral-900">Total: {{ p.currency.iso_code|default:p.booking.room.currency.iso_code }} {{ p.amount|floatformat:2 }}</strong>
+                            <span class="block">Excl. Tax: {{ p.currency.iso_code|default:p.booking.currency_code }} {{ p.amount_ex_tax|floatformat:2 }}</span>
+                            <span class="block">Tax: {{ p.currency.iso_code|default:p.booking.currency_code }} {{ p.tax_amount|floatformat:2 }}</span>
+                            <strong class="block text-sm font-bold text-neutral-900 dark:text-neutral-100">Total: {{ p.currency.iso_code|default:p.booking.currency_code }} {{ p.amount|floatformat:2 }}</strong>
                         </div>
                     </td>
                     <td class="px-6 py-4">

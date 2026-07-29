@@ -5,8 +5,19 @@
 {% block meta_description %}{{ seo_raw.meta_description|default:"Experience Nepal's longest and best zipline adventure in Nagarkot. Superman and tandem zip flights with mountain views and certified international safety." }}{% endblock %}
 
 {% block content %}
+<div x-data="{ 
+    ziplineModalOpen: false, 
+    selectedPackage: null, 
+    noOfFlights: 1,
+    openPackageModal(pkg) {
+        this.selectedPackage = pkg;
+        this.noOfFlights = 1;
+        this.ziplineModalOpen = true;
+    }
+}">
+
 <!-- Zipline Hero Banner -->
-<div class="relative py-16 sm:py-28 md:py-36 bg-adventureGradient text-white overflow-hidden shadow-luxury">
+<div class="relative py-12 sm:py-20 md:py-24 bg-adventureGradient text-white overflow-hidden shadow-luxury">
     <div class="absolute inset-0 bg-cover bg-center opacity-30 scale-105 transition-transform duration-1000"
          style="background-image: url('{% if seo_raw and seo_raw.header_image %}{{ seo_raw.header_image.url }}{% else %}https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?q=80&w=1920&auto=format&fit=crop{% endif %}');"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
@@ -24,7 +35,145 @@
     </div>
 </div>
 
-<!-- Video Preview Showcase Section -->
+{% if zipline_packages|length == 1 %}
+<!-- SINGLE PACKAGE + VIDEO PREVIEW SIDE-BY-SIDE IN ONE ROW -->
+<section class="py-10 sm:py-16 border-t border-brand-gold/20"
+         :class="{ 'bg-[#EEF5F0] text-gray-900': currentTheme === 'light', 'bg-[#0B1E17] text-white': currentTheme !== 'light' }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div class="text-center max-w-3xl mx-auto space-y-2">
+            <span class="text-xs font-bold uppercase tracking-widest text-brand-gold"><i class="fa-solid fa-bolt mr-1"></i> Adventure Flight Experience</span>
+            <h2 class="font-heading text-3xl sm:text-4xl font-bold">Select Package & Video Preview</h2>
+            <p class="text-sm opacity-80">Book your flight package below and preview the real flight experience in Nagarkot.</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+            <!-- Left Column: Single Package Card -->
+            {% for pkg in zipline_packages %}
+            <div class="lg:col-span-5 flex flex-col">
+                <div class="rounded-3xl overflow-hidden border shadow-xl flex flex-col justify-between h-full group hover:-translate-y-1 duration-500"
+                     :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#153429] border-brand-gold/20': currentTheme !== 'light' }">
+                    <div>
+                        <div class="relative h-52 sm:h-60 overflow-hidden">
+                            <img src="{{ pkg.display_image }}" alt="{{ pkg.name }}" class="w-full h-full object-cover group-hover:scale-105 duration-700">
+                            <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-400 text-neutral-950 shadow-md">
+                                {{ pkg.flight_type }}
+                            </span>
+                        </div>
+                        <div class="p-6 space-y-4">
+                            <h3 class="font-heading text-2xl font-bold">{{ pkg.name }}</h3>
+                            <p class="text-xs opacity-85 leading-relaxed">{{ pkg.description }}</p>
+                            <div class="pt-2 border-t border-brand-gold/15 flex items-center justify-between text-xs opacity-80">
+                                <span><i class="fa-solid fa-clock text-brand-gold mr-1"></i> {{ pkg.duration }}</span>
+                                <span><i class="fa-solid fa-shield-halved text-brand-gold mr-1"></i> Certified Safety</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6 pt-0 border-t border-brand-gold/10 flex items-center justify-between gap-4 mt-4">
+                        <div>
+                            <span class="text-[10px] uppercase font-bold opacity-60 block">Price Per Person</span>
+                            <span class="text-xl sm:text-2xl font-extrabold text-brand-gold font-luxury-title whitespace-nowrap">
+                                {{ pkg.currency.iso_code }} {{ pkg.final_price }}
+                            </span>
+                        </div>
+                        <button type="button" 
+                                @click="openPackageModal({ id: {{ pkg.id }}, name: '{{ pkg.name|escapejs }}', duration: '{{ pkg.duration|escapejs }}', price: '{{ pkg.final_price }}', currency_code: '{{ pkg.currency.iso_code|escapejs }}' })"
+                                class="btn-gold-gradient px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider text-brand-forestDark shadow-md hover:scale-105 duration-300 cursor-pointer text-center whitespace-nowrap">
+                            Book Package
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Right Column: Live Action Video Preview -->
+            <div class="lg:col-span-7 flex flex-col justify-center">
+                {% if zipline_cms.video_file or zipline_cms.video_url %}
+                <div class="space-y-3">
+                    <span class="text-xs font-bold uppercase tracking-widest text-brand-gold"><i class="fa-solid fa-play-circle mr-1"></i> Live Action Video Preview</span>
+                    <h3 class="font-heading text-xl sm:text-2xl font-bold text-brand-gold">Experience the Flight</h3>
+                    <div class="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl border border-brand-gold/30 bg-black">
+                        {% if zipline_cms.video_file %}
+                        <video controls autoplay loop muted class="w-full h-full object-cover">
+                            <source src="{{ zipline_cms.video_file.url }}" type="video/mp4">
+                            Your browser does not support HTML video.
+                        </video>
+                        {% elif zipline_cms.video_url %}
+                        <iframe class="w-full h-full" src="{{ zipline_cms.video_url }}" title="Nagarkot Zipline Video Preview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="p-8 rounded-2xl border border-dashed border-brand-gold/30 text-center text-xs opacity-75">
+                    Live flight video preview will appear here once uploaded in admin.
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% else %}
+<!-- MULTI-PACKAGE GRID SHOWCASE -->
+<section class="py-10 sm:py-16 border-t border-brand-gold/20"
+         :class="{ 'bg-[#EEF5F0] text-gray-900': currentTheme === 'light', 'bg-[#0B1E17] text-white': currentTheme !== 'light' }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
+        <div class="text-center max-w-3xl mx-auto space-y-2.5">
+            <span class="text-xs font-bold uppercase tracking-widest text-brand-gold"><i class="fa-solid fa-tags mr-1"></i> Adventure Flight Packages</span>
+            <h2 class="font-heading text-3xl sm:text-4xl font-bold">Select & Book Your Flight Package</h2>
+            <p class="text-sm opacity-80">Choose your preferred harness position or dual flight combo. Prices change automatically based on your selected currency and unit of people.</p>
+        </div>
+
+        <div class="grid grid-cols-1 {% if zipline_packages|length == 2 %}md:grid-cols-2 max-w-4xl{% else %}md:grid-cols-3{% endif %} gap-6 sm:gap-8 mx-auto">
+            {% for pkg in zipline_packages %}
+            <div class="rounded-3xl overflow-hidden border shadow-xl flex flex-col justify-between group hover:-translate-y-2 duration-500"
+                 :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#153429] border-brand-gold/20': currentTheme !== 'light' }">
+                <div>
+                    <!-- Package Image -->
+                    <div class="relative h-48 sm:h-56 overflow-hidden">
+                        <img src="{{ pkg.display_image }}" alt="{{ pkg.name }}" class="w-full h-full object-cover group-hover:scale-105 duration-700">
+                        <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-400 text-neutral-950 shadow-md">
+                            {{ pkg.flight_type }}
+                        </span>
+                    </div>
+
+                    <!-- Package Details -->
+                    <div class="p-6 space-y-4">
+                        <div class="flex items-start justify-between gap-2">
+                            <h3 class="font-heading text-xl font-bold">{{ pkg.name }}</h3>
+                        </div>
+                        <p class="text-xs opacity-85 leading-relaxed line-clamp-3">{{ pkg.description }}</p>
+                        
+                        <div class="pt-2 border-t border-brand-gold/15 flex items-center justify-between text-xs opacity-80">
+                            <span><i class="fa-solid fa-clock text-brand-gold mr-1"></i> {{ pkg.duration }}</span>
+                            <span><i class="fa-solid fa-shield-halved text-brand-gold mr-1"></i> Certified Safety</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Price & Booking Trigger -->
+                <div class="p-6 pt-0 border-t border-brand-gold/10 flex items-center justify-between gap-4 mt-4">
+                    <div>
+                        <span class="text-[10px] uppercase font-bold opacity-60 block">Price Per Person</span>
+                        <span class="text-xl sm:text-2xl font-extrabold text-brand-gold font-luxury-title whitespace-nowrap">
+                            {{ pkg.currency.iso_code }} {{ pkg.final_price }}
+                        </span>
+                    </div>
+                    <button type="button" 
+                            @click="openPackageModal({ id: {{ pkg.id }}, name: '{{ pkg.name|escapejs }}', duration: '{{ pkg.duration|escapejs }}', price: '{{ pkg.final_price }}', currency_code: '{{ pkg.currency.iso_code|escapejs }}' })"
+                            class="btn-gold-gradient px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider text-brand-forestDark shadow-md hover:scale-105 duration-300 cursor-pointer text-center whitespace-nowrap">
+                        Book Package
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-3 text-center py-12 text-sm opacity-70">
+                No zipline packages currently configured.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Video Preview Showcase Section (Multi-Package Mode) -->
 {% if zipline_cms.video_file or zipline_cms.video_url %}
 <section class="py-8 sm:py-12 text-white relative">
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3 sm:space-y-4">
@@ -42,6 +191,7 @@
         </div>
     </div>
 </section>
+{% endif %}
 {% endif %}
 
 <!-- Main Zipline Content & Specs -->
@@ -86,14 +236,6 @@
                         <span class="text-[11px] sm:text-xs opacity-75">{{ zipline_cms.spec_elevation_label|default:"Altitude Elevation" }}</span>
                     </div>
                 </div>
-
-                <div class="pt-2 sm:pt-4">
-                    <a href="{{ zipline_cms.booking_url|default:'https://www.facebook.com/ziplinenagarkot' }}" target="_blank" 
-                       class="btn-gold-gradient w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 text-brand-forestDark font-bold rounded-xl text-xs sm:text-sm transition transform hover:scale-105 shadow-glow text-center">
-                        <i class="fa-solid fa-external-link mr-1"></i>
-                        <span>{{ zipline_cms.booking_button_text|default:"Book Zipline Flight" }}</span>
-                    </a>
-                </div>
             </div>
 
             <!-- Image Showcase -->
@@ -114,4 +256,9 @@
 
     </div>
 </section>
+
+<!-- INCLUDE ZIPLINE BOOKING MODAL -->
+{% include 'homepage/includes/zipline_package_modal.html' %}
+
+</div>
 {% endblock %}

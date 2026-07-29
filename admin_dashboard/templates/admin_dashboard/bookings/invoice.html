@@ -136,8 +136,13 @@
             <td style="width: 50%; text-align: right;">
                 <strong>Invoice ID:</strong> {{ booking.booking_uid }}<br>
                 <strong>Date Issued:</strong> {{ print_date|date:"F d, Y" }}<br>
+                {% if booking.booking_type == 'zipline' or booking.zipline_package %}
+                <strong>Flight Date:</strong> {{ booking.flight_date|date:"M d, Y" }}<br>
+                <strong>Preferred Time Slot:</strong> {{ booking.slot_time|default:"Scheduled Flight" }}
+                {% else %}
                 <strong>Check-In Date:</strong> {{ booking.check_in|date:"M d, Y" }}<br>
                 <strong>Check-Out Date:</strong> {{ booking.check_out|date:"M d, Y" }}
+                {% endif %}
             </td>
         </tr>
     </table>
@@ -146,13 +151,22 @@
         <thead>
             <tr>
                 <th>Description</th>
-                <th>Units / Rooms</th>
+                <th>Units / Quantity</th>
                 <th>Base rate</th>
                 <th style="text-align: right;">Amount</th>
             </tr>
         </thead>
         <tbody>
             <tr>
+                {% if booking.booking_type == 'zipline' or booking.zipline_package %}
+                <td>
+                    Zipline Flight Package: <strong>{{ booking.zipline_package.name }}</strong><br>
+                    <small style="color: #666;">Flight Harness: {{ booking.zipline_package.flight_type }} ({{ booking.zipline_package.duration }})</small>
+                </td>
+                <td>{{ booking.num_tickets|default:1 }} ticket(s) / flyer(s)</td>
+                <td>{{ booking.currency_code }} {{ booking.zipline_package.final_price|floatformat:2 }}</td>
+                <td style="text-align: right;">{{ booking.currency_code }} {{ booking.subtotal }}</td>
+                {% else %}
                 <td>
                     Accommodation Lodging: <strong>{{ booking.room.title }}</strong><br>
                     <small style="color: #666;">Room Category: {{ booking.room.category.name }}</small>
@@ -176,6 +190,7 @@
                     {% endwith %}
                 </td>
                 <td style="text-align: right;">{{ booking.currency_code }} {{ booking.subtotal }}</td>
+                {% endif %}
             </tr>
         </tbody>
     </table>

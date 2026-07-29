@@ -29,7 +29,7 @@ def process_payment(request, booking_uid, gateway):
 
     taxable_amount = booking.subtotal - booking.discount
     tax_amount = Decimal('0.00')
-    if processor_meta and processor_meta.apply_tax:
+    if processor_meta and processor_meta.apply_tax and booking.room:
         tax_pct = Decimal(str(booking.room.tax_percentage or 0))
         tax_amount = taxable_amount * (tax_pct / Decimal('100.00'))
         booking.tax = tax_amount
@@ -44,10 +44,14 @@ def process_payment(request, booking_uid, gateway):
     if processor_meta:
         currency_obj = processor_meta.payment_currencies.first()
     if not currency_obj:
-        # Fall back to the first currency price defined for the room
-        first_cp = booking.room.base_prices.first()
-        if first_cp:
-            currency_obj = first_cp.currency
+        if booking.room:
+            first_cp = booking.room.base_prices.first()
+            if first_cp:
+                currency_obj = first_cp.currency
+        elif booking.zipline_package:
+            first_cp = booking.zipline_package.base_prices.first()
+            if first_cp:
+                currency_obj = first_cp.currency
 
     # Create a pending Payment record with the correct amount and currency
     transaction_id = str(uuid.uuid4())
@@ -83,7 +87,8 @@ def process_payment(request, booking_uid, gateway):
         }
 
         if gateway == 'khalti':
-            kwargs['display_name'] = f"Booking for {booking.room.title}"
+            item_name = booking.room.title if booking.room else (booking.zipline_package.name if booking.zipline_package else "Booking")
+            kwargs['display_name'] = f"Booking for {item_name}"
             kwargs['customer_info'] = {
                 'name': booking.guest_name,
                 'email': booking.guest_email,
@@ -91,8 +96,8 @@ def process_payment(request, booking_uid, gateway):
             }
             from ..services.utils import to_minor_units
             kwargs['product_items'] = [{
-                'identity': str(booking.room.id),
-                'name': booking.room.title,
+                'identity': str(booking.room.id if booking.room else (booking.zipline_package.id if booking.zipline_package else 1)),
+                'name': item_name,
                 'total_price': to_minor_units(booking.total),
                 'quantity': 1,
                 'unit_price': to_minor_units(booking.total)
@@ -142,9 +147,10 @@ def payment_callback(request, payment_id):
     if gateway == 'stripe':
         # Keep simulated success for stripe
         with transaction.atomic():
-            from rooms.models.room import Room
+            if booking.room_id:
+                from rooms.models.room import Room
+                Room.objects.select_for_update().get(pk=booking.room_id)
 
-            Room.objects.select_for_update().get(pk=booking.room_id)
             if not booking.has_room_availability():
                 payment.status = 'failed'
                 payment.gateway_response = 'Room inventory changed before confirmation.'
@@ -183,9 +189,10 @@ def payment_callback(request, payment_id):
 
         if validation_result.status == PaymentValidationResult.Status.SUCCESS:
             with transaction.atomic():
-                from rooms.models.room import Room
+                if booking.room_id:
+                    from rooms.models.room import Room
+                    Room.objects.select_for_update().get(pk=booking.room_id)
 
-                Room.objects.select_for_update().get(pk=booking.room_id)
                 if not booking.has_room_availability():
                     payment.status = 'failed'
                     payment.gateway_response = 'Room inventory changed before confirmation.'
@@ -246,7 +253,11 @@ def payment_callback(request, payment_id):
 def view_invoice(request, booking_uid):
     from django.utils import timezone
     booking = get_object_or_404(Booking, booking_uid=booking_uid)
-    booking.room.set_active_currency(booking.currency_code)
+    if booking.room:
+        booking.room.set_active_currency(booking.currency_code)
+    elif booking.zipline_package:
+        booking.zipline_package.set_active_currency(booking.currency_code)
+
     payments = Payment.objects.filter(booking=booking, status='success')
     
     context = {

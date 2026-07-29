@@ -44,7 +44,7 @@
                 <span class="text-[10px] sm:text-xs uppercase tracking-widest opacity-60 block mb-1">Unpaid Amount</span>
             {% endif %}
             <span class="text-3xl sm:text-5xl font-extrabold tracking-wide text-luxuryGold-500 font-luxury-title block">
-                {% if payment.currency %}{{ payment.currency.symbol }}{% else %}{{ payment.booking.room.currency }}{% endif %} {{ payment.amount|floatformat:2 }}
+                {% if payment.currency %}{{ payment.currency.symbol }}{% else %}{{ booking.currency_code }}{% endif %} {{ payment.amount|floatformat:2 }}
             </span>
             {% if payment.gateway %}
             <span class="inline-block mt-2.5 sm:mt-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider 
@@ -67,18 +67,32 @@
                 <span class="text-right font-mono text-[11px] sm:text-xs break-all">{{ booking.booking_uid }}</span>
             </div>
             <div class="grid grid-cols-2 p-3 sm:p-4 border-b gap-2" :class="{ 'border-gray-100': currentTheme === 'light', 'border-amber-900/5': currentTheme !== 'light' }">
-                <span class="text-left opacity-75">{% if payment.status == 'success' %}Room Booked{% else %}Room Selected{% endif %}</span>
-                <span class="text-right font-semibold">{{ booking.room.title }}</span>
+                <span class="text-left opacity-75">
+                    {% if booking.booking_type == 'zipline' or booking.zipline_package %}
+                        Zipline Package
+                    {% else %}
+                        {% if payment.status == 'success' %}Room Booked{% else %}Room Selected{% endif %}
+                    {% endif %}
+                </span>
+                <span class="text-right font-semibold">
+                    {% if booking.room %}
+                        {{ booking.room.title }}
+                    {% elif booking.zipline_package %}
+                        {{ booking.zipline_package.name }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </span>
             </div>
             {% if payment.tax_amount > 0 %}
             <div class="grid grid-cols-2 p-3 sm:p-4 border-b gap-2" :class="{ 'border-gray-100': currentTheme === 'light', 'border-amber-900/5': currentTheme !== 'light' }">
                 <span class="text-left opacity-75">Tax</span>
-                <span class="text-right font-semibold">{% if payment.currency %}{{ payment.currency.symbol }}{% else %}{{ payment.booking.room.currency }}{% endif %} {{ payment.tax_amount|floatformat:2 }}</span>
+                <span class="text-right font-semibold">{% if payment.currency %}{{ payment.currency.symbol }}{% else %}{{ booking.currency_code }}{% endif %} {{ payment.tax_amount|floatformat:2 }}</span>
             </div>
             {% if booking.num_rooms > 1 %}
             <div class="grid grid-cols-2 p-3 sm:p-4 border-b gap-2" :class="{ 'border-gray-100': currentTheme === 'light', 'border-amber-900/5': currentTheme !== 'light' }">
                 <span class="text-left opacity-75">Tax per room</span>
-                <span class="text-right font-semibold">{% if payment.currency %}{{ payment.currency.symbol }}{% else %}{{ payment.booking.room.currency }}{% endif %} {{ payment.tax_per_room|floatformat:2 }}</span>
+                <span class="text-right font-semibold">{% if payment.currency %}{{ payment.currency.symbol }}{% else %}{{ booking.currency_code }}{% endif %} {{ payment.tax_per_room|floatformat:2 }}</span>
             </div>
             {% endif %}
             {% endif %}
@@ -92,7 +106,7 @@
                     {% if payment.status == 'success' %}Total Paid{% else %}Total Price{% endif %}
                 </span>
                 <span class="text-right font-bold text-luxuryGold-500 font-luxury-title text-sm sm:text-lg">
-                    {% if payment.currency %}{{ payment.currency.symbol }}{% else %}{{ payment.booking.room.currency }}{% endif %} {{ payment.amount|floatformat:2 }}
+                    {% if payment.currency %}{{ payment.currency.symbol }}{% else %}{{ booking.currency_code }}{% endif %} {{ payment.amount|floatformat:2 }}
                 </span>
             </div>
             <div class="grid grid-cols-2 p-3 sm:p-4 gap-2" :class="{ 'border-gray-100': currentTheme === 'light', 'border-amber-900/5': currentTheme !== 'light' }">
@@ -108,10 +122,17 @@
                 Print Invoice / Receipt
             </a>
             {% else %}
-            <a href="{% url 'rooms:room_detail' booking.room.slug %}" 
-               class="w-full sm:w-auto px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wider border border-luxuryGold-400 text-luxuryGold-500 hover:bg-luxuryGold-900/10 transition-all text-center">
-                Try Booking Again
-            </a>
+                {% if booking.room %}
+                <a href="{% url 'rooms:room_detail' booking.room.slug %}" 
+                   class="w-full sm:w-auto px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wider border border-luxuryGold-400 text-luxuryGold-500 hover:bg-luxuryGold-900/10 transition-all text-center">
+                    Try Booking Again
+                </a>
+                {% else %}
+                <a href="{% url 'homepage:home' %}" 
+                   class="w-full sm:w-auto px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wider border border-luxuryGold-400 text-luxuryGold-500 hover:bg-luxuryGold-900/10 transition-all text-center">
+                    Try Booking Again
+                </a>
+                {% endif %}
             {% endif %}
             <a href="{% url 'homepage:home' %}" 
                class="btn-gold-gradient w-full sm:w-auto px-6 py-3 rounded-lg text-xs font-bold uppercase tracking-wider text-center cursor-pointer text-white shadow-md">

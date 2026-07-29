@@ -83,15 +83,31 @@
                         <p class="text-xs text-neutral-500">{{ b.booking_uid }}</p>
                     </td>
                     <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400">
+                        {% if b.booking_type == 'zipline' or b.zipline_package %}
+                        <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/10 text-amber-500 mb-1">ZIPLINE</span><br>
+                        {{ b.zipline_package.name }}
+                        {% else %}
                         {{ b.room.title }}
                         <span class="text-xs text-neutral-500 block">({{ b.room.category.name }})</span>
+                        {% endif %}
                     </td>
                     <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-medium">
+                        {% if b.booking_type == 'zipline' or b.zipline_package %}
+                        {{ b.flight_date|date:"M d, Y" }}
+                        <span class="text-xs text-neutral-500 block">{{ b.slot_time }}</span>
+                        {% else %}
                         {{ b.check_in|date:"M d, Y" }}
                         <i class="fa-solid fa-arrow-right-long text-xs mx-1 text-neutral-400"></i>
                         {{ b.check_out|date:"M d, Y" }}
+                        {% endif %}
                     </td>
-                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-medium">{{ b.num_rooms }}</td>
+                    <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-medium">
+                        {% if b.booking_type == 'zipline' or b.zipline_package %}
+                        {{ b.num_tickets }} flyer(s)
+                        {% else %}
+                        {{ b.num_rooms }} room(s)
+                        {% endif %}
+                    </td>
                     <td class="px-6 py-4 text-neutral-900 dark:text-neutral-100 font-semibold">{{ b.currency_code }} {{ b.total }}</td>
                     <td class="px-6 py-4">
                         <span class="px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wider uppercase
@@ -101,7 +117,7 @@
                                      {% elif b.status == 'checked_out' %}bg-neutral-500/10 text-neutral-400
                                      {% elif b.status == 'cancelled' %}bg-rose-500/10 text-rose-500
                                      {% else %}bg-neutral-200 text-neutral-600{% endif %}">
-                            {{ b.get_status_display }}
+                            {{ b.status_label }}
                         </span>
                     </td>
                     <td class="px-6 py-4 text-right">

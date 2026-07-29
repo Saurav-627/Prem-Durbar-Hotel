@@ -1,0 +1,48 @@
+zipline_packages:
+  - name: Superman Aerial Zip Flight
+    slug: superman-aerial-zip-flight
+    flight_type: Superman Flying Harness
+    duration: 2.5 Minutes / 1.2 KM
+    description: Head-first lying superman position gliding above Nagarkot pine forests with unobstructed views of the Mount Everest range.
+    highlights: Superman Harness, Helmet & GoPro Mount, Certified Instructor, Panoramic Himalayan View
+    image_url: https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?q=80&w=800
+    is_featured: true
+    is_published: true
+    order: 1
+    prices:
+      - currency: USD
+        base_price: 45.00
+      - currency: NPR
+        base_price: 4500.00
+
+  - name: Tandem Dual Zip Flight
+    slug: tandem-dual-zip-flight
+    flight_type: Tandem Dual Flight
+    duration: 2.5 Minutes / 1.2 KM
+    description: Fly together side-by-side or paired harness experience. Ideal for couples, friends, or parent-child mountain flights.
+    highlights: Dual Harness setup, Twin Safety Lines, Photo Package Included, High Altitude Thrill
+    image_url: https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?q=80&w=800
+    is_featured: true
+    is_published: true
+    order: 2
+    prices:
+      - currency: USD
+        base_price: 75.00
+      - currency: NPR
+        base_price: 7500.00
+
+  - name: Classic Seated Harness Zip
+    slug: classic-seated-harness-zip
+    flight_type: Classic Seated Harness
+    duration: 2.0 Minutes / 1.2 KM
+    description: Traditional comfortable seated harness zipline flight. Perfect for beginners and family adventures across the Nagarkot valley.
+    highlights: Classic Seated Position, Full Safety Gear, Experienced Guide Briefing, Suitable for all ages
+    image_url: https://images.unsplash.com/photo-1522163182402-834f871fd851?q=80&w=800
+    is_featured: true
+    is_published: true
+    order: 3
+    prices:
+      - currency: USD
+        base_price: 35.00
+      - currency: NPR
+        base_price: 3500.00

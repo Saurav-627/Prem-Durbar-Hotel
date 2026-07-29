@@ -60,13 +60,12 @@ class BookingDetailView(StaffRequiredMixin, DetailView):
         from rooms.models.room_base_price import RoomBasePrice
         # Resolve the booking's currency by looking at the subtotal-stored currency (fallback: first available price)
         booking = self.object
-        if booking and booking.room:
-            # Use the first available price as the display currency for the invoice (price was copied at booking time)
-            first_cp = booking.room.base_prices.first()
-            if first_cp:
-                booking.room.set_active_currency(first_cp.currency.iso_code)
-        # Fetch payments associated with this booking
-        # pyrefly: ignore [missing-attribute]
+        if booking:
+            if booking.room:
+                booking.room.set_active_currency(booking.currency_code)
+            elif booking.zipline_package:
+                booking.zipline_package.set_active_currency(booking.currency_code)
+
         context['payments'] = Payment.objects.filter(booking=self.object).order_by('-created_at')
         return context
 
@@ -110,9 +109,11 @@ class BookingInvoiceView(StaffRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Set currency matching the booking's currency_code
-        self.object.room.set_active_currency(self.object.currency_code)
-        # pyrefly: ignore [missing-attribute]
+        if self.object.room:
+            self.object.room.set_active_currency(self.object.currency_code)
+        elif self.object.zipline_package:
+            self.object.zipline_package.set_active_currency(self.object.currency_code)
+
         context['payments'] = Payment.objects.filter(booking=self.object, status='success')
         context['print_date'] = timezone.now()
         return context

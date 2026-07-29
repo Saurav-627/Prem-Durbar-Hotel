@@ -1,0 +1,271 @@
+<!-- ZIPLINE PACKAGE BOOKING MODAL -->
+<div x-show="ziplineModalOpen" 
+     x-cloak
+     x-effect="document.body.style.overflow = ziplineModalOpen ? 'hidden' : ''"
+     class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 overflow-hidden"
+     style="display: none;">
+    
+    <!-- Backdrop Blur Fade Transition -->
+    <div x-show="ziplineModalOpen"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         @click="ziplineModalOpen = false"
+         class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
+
+    <!-- Modal Card Zoom-In Slide Transition -->
+    <div x-show="ziplineModalOpen"
+         x-transition:enter="transition ease-out duration-300 transform"
+         x-transition:enter-start="opacity-0 scale-90 translate-y-4"
+         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+         x-transition:leave="transition ease-in duration-200 transform"
+         x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+         x-transition:leave-end="opacity-0 scale-90 translate-y-4"
+         class="modal-container relative w-full max-w-xl sm:max-w-2xl max-h-[85vh] sm:max-h-[90vh] flex flex-col rounded-3xl border shadow-2xl overflow-hidden text-left my-auto z-10"
+         :class="{
+             'bg-white border-gray-200 text-gray-900': currentTheme === 'light',
+             'bg-[#122A22] border-brand-primary/30 text-white': currentTheme !== 'light'
+         }">
+        
+        <!-- Header Banner (Fixed Header) -->
+        <div class="relative p-5 sm:p-6 bg-gradient-to-r from-brand-forest to-brand-forestDark text-white overflow-hidden shrink-0">
+            <div class="absolute -right-8 -bottom-8 opacity-15 text-8xl text-brand-gold">
+                <i class="fa-solid fa-bolt"></i>
+            </div>
+            <button type="button" @click="ziplineModalOpen = false" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center transition-all cursor-pointer">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-widest bg-amber-400 text-neutral-950 mb-1.5 shadow-md">
+                <i class="fa-solid fa-ticket text-neutral-950"></i>
+                <span>Zipline Adventure Flight Booking</span>
+            </span>
+            <h2 class="font-luxury-title text-xl sm:text-2xl font-bold tracking-wide" x-text="selectedPackage ? selectedPackage.name : 'Book Zipline Package'"></h2>
+            <p class="text-xs text-brand-champagne/90 mt-0.5" x-text="selectedPackage ? selectedPackage.duration : ''"></p>
+        </div>
+
+        <!-- Body Form (Scrollable Content with Rich Validation) -->
+        <form :action="selectedPackage ? '/booking/zipline/create/' + selectedPackage.id + '/' : '#'" 
+              method="POST" 
+              x-data="{
+                  name: '',
+                  phone: '',
+                  email: '',
+                  flightDate: new Date().toISOString().split('T')[0],
+                  errors: { name: '', phone: '', email: '', flightDate: '', noOfFlights: '' },
+                  touched: { name: false, phone: false, email: false, flightDate: false, noOfFlights: false },
+
+                  validateName() {
+                      const trimmed = (this.name || '').trim();
+                      if (!trimmed) return 'Full name is required.';
+                      if (trimmed.length < 2) return 'Full name must be at least 2 characters.';
+                      if (!/^[a-zA-Z\s'.-]+$/.test(trimmed)) return 'Please enter a valid name.';
+                      return '';
+                  },
+                  validatePhone() {
+                      const trimmed = (this.phone || '').trim();
+                      if (!trimmed) return 'Phone number is required.';
+                      const digits = trimmed.replace(/\D/g, '');
+                      if (digits.length < 10) return 'Phone number must contain at least 10 digits.';
+                      if (digits.length > 10) return 'Phone number cannot exceed 10 digits.';
+                      return '';
+                  },
+                  validateEmail() {
+                      const trimmed = (this.email || '').trim();
+                      if (!trimmed) return 'Email address is required for ticket delivery.';
+                      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) return 'Please enter a valid email address.';
+                      return '';
+                  },
+                  validateDate() {
+                      if (!this.flightDate) return 'Flight date is required.';
+                      const selected = new Date(this.flightDate + 'T00:00:00');
+                      const today = new Date();
+                      today.setHours(0,0,0,0);
+                      if (selected < today) return 'Flight date cannot be in the past.';
+                      return '';
+                  },
+                  validateFlights() {
+                      const num = parseInt(noOfFlights || 0);
+                      if (!num || num < 1) return 'At least 1 ticket is required.';
+                      if (num > 20) return 'Maximum 20 tickets allowed per booking.';
+                      return '';
+                  },
+                  validateForm(e) {
+                      this.errors.name = this.validateName();
+                      this.errors.phone = this.validatePhone();
+                      this.errors.email = this.validateEmail();
+                      this.errors.flightDate = this.validateDate();
+                      this.errors.noOfFlights = this.validateFlights();
+
+                      this.touched = { name: true, phone: true, email: true, flightDate: true, noOfFlights: true };
+
+                      const hasErrors = Object.values(this.errors).some(err => err !== '');
+                      if (hasErrors) {
+                          e.preventDefault();
+                          return false;
+                      }
+                      return true;
+                  }
+              }"
+              @submit="validateForm($event)"
+              class="p-5 sm:p-6 space-y-4 overflow-y-auto flex-1 custom-scrollbar">
+            {% csrf_token %}
+
+            <!-- Package Summary & Live Price Calculator -->
+            <div class="p-4 rounded-2xl border bg-black/5 dark:bg-black/30 border-luxuryGold-400/20 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div>
+                    <span class="text-[10px] uppercase font-bold tracking-wider opacity-75">Base Rate Per Flight (Person)</span>
+                    <p class="text-base sm:text-lg font-bold text-luxuryGold-500" x-text="selectedPackage ? (selectedPackage.currency_code + ' ' + selectedPackage.price) : ''"></p>
+                </div>
+                <div class="text-right sm:text-right w-full sm:w-auto p-2.5 sm:p-0 rounded-xl bg-luxuryGold-500/10 sm:bg-transparent">
+                    <span class="text-[10px] uppercase font-bold tracking-wider text-luxuryGold-500 block">Total Payable Amount</span>
+                    <p class="text-xl sm:text-2xl font-extrabold text-luxuryGold-500 font-luxury-title" 
+                       x-text="selectedPackage ? (selectedPackage.currency_code + ' ' + (parseFloat(selectedPackage.price || 0) * parseInt(noOfFlights || 1)).toFixed(2)) : ''">
+                    </p>
+                </div>
+            </div>
+
+            <!-- Booking Inputs Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                
+                <!-- Guest Name -->
+                <div>
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider mb-1 opacity-90">Full Name <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <i class="fa-regular fa-user absolute left-3.5 top-3 opacity-50 text-xs"></i>
+                        <input type="text" name="name" x-model="name"
+                               @blur="touched.name = true; errors.name = validateName()"
+                               @input="if(touched.name) errors.name = validateName()"
+                               required minlength="2" maxlength="100" placeholder="e.g. John Doe" 
+                               class="w-full pl-10 pr-3 py-2 rounded-xl border bg-transparent text-xs sm:text-sm focus:outline-none focus:ring-1 transition-all"
+                               :class="errors.name && touched.name ? 'border-red-500 ring-1 ring-red-500/50' : (currentTheme === 'light' ? 'border-gray-300 focus:ring-luxuryGold-400' : 'border-amber-900/40 focus:ring-luxuryGold-400')">
+                    </div>
+                    <p x-show="errors.name && touched.name" class="text-[11px] text-red-500 mt-1 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-exclamation text-[10px]"></i>
+                        <span x-text="errors.name"></span>
+                    </p>
+                </div>
+
+                <!-- Phone Number -->
+                <div>
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider mb-1 opacity-90">Phone Number <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <i class="fa-solid fa-phone absolute left-3.5 top-3 opacity-50 text-xs"></i>
+                        <input type="tel" name="phone" x-model="phone"
+                               @blur="touched.phone = true; errors.phone = validatePhone()"
+                               @input="if(touched.phone) errors.phone = validatePhone()"
+                               required minlength="7" maxlength="20" placeholder="e.g. +977 9800000000" 
+                               class="w-full pl-10 pr-3 py-2 rounded-xl border bg-transparent text-xs sm:text-sm focus:outline-none focus:ring-1 transition-all"
+                               :class="errors.phone && touched.phone ? 'border-red-500 ring-1 ring-red-500/50' : (currentTheme === 'light' ? 'border-gray-300 focus:ring-luxuryGold-400' : 'border-amber-900/40 focus:ring-luxuryGold-400')">
+                    </div>
+                    <p x-show="errors.phone && touched.phone" class="text-[11px] text-red-500 mt-1 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-exclamation text-[10px]"></i>
+                        <span x-text="errors.phone"></span>
+                    </p>
+                </div>
+
+                <!-- Email (For Ticket Delivery) -->
+                <div class="sm:col-span-2">
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider mb-1 opacity-90">Email Address <span class="text-luxuryGold-500">(Tickets Sent Here)</span> <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <i class="fa-regular fa-envelope absolute left-3.5 top-3 opacity-50 text-xs"></i>
+                        <input type="email" name="email" x-model="email"
+                               @blur="touched.email = true; errors.email = validateEmail()"
+                               @input="if(touched.email) errors.email = validateEmail()"
+                               required placeholder="e.g. john@example.com" 
+                               class="w-full pl-10 pr-3 py-2 rounded-xl border bg-transparent text-xs sm:text-sm focus:outline-none focus:ring-1 transition-all"
+                               :class="errors.email && touched.email ? 'border-red-500 ring-1 ring-red-500/50' : (currentTheme === 'light' ? 'border-gray-300 focus:ring-luxuryGold-400' : 'border-amber-900/40 focus:ring-luxuryGold-400')">
+                    </div>
+                    <p x-show="errors.email && touched.email" class="text-[11px] text-red-500 mt-1 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-exclamation text-[10px]"></i>
+                        <span x-text="errors.email"></span>
+                    </p>
+                </div>
+
+                <!-- Number of Flights / People (Unit Counter) -->
+                <div>
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider mb-1 opacity-90">No. of Flights / People <span class="text-red-500">*</span></label>
+                    <div class="flex items-center rounded-xl border p-0.5"
+                         :class="errors.noOfFlights && touched.noOfFlights ? 'border-red-500 ring-1 ring-red-500/50' : (currentTheme === 'light' ? 'border-gray-300 bg-gray-50' : 'border-amber-900/40 bg-black/20')">
+                        <button type="button" @click="noOfFlights = Math.max(1, parseInt(noOfFlights) - 1); touched.noOfFlights = true; errors.noOfFlights = validateFlights()" 
+                                class="w-8 h-8 rounded-lg bg-black/10 dark:bg-white/10 hover:bg-luxuryGold-500 hover:text-black font-bold text-sm transition-colors flex items-center justify-center cursor-pointer">
+                            -
+                        </button>
+                        <input type="number" name="no_of_flights" x-model.number="noOfFlights" min="1" max="20" required 
+                               @change="touched.noOfFlights = true; errors.noOfFlights = validateFlights()"
+                               class="w-full text-center bg-transparent text-xs font-bold focus:outline-none">
+                        <button type="button" @click="noOfFlights = parseInt(noOfFlights) + 1; touched.noOfFlights = true; errors.noOfFlights = validateFlights()" 
+                                class="w-8 h-8 rounded-lg bg-black/10 dark:bg-white/10 hover:bg-luxuryGold-500 hover:text-black font-bold text-sm transition-colors flex items-center justify-center cursor-pointer">
+                            +
+                        </button>
+                    </div>
+                    <p x-show="errors.noOfFlights && touched.noOfFlights" class="text-[11px] text-red-500 mt-1 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-exclamation text-[10px]"></i>
+                        <span x-text="errors.noOfFlights"></span>
+                    </p>
+                </div>
+
+                <!-- Flight Date -->
+                <div>
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider mb-1 opacity-90">Flight Date <span class="text-red-500">*</span></label>
+                    <div class="relative">
+                        <i class="fa-regular fa-calendar absolute left-3.5 top-3 opacity-50 text-xs"></i>
+                        <input type="date" name="flight_date" x-model="flightDate"
+                               @change="touched.flightDate = true; errors.flightDate = validateDate()"
+                               required autocomplete="off"
+                               :min="new Date().toISOString().split('T')[0]"
+                               class="w-full pl-10 pr-3 py-2 rounded-xl border bg-transparent text-xs sm:text-sm focus:outline-none focus:ring-1 transition-all"
+                               :class="errors.flightDate && touched.flightDate ? 'border-red-500 ring-1 ring-red-500/50' : (currentTheme === 'light' ? 'border-gray-300 focus:ring-luxuryGold-400' : 'border-amber-900/40 focus:ring-luxuryGold-400')">
+                    </div>
+                    <p x-show="errors.flightDate && touched.flightDate" class="text-[11px] text-red-500 mt-1 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-exclamation text-[10px]"></i>
+                        <span x-text="errors.flightDate"></span>
+                    </p>
+                </div>
+
+                <!-- Time Slot Picker -->
+                <div>
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider mb-1 opacity-90">Preferred Time Slot</label>
+                    <select name="slot_time" 
+                            class="w-full px-3 py-2 rounded-xl border bg-transparent text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                            :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40 bg-[#122A22]': currentTheme !== 'light' }">
+                        <option value="Morning (09:00 AM - 12:00 PM)">Morning (09:00 AM - 12:00 PM)</option>
+                        <option value="Afternoon (12:00 PM - 03:00 PM)" selected>Afternoon (12:00 PM - 03:00 PM)</option>
+                        <option value="Sunset Flight (03:00 PM - 06:00 PM)">Sunset Flight (03:00 PM - 06:00 PM)</option>
+                    </select>
+                </div>
+
+                <!-- Promo Code -->
+                <div>
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider mb-1 opacity-90">Promo / Coupon Code</label>
+                    <input type="text" name="promo_code" placeholder="Optional Promo Code" 
+                           class="w-full px-3 py-2 rounded-xl border bg-transparent text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                           :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }">
+                </div>
+
+                <!-- Special Requests / Notes -->
+                <div class="sm:col-span-2">
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider mb-1 opacity-90">Special Requests / Weight Notes</label>
+                    <textarea name="special_requests" rows="2" placeholder="e.g. Any special assistance required, group flight preference..." 
+                              class="w-full px-3 py-2 rounded-xl border bg-transparent text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
+                              :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }"></textarea>
+                </div>
+
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-3 border-t border-luxuryGold-400/20 flex flex-col sm:flex-row items-center justify-end gap-3">
+                <button type="button" @click="ziplineModalOpen = false" class="w-full sm:w-auto px-5 py-2.5 rounded-xl border border-gray-400/30 text-xs font-semibold uppercase tracking-wider hover:bg-black/10 transition-colors">
+                    Cancel
+                </button>
+                <button type="submit" 
+                        class="btn-gold-gradient w-full sm:w-auto px-7 py-3 rounded-xl text-xs font-bold uppercase tracking-widest text-brand-forestDark shadow-lg hover:scale-[1.02] duration-300 cursor-pointer">
+                    <i class="fa-solid fa-bolt mr-1.5"></i> Proceed to Secure Checkout
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
