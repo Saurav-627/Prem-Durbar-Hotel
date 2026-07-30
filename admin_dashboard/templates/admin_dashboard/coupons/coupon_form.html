@@ -265,6 +265,8 @@
     let dpFrom, dpTo;
 
     if (fromEl) {
+        fromEl.readOnly = true;
+        fromEl.setAttribute('inputmode', 'none');
         dpFrom = new AirDatepicker(fromEl, {
             ...sharedOpts,
             onSelect({ date }) {
@@ -274,6 +276,8 @@
     }
 
     if (toEl) {
+        toEl.readOnly = true;
+        toEl.setAttribute('inputmode', 'none');
         dpTo = new AirDatepicker(toEl, {
             ...sharedOpts,
             onSelect({ date }) {

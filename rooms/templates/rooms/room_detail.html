@@ -307,10 +307,19 @@
                         .then(data => {
                             const booked = data.booked_dates || [];
                             
+                            const parseLocalDate = (str) => {
+                                if (!str) return undefined;
+                                const parts = str.split('-');
+                                if (parts.length === 3) {
+                                    return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+                                }
+                                return new Date(str);
+                            };
+
                             const checkInPicker = new AirDatepicker('#room_check_in', {
                                 ...window.defaultAirDatepickerConfig,
                                 minDate: new Date(),
-                                selectedDates: this.checkIn ? [new Date(this.checkIn)] : undefined,
+                                selectedDates: this.checkIn ? [parseLocalDate(this.checkIn)] : undefined,
                                 onRenderCell: ({date, cellType}) => {
                                     if (cellType === 'day') {
                                         const formatted = formatDate(date);
@@ -331,8 +340,8 @@
                             
                             const checkOutPicker = new AirDatepicker('#room_check_out', {
                                 ...window.defaultAirDatepickerConfig,
-                                minDate: this.checkIn ? new Date(this.checkIn) : new Date(),
-                                selectedDates: this.checkOut ? [new Date(this.checkOut)] : undefined,
+                                minDate: this.checkIn ? parseLocalDate(this.checkIn) : new Date(),
+                                selectedDates: this.checkOut ? [parseLocalDate(this.checkOut)] : undefined,
                                 onRenderCell: ({date, cellType}) => {
                                     if (cellType === 'day') {
                                         const formatted = formatDate(date);

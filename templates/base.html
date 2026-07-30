@@ -328,6 +328,7 @@
         /* Premium Custom Air Datepicker Theme styling */
         .air-datepicker {
             z-index: 99999 !important;
+            max-width: calc(100vw - 24px) !important;
             --ad-background-color: var(--card-bg) !important;
             --ad-text-color: var(--text-color) !important;
             --ad-border-color: var(--border-color) !important;
@@ -499,22 +500,37 @@
             position({$datepicker, $target}) {
                 if (!$target || !$datepicker) return;
                 const rect = $target.getBoundingClientRect();
+                const pickerWidth = $datepicker.offsetWidth || 280;
                 const pickerHeight = $datepicker.offsetHeight || 310;
+                const windowWidth = document.documentElement.clientWidth || window.innerWidth;
                 const windowHeight = window.innerHeight;
 
                 const spaceBelow = windowHeight - rect.bottom;
                 const spaceAbove = rect.top;
+                const spaceRight = windowWidth - rect.left;
+                const spaceLeft = rect.right;
 
                 $datepicker.style.position = 'absolute';
 
-                // Automatically position ABOVE if space below is limited and space above is greater
+                // Vertical positioning (Above vs Below)
+                let top;
                 if (spaceBelow < pickerHeight && spaceAbove > spaceBelow) {
-                    $datepicker.style.left = `${rect.left + window.scrollX}px`;
-                    $datepicker.style.top = `${rect.top + window.scrollY - pickerHeight - 6}px`;
+                    top = rect.top + window.scrollY - pickerHeight - 6;
                 } else {
-                    $datepicker.style.left = `${rect.left + window.scrollX}px`;
-                    $datepicker.style.top = `${rect.bottom + window.scrollY + 6}px`;
+                    top = rect.bottom + window.scrollY + 6;
                 }
+
+                // Horizontal positioning (Left vs Right space tracking & viewport boundary clamping)
+                let left = rect.left + window.scrollX;
+                if (spaceRight < pickerWidth && spaceLeft >= pickerWidth) {
+                    left = rect.right + window.scrollX - pickerWidth;
+                } else if (left + pickerWidth > windowWidth + window.scrollX - 12) {
+                    left = windowWidth + window.scrollX - pickerWidth - 12;
+                }
+                left = Math.max(12 + window.scrollX, left);
+
+                $datepicker.style.left = `${left}px`;
+                $datepicker.style.top = `${top}px`;
             }
         };
 
@@ -566,6 +582,8 @@
                     // Convert input to text so browser native date picker is disabled
                     el.type = 'text';
                     el.placeholder = 'YYYY-MM-DD';
+                    el.readOnly = true;
+                    el.setAttribute('inputmode', 'none');
                     el.classList.add('cursor-pointer');
                     el.setAttribute('autocomplete', 'off');
 

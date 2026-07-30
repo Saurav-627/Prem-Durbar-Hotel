@@ -149,7 +149,7 @@
 
                         <!-- Card CTA -->
                         <div class="pt-4 sm:pt-6 mt-6 border-t border-brand-primary/10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
-                            <a href="{% url 'rooms:room_detail' room.slug %}" class="text-xs font-semibold uppercase tracking-wider hover:text-brand-primaryLight transition-colors text-center sm:text-left">Details & Specs</a>
+                            <a href="{% url 'rooms:room_detail' room.slug %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" class="text-xs font-semibold uppercase tracking-wider hover:text-brand-primaryLight transition-colors text-center sm:text-left">Details &amp; Specs</a>
                             <a href="{% url 'rooms:room_detail' room.slug %}{% if request.GET %}?{{ request.GET.urlencode }}{% endif %}" 
                                class="btn-gold-gradient px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-white shadow-md text-center">
                                 Reserve Suite

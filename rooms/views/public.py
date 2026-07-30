@@ -67,6 +67,16 @@ class RoomListView(ListView):
             except ValueError:
                 pass
                 
+        # Save check_in & check_out in session if user searched from home/list, else clear stale dates
+        check_in = self.request.GET.get('check_in')
+        check_out = self.request.GET.get('check_out')
+        if check_in and check_out:
+            self.request.session['search_check_in'] = check_in
+            self.request.session['search_check_out'] = check_out
+        else:
+            self.request.session.pop('search_check_in', None)
+            self.request.session.pop('search_check_out', None)
+
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -116,6 +126,12 @@ class RoomDetailView(DetailView):
         selected_currency = self.request.COOKIES.get('currency', 'USD')
         if self.object:
             self.object.set_active_currency(selected_currency)
+
+        # Pre-fill check_in & check_out only if entered on home/search form
+        check_in = self.request.GET.get('check_in') or self.request.session.get('search_check_in', '')
+        check_out = self.request.GET.get('check_out') or self.request.session.get('search_check_out', '')
+        context['default_checkin'] = check_in
+        context['default_checkout'] = check_out
         
         # Resolve active currency symbol
         from settings_manager.models.currency import Currency

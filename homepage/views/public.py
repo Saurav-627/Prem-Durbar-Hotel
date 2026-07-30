@@ -13,6 +13,10 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
+        # Clear stale search dates from session when landing on homepage
+        self.request.session.pop('search_check_in', None)
+        self.request.session.pop('search_check_out', None)
+        
         from settings_manager.models.currency import Currency
         try:
             published_currencies = list(Currency.objects.filter(is_published=True))

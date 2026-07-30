@@ -37,7 +37,7 @@
             <!-- LEFT COLUMN (1st Branding): HOTEL SANCTUARY & ROOM SEARCH -->
             <div class="lg:col-span-6 flex flex-col justify-start space-y-5">
                 <!-- Slideshow Frame -->
-                <div class="relative h-[220px] sm:h-[360px] lg:h-[410px] rounded-2xl overflow-hidden shadow-2xl border border-luxuryGold-400/30 group"
+                <div class="relative h-[300px] sm:h-[360px] lg:h-[410px] rounded-2xl overflow-hidden shadow-2xl border border-luxuryGold-400/30 group"
                      x-data="{ touchStartX: 0 }"
                      @touchstart.passive="touchStartX = $event.changedTouches[0].clientX"
                      @touchend.passive="const dx = $event.changedTouches[0].clientX - touchStartX; if (Math.abs(dx) > 40) { dx < 0 ? leftNext() : leftPrev() }">
@@ -138,7 +138,7 @@
                 </div>
 
                 <!-- Auto-Swiping Zipline Packages Card Carousel -->
-                <div class="relative h-[240px] sm:h-[360px] lg:h-[410px] rounded-2xl overflow-hidden shadow-2xl border border-luxuryGold-400/30 group"
+                <div class="relative h-[300px] sm:h-[360px] lg:h-[410px] rounded-2xl overflow-hidden shadow-2xl border border-luxuryGold-400/30 group"
                      x-data="{ touchStartX: 0 }"
                      @touchstart.passive="touchStartX = $event.changedTouches[0].clientX"
                      @touchend.passive="const dx = $event.changedTouches[0].clientX - touchStartX; if (Math.abs(dx) > 40) { dx < 0 ? rightNext() : rightPrev() }">
@@ -158,7 +158,7 @@
 
                         <div class="relative z-10 space-y-2.5">
                             <div class="flex items-center justify-between">
-                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-luxuryGold-500 text-neutral-950">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-luxuryGold-500 text-white">
                                     {{ pkg.flight_type }}
                                 </span>
                                 <span class="text-xs text-luxuryGold-300 font-medium bg-black/40 px-2 py-0.5 rounded-md border border-white/10">
