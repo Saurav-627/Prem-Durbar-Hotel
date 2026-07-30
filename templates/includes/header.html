@@ -1,6 +1,6 @@
 {% load static %}
 <!-- GLOBAL HEADER / STICKY NAVBAR -->
-<header class="sticky top-0 z-50 border-b shadow-sm backdrop-blur-md {% if selected_theme == 'light' %}bg-[#FAF7F2]/95 border-[#EEF5F0] text-[#24332A]{% else %}bg-[#0A2017]/95 border-brand-primary/30 text-white{% endif %}"
+<header class="sticky top-0 z-50 border-b shadow-sm backdrop-blur-md transition-colors duration-300 {% if selected_theme == 'light' %}bg-[#FAF7F2]/95 border-[#EEF5F0] text-[#24332A]{% else %}bg-[#0A2017]/95 border-brand-primary/30 text-white{% endif %}"
         :class="{
             'bg-[#FAF7F2]/95 border-[#EEF5F0] text-[#24332A]': currentTheme === 'light',
             'bg-[#0A2017]/95 border-brand-primary/30 text-white': currentTheme !== 'light'
@@ -11,7 +11,7 @@
             <!-- Brand Logo -->
             <div class="flex-shrink-0">
                 <a href="{% url 'homepage:home' %}" class="flex items-center gap-3">
-                    <img src="{% static 'images/hotel-logo.png' %}" alt="{{ hotel_settings.site_name }}" class="h-20 w-auto object-contain">
+                    <img src="{% static 'images/hotel-logo.png' %}" alt="{{ hotel_settings.site_name }}" class="h-20 w-auto object-contain transition-opacity duration-200 hover:opacity-90">
                 </a>
             </div>
 
@@ -19,10 +19,11 @@
             <nav class="hidden md:flex space-x-8 items-center" x-data="{ currentPath: window.location.pathname }">
                 <!-- Home -->
                 <a href="{% url 'homepage:home' %}" 
-                   class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                   class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
                    :class="(currentPath === '/' || currentPath === '/home/') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
-                   {% if request.path == '/' or request.path == '/home/' %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase pb-1"{% endif %}>
-                    Home
+                   {% if request.path == '/' or request.path == '/home/' %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase py-1"{% endif %}>
+                    <span>Home</span>
+                    <span x-show="!(currentPath === '/' || currentPath === '/home/')" class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
                 </a>
                 
                 <!-- Dynamic Navigation Items -->
@@ -30,10 +31,11 @@
                     {% if item.children.all %}
                         <!-- Dropdown / Mega Menu -->
                         <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
-                            <button class="flex items-center gap-1 text-sm font-medium tracking-wide uppercase transition-colors focus:outline-none pb-1"
+                            <button class="relative flex items-center gap-1.5 text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 focus:outline-none group"
                                     :class="(currentPath !== '/' && currentPath.includes('{{ item.url }}')) ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'">
                                 <span>{{ item.name }}</span>
-                                <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-200" :class="{ 'rotate-180': open }"></i>
+                                <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 ease-in-out" :class="{ 'rotate-180': open }"></i>
+                                <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
                             </button>
                             <div x-show="open" 
                                  x-transition:enter="transition ease-out duration-150"
@@ -42,16 +44,16 @@
                                  x-transition:leave="transition ease-in duration-100"
                                  x-transition:leave-start="opacity-100 translate-y-0"
                                  x-transition:leave-end="opacity-0 translate-y-1"
-                                 class="absolute left-0 mt-2 w-56 rounded-md shadow-lg border backdrop-blur-lg focus:outline-none"
+                                 class="absolute left-0 mt-2 w-56 rounded-xl shadow-xl border backdrop-blur-lg focus:outline-none py-1.5 overflow-hidden"
                                  :class="{
-                                     'bg-white border-gray-200 text-gray-800': currentTheme === 'light',
-                                     'bg-[#1A3A32] border-brand-primary/30 text-white': currentTheme !== 'light'
+                                     'bg-white/95 border-gray-200 text-gray-800': currentTheme === 'light',
+                                     'bg-[#1A3A32]/95 border-brand-primary/30 text-white': currentTheme !== 'light'
                                  }">
-                                <div class="py-1">
+                                <div>
                                     {% for child in item.children.all %}
                                         <a href="{{ child.url }}" 
-                                           class="block px-4 py-3 text-sm tracking-wide transition-colors"
-                                           :class="currentPath.includes('{{ child.url }}') ? (currentTheme === 'light' ? 'text-brand-primary font-bold bg-brand-primary/10' : 'text-brand-primaryLight font-bold bg-brand-primary/20') : 'hover:bg-brand-primary/20 hover:text-brand-secondary'">
+                                           class="block px-4 py-3 text-sm tracking-wide transition-colors duration-200"
+                                           :class="currentPath.includes('{{ child.url }}') ? (currentTheme === 'light' ? 'text-brand-primary font-bold bg-brand-primary/10' : 'text-brand-primaryLight font-bold bg-brand-primary/20') : 'hover:bg-brand-primary/20 hover:text-luxuryGold-400'">
                                             {{ child.name }}
                                         </a>
                                     {% endfor %}
@@ -60,41 +62,63 @@
                         </div>
                     {% else %}
                         <a href="{{ item.url }}" 
-                           class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                           class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
                            :class="((currentPath === '/' && '{{ item.url }}' === '/') || (currentPath !== '/' && '{{ item.url }}' !== '/' && currentPath.includes('{{ item.url }}'))) ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'">
-                            {{ item.name }}
+                            <span>{{ item.name }}</span>
+                            <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
                         </a>
                     {% endif %}
                 {% empty %}
                     <!-- Fallback menus if database is empty -->
                     <a href="{% url 'homepage:about' %}" 
-                       class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                       class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
                        :class="currentPath.includes('/about') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
-                       {% if '/about' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase pb-1"{% endif %}>About Us</a>
+                       {% if '/about' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase py-1"{% endif %}>
+                        <span>About Us</span>
+                        <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
                     <a href="{% url 'rooms:room_list' %}" 
-                       class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                       class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
                        :class="currentPath.includes('/rooms') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
-                       {% if '/rooms' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase pb-1"{% endif %}>Rooms & Suites</a>
+                       {% if '/rooms' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase py-1"{% endif %}>
+                        <span>Rooms &amp; Suites</span>
+                        <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
                     <a href="{% url 'dining:dining_list' %}" 
-                       class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                       class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
                        :class="currentPath.includes('/dining') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
-                       {% if '/dining' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase pb-1"{% endif %}>Dining</a>
+                       {% if '/dining' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase py-1"{% endif %}>
+                        <span>Dining</span>
+                        <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
                     <a href="{% url 'homepage:zipline' %}" 
-                       class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                       class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
                        :class="currentPath.includes('/zipline') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
-                       {% if '/zipline' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase pb-1"{% endif %}>Zipline</a>
+                       {% if '/zipline' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase py-1"{% endif %}>
+                        <span>Zipline</span>
+                        <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
                     <a href="{% url 'homepage:sustainability' %}" 
-                       class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                       class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
                        :class="currentPath.includes('/sustainability') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
-                       {% if '/sustainability' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase pb-1"{% endif %}>Sustainability</a>
+                       {% if '/sustainability' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase py-1"{% endif %}>
+                        <span>Sustainability</span>
+                        <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
                     <a href="{% url 'gallery:gallery_list' %}" 
-                       class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                       class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
                        :class="currentPath.includes('/gallery') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
-                       {% if '/gallery' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase pb-1"{% endif %}>Gallery</a>
+                       {% if '/gallery' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase py-1"{% endif %}>
+                        <span>Gallery</span>
+                        <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
                     <a href="{% url 'contact:contact_page' %}" 
-                       class="text-sm font-medium tracking-wide uppercase transition-colors pb-1"
+                       class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
                        :class="currentPath.includes('/contact') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
-                       {% if '/contact' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase pb-1"{% endif %}>Contact</a>
+                       {% if '/contact' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase py-1"{% endif %}>
+                        <span>Contact</span>
+                        <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
+                    </a>
                 {% endfor %}
             </nav>
 
@@ -104,12 +128,12 @@
                 <!-- Currency Switcher Dropdown -->
                 <div class="relative" x-data="{ open: false }" @click.away="open = false">
                     <button @click="open = !open" 
-                            class="p-2 rounded-full focus:outline-none transition-colors flex items-center gap-1.5 text-xs font-semibold"
+                            class="p-2 rounded-full focus:outline-none transition-colors duration-200 flex items-center gap-1.5 text-xs font-semibold cursor-pointer"
                             :class="currentTheme === 'light' ? 'hover:bg-gray-100 text-gray-800' : 'hover:bg-brand-primary/20 text-white'"
                             title="Switch Currency">
                         <i class="fa-solid fa-coins text-base text-brand-primaryLight"></i>
                         <span x-text="currentCurrency">{{ selected_currency }}</span>
-                        <i class="fa-solid fa-chevron-down text-[10px] opacity-70"></i>
+                        <i class="fa-solid fa-chevron-down text-[10px] opacity-70 transition-transform duration-300 ease-in-out" :class="{ 'rotate-180': open }"></i>
                     </button>
                     
                     <!-- Dropdown Menu -->
@@ -120,15 +144,15 @@
                          x-transition:leave="transition ease-in duration-100"
                          x-transition:leave-start="opacity-100 translate-y-0"
                          x-transition:leave-end="opacity-0 translate-y-1"
-                         class="absolute right-0 mt-2 w-52 rounded-xl shadow-xl border z-50 focus:outline-none py-1.5"
+                         class="absolute right-0 mt-2 w-52 rounded-xl shadow-xl border z-50 focus:outline-none py-1.5 overflow-hidden"
                          :class="{
-                             'bg-white border-gray-200 text-gray-800': currentTheme === 'light',
-                             'bg-[#1A3A32] border-brand-primary/30 text-white': currentTheme !== 'light'
+                             'bg-white/95 border-gray-200 text-gray-800': currentTheme === 'light',
+                             'bg-[#1A3A32]/95 border-brand-primary/30 text-white': currentTheme !== 'light'
                          }"
                          style="display: none;">
                         {% for c in published_currencies %}
                         <button @click="setCurrency('{{ c.iso_code }}'); open = false" 
-                                class="flex w-full items-center justify-between px-4 py-2.5 text-left transition-colors text-xs"
+                                class="flex w-full items-center justify-between px-4 py-2.5 text-left transition-colors duration-200 text-xs cursor-pointer"
                                 :class="currentTheme === 'light' ? 'hover:bg-gray-100' : 'hover:bg-brand-primary/20'">
                             <div class="flex items-center gap-2">
                                 <span class="font-serif font-bold text-xs opacity-75 w-5 text-center">{{ c.symbol }}</span>
@@ -138,7 +162,7 @@
                         </button>
                         {% empty %}
                         <button @click="setCurrency('USD'); open = false" 
-                                class="flex w-full items-center justify-between px-4 py-2.5 text-left transition-colors text-xs"
+                                class="flex w-full items-center justify-between px-4 py-2.5 text-left transition-colors duration-200 text-xs cursor-pointer"
                                 :class="currentTheme === 'light' ? 'hover:bg-gray-100' : 'hover:bg-brand-primary/20'">
                             <div class="flex items-center gap-2">
                                 <span class="font-serif font-bold text-xs opacity-75 w-5 text-center">$</span>
@@ -151,13 +175,13 @@
                 </div>
 
                 <!-- Search Button -->
-                <button @click="searchOpen = true" class="p-2 rounded-full hover:bg-brand-primary/10 transition-colors">
-                    <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                <button @click="searchOpen = true" class="p-2 rounded-full hover:bg-brand-primary/10 transition-colors duration-200 cursor-pointer" title="Search">
+                    <i class="fa-solid fa-magnifying-glass text-lg text-luxuryGold-400"></i>
                 </button>
 
                 <!-- Primary Booking CTA -->
                 <a href="{% url 'rooms:room_list' %}" 
-                   class="btn-gold-gradient px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white rounded-full shadow-md hover:shadow-glow">
+                   class="btn-gold-gradient px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white rounded-full shadow-md transition-all duration-200 hover:brightness-110">
                     Book A Stay
                 </a>
             </div>
@@ -167,12 +191,12 @@
                 <!-- Mobile Currency Switcher Dropdown (Left side of Hamburger) -->
                 <div class="relative" x-data="{ open: false }" @click.away="open = false">
                     <button @click="open = !open" 
-                            class="p-2 rounded-full focus:outline-none transition-colors flex items-center gap-1 text-xs font-semibold"
+                            class="p-2 rounded-full focus:outline-none transition-colors duration-200 flex items-center gap-1 text-xs font-semibold cursor-pointer"
                             :class="currentTheme === 'light' ? 'hover:bg-gray-100 text-gray-800' : 'hover:bg-brand-primary/20 text-white'"
                             title="Switch Currency">
                         <i class="fa-solid fa-coins text-sm text-brand-primaryLight"></i>
                         <span x-text="currentCurrency">{{ selected_currency }}</span>
-                        <i class="fa-solid fa-chevron-down text-[10px] opacity-70"></i>
+                        <i class="fa-solid fa-chevron-down text-[10px] opacity-70 transition-transform duration-300 ease-in-out" :class="{ 'rotate-180': open }"></i>
                     </button>
                     
                     <!-- Dropdown Menu -->
@@ -183,15 +207,15 @@
                          x-transition:leave="transition ease-in duration-100"
                          x-transition:leave-start="opacity-100 translate-y-0"
                          x-transition:leave-end="opacity-0 translate-y-1"
-                         class="absolute right-0 mt-2 w-48 rounded-xl shadow-xl border z-50 focus:outline-none py-1.5"
+                         class="absolute right-0 mt-2 w-48 rounded-xl shadow-xl border z-50 focus:outline-none py-1.5 overflow-hidden"
                          :class="{
-                             'bg-white border-gray-200 text-gray-800': currentTheme === 'light',
-                             'bg-[#1A3A32] border-brand-primary/30 text-white': currentTheme !== 'light'
+                             'bg-white/95 border-gray-200 text-gray-800': currentTheme === 'light',
+                             'bg-[#1A3A32]/95 border-brand-primary/30 text-white': currentTheme !== 'light'
                          }"
                          style="display: none;">
                         {% for c in published_currencies %}
                         <button @click="setCurrency('{{ c.iso_code }}'); open = false" 
-                                class="flex w-full items-center justify-between px-3.5 py-2 text-left transition-colors text-xs"
+                                class="flex w-full items-center justify-between px-3.5 py-2 text-left transition-colors duration-200 text-xs cursor-pointer"
                                 :class="currentTheme === 'light' ? 'hover:bg-gray-100' : 'hover:bg-brand-primary/20'">
                             <div class="flex items-center gap-2">
                                 <span class="font-serif font-bold text-xs opacity-75 w-4 text-center">{{ c.symbol }}</span>
@@ -201,7 +225,7 @@
                         </button>
                         {% empty %}
                         <button @click="setCurrency('USD'); open = false" 
-                                class="flex w-full items-center justify-between px-3.5 py-2 text-left transition-colors text-xs"
+                                class="flex w-full items-center justify-between px-3.5 py-2 text-left transition-colors duration-200 text-xs cursor-pointer"
                                 :class="currentTheme === 'light' ? 'hover:bg-gray-100' : 'hover:bg-brand-primary/20'">
                             <div class="flex items-center gap-2">
                                 <span class="font-serif font-bold text-xs opacity-75 w-4 text-center">$</span>
@@ -214,7 +238,7 @@
                 </div>
 
                 <!-- Mobile Hamburger Button -->
-                <button @click="mobileMenuOpen = true" class="p-2 rounded-lg hover:bg-brand-primary/10 focus:outline-none transition-colors" title="Toggle Navigation">
+                <button @click="mobileMenuOpen = true" class="p-2 rounded-lg hover:bg-brand-primary/10 focus:outline-none transition-colors duration-200 cursor-pointer" title="Toggle Navigation">
                     <i class="fa-solid fa-bars text-xl"></i>
                 </button>
             </div>
