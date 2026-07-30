@@ -73,6 +73,12 @@
                     <span class="font-semibold">{{ booking.slot_time }}</span>
                 </div>
                 {% endif %}
+                <div class="col-span-2 pt-2 border-t border-luxuryGold-400/15">
+                    <span class="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
+                        <i class="fa-solid fa-file-contract"></i>
+                        <span>NAGARKOT ZIPLINE PVT. LTD Waiver Agreed {% if booking.waiver_accepted_at %}({{ booking.waiver_accepted_at|date:"M d, Y H:i" }}){% endif %}</span>
+                    </span>
+                </div>
             </div>
             {% elif booking.room %}
             <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-luxuryGold-400/20 flex-wrap sm:flex-nowrap">

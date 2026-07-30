@@ -18,11 +18,11 @@ class CouponAdmin(admin.ModelAdmin):
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ('booking_uid', 'guest_name', 'room', 'check_in', 'check_out', 'num_rooms', 'total', 'status_badge')
-    list_filter = ('status', 'check_in', 'room')
+    list_display = ('booking_uid', 'booking_type', 'guest_name', 'num_tickets', 'flight_date', 'waiver_accepted', 'total', 'status_badge')
+    list_filter = ('booking_type', 'status', 'waiver_accepted', 'check_in', 'flight_date')
     search_fields = ('booking_uid', 'guest_name', 'guest_email', 'guest_phone')
-    readonly_fields = ('booking_uid', 'created_at', 'updated_at')
-    list_select_related = ('room',)
+    readonly_fields = ('booking_uid', 'waiver_accepted', 'waiver_accepted_at', 'created_at', 'updated_at')
+    list_select_related = ('room', 'zipline_package')
 
     STATUS_STYLES = {
         'draft': ('⚪', '#374151', '#f3f4f6'),

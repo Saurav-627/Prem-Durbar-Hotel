@@ -1,9 +1,13 @@
 hotel_settings:
   site_name: Prem Durbar Hotel & Nagarkot Zipline
   theme: luxury
-  contact_phone: +01-5145351
+  contact_phone: +977-015145351, +977-9851160380
   contact_email: info@premdurbar.com
   address: Changunarayan-7, Zipline Marga-Hawelli, Nagarkot, Nepal
+  vat_no: '609554676'
+  zipline_company_name: NAGARKOT ZIPLINE PVT. LTD
+  zipline_address: Chagunarayan-07, Bhaktapur, Nepal
+  zipline_phone: +977-015145351, +977-9851160380
   about_text: Prem Durbar is a premier adventure and luxury hospitality destination in Nagarkot featuring Nepal's longest zipline, scenic Himalayan views, traditional Newari brick and wood craftsmanship, organic farm-to-table dining, and wellness retreats.
   copyright_text: '&copy; 2026 PREM DURBAR HOTEL. All Rights Reserved.'
   facebook_url: https://www.facebook.com/premdurbarhotel/

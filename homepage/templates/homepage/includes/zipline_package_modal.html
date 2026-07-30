@@ -1,3 +1,4 @@
+{% load static %}
 <!-- ZIPLINE PACKAGE BOOKING MODAL -->
 <div x-show="ziplineModalOpen" 
      x-cloak
@@ -25,7 +26,7 @@
          x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
          x-transition:leave-end="opacity-0 translate-y-8 sm:scale-90 sm:translate-y-4"
          class="modal-container relative w-full sm:max-w-2xl
-                max-h-[92dvh] sm:max-h-[90vh]
+                max-h-[97dvh] sm:max-h-[90vh]
                 flex flex-col
                 rounded-t-3xl sm:rounded-3xl
                 border shadow-2xl overflow-hidden text-left z-10"
@@ -67,9 +68,11 @@
                   name: '',
                   phone: '',
                   email: '',
+                  noOfFlights: 1,
                   flightDate: new Date().toISOString().split('T')[0],
-                  errors: { name: '', phone: '', email: '', flightDate: '', noOfFlights: '' },
-                  touched: { name: false, phone: false, email: false, flightDate: false, noOfFlights: false },
+                  waiverAccepted: false,
+                  errors: { name: '', phone: '', email: '', flightDate: '', noOfFlights: '', waiverAccepted: '' },
+                  touched: { name: false, phone: false, email: false, flightDate: false, noOfFlights: false, waiverAccepted: false },
 
                   validateName() {
                       const trimmed = (this.name || '').trim();
@@ -106,14 +109,19 @@
                       if (num > 20) return 'Maximum 20 tickets allowed per booking.';
                       return '';
                   },
+                  validateWaiver() {
+                      if (!this.waiverAccepted) return 'You must agree to the Waiver & Release of Liability Form to proceed.';
+                      return '';
+                  },
                   validateForm(e) {
                       this.errors.name = this.validateName();
                       this.errors.phone = this.validatePhone();
                       this.errors.email = this.validateEmail();
                       this.errors.flightDate = this.validateDate();
                       this.errors.noOfFlights = this.validateFlights();
+                      this.errors.waiverAccepted = this.validateWaiver();
 
-                      this.touched = { name: true, phone: true, email: true, flightDate: true, noOfFlights: true };
+                      this.touched = { name: true, phone: true, email: true, flightDate: true, noOfFlights: true, waiverAccepted: true };
 
                       const hasErrors = Object.values(this.errors).some(err => err !== '');
                       if (hasErrors) {
@@ -270,11 +278,83 @@
                 <div class="sm:col-span-2">
                     <label class="block text-[11px] font-semibold uppercase tracking-wider mb-1 opacity-90">Special Requests / Weight Notes</label>
                     <textarea name="special_requests" rows="2" 
-                              placeholder="e.g. Any special assistance required, group flight preference..." 
-                              class="w-full px-3 py-2 rounded-xl border bg-transparent text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400 resize-none"
-                              :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }"></textarea>
+                               placeholder="e.g. Any special assistance required, group flight preference..." 
+                               class="w-full px-3 py-2 rounded-xl border bg-transparent text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400 resize-none"
+                               :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40': currentTheme !== 'light' }"></textarea>
                 </div>
 
+            </div>
+
+            <!-- WAIVER & RELEASE OF LIABILITY FORM SECTION -->
+            <div class="p-3 sm:p-4 rounded-2xl border bg-black/5 dark:bg-black/30 border-luxuryGold-400/30 text-xs space-y-2.5 sm:space-y-3">
+                <!-- Header with Logo and Official Company Details -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 pb-2.5 sm:pb-3 border-b border-luxuryGold-400/20">
+                    <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                        <img src="{% static 'images/zipline-logo.png' %}" alt="Nagarkot Zipline Logo" class="h-9 sm:h-12 w-auto object-contain shrink-0">
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-xs sm:text-sm tracking-wide text-luxuryGold-500 font-luxury-title truncate">{{ hotel_settings.zipline_company_name }}</h4>
+                            <p class="text-[10px] sm:text-[11px] opacity-80 leading-tight truncate">{{ hotel_settings.zipline_address }}</p>
+                            <p class="text-[9px] sm:text-[10px] opacity-80 leading-tight flex flex-wrap gap-x-2 gap-y-0.5">
+                                <span>Phone: {{ hotel_settings.zipline_phone }}</span>
+                                <span class="hidden xs:inline">•</span>
+                                <span>VAT No: {{ hotel_settings.vat_no }}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <span class="self-start sm:self-center px-2 py-0.5 rounded text-[8px] sm:text-[9px] font-extrabold uppercase tracking-wider bg-amber-400 text-neutral-950 shrink-0">Official Waiver</span>
+                </div>
+
+                <!-- Waiver Document Title -->
+                <div class="text-center space-y-0.5 pt-0.5">
+                    <h5 class="font-bold text-xs sm:text-sm uppercase tracking-wider text-luxuryGold-400 font-luxury-title">WAIVER &amp; RELEASE OF LIABILITY FORM</h5>
+                    <p class="font-semibold text-[9px] sm:text-[10px] uppercase tracking-widest opacity-80">PARTICIPANT USER AGREEMENT</p>
+                    <p class="text-[10px] sm:text-[11px] italic text-amber-600 dark:text-amber-400">This waiver is a legal document. Please read carefully.</p>
+                </div>
+
+                <!-- Scrollable Legal Terms Box -->
+                <div class="max-h-36 sm:max-h-48 overflow-y-auto p-2.5 sm:p-3 rounded-xl border bg-black/20 text-[10px] sm:text-[11px] leading-relaxed space-y-2 custom-scrollbar text-justify opacity-90 border-luxuryGold-400/15">
+                    <p>In consideration of {{ hotel_settings.zipline_company_name }} furnishing services and/or equipment to enable me to participate in activities associated with or enter upon the lands of {{ hotel_settings.zipline_company_name }}., their agents, owners, associates and all other persons or entities acting in any capacity on their behalf (hereinafter collectively referred to as "Zip Line Tour"), I hereby voluntarily agree to release, discharge, hold harmless and covenant not to sue Zip Line Tour on behalf of myself, my children, my parents, my heirs, assigns, personal representatives and/or estate for any and all claims of liability arising out of negligence, recklessness, strict liability, breach of contract, intentional acts or any other act or omission which causes illness, injury, death or damage of any nature in any way connected with my participation in this activity.</p>
+
+                    <p class="font-semibold text-[10px] sm:text-[11px] uppercase tracking-wide opacity-100 text-luxuryGold-400">I fully understand and acknowledge that:</p>
+
+                    <ul class="space-y-1.5 sm:space-y-2 list-none pl-0">
+                        <li class="flex items-start gap-1.5 sm:gap-2">
+                            <span class="font-bold text-luxuryGold-400 shrink-0">A.</span>
+                            <span>Outdoor recreational activities such as zip lines, canopy tours, challenge courses, mountain hiking and exploring have inherent risks, dangers and hazards, and such risks may exist in my use of {{ hotel_settings.zipline_company_name }}. property and equipment.</span>
+                        </li>
+                        <li class="flex items-start gap-1.5 sm:gap-2">
+                            <span class="font-bold text-luxuryGold-400 shrink-0">B.</span>
+                            <span>My participation in such activities and/or use of such equipment may result in injury or illness including, but not limited to, body injury, strains, fractures, partial or total paralysis, death, exposure to insects and snake bites, extreme temperatures, slips and falls, encounters with animals, collisions, and remote area medical limitations.</span>
+                        </li>
+                        <li class="flex items-start gap-1.5 sm:gap-2">
+                            <span class="font-bold text-luxuryGold-400 shrink-0">C.</span>
+                            <span>These risks and dangers may be caused by negligence of the owners, employees, officers or agents of {{ hotel_settings.zipline_company_name }}., negligence of participants, accidents, breaches of contract, forces of nature, or other causes, whether foreseeable or unforeseeable.</span>
+                        </li>
+                        <li class="flex items-start gap-1.5 sm:gap-2">
+                            <span class="font-bold text-luxuryGold-400 shrink-0">D.</span>
+                            <span>By participating in these activities, I assume all risks and responsibility for any loss or damage whether caused in whole or in part by negligence or other conduct of {{ hotel_settings.zipline_company_name }}. I also grant permission to {{ hotel_settings.zipline_company_name }}. to use photographs or recordings for promotional purposes without compensation.</span>
+                        </li>
+                    </ul>
+
+                    <p>I have read the above and fully understand that by signing this document I am waiving legal rights and confirm that I choose to sign it freely and voluntarily in full knowledge of the risks.</p>
+
+                    <p>I certify that I have adequate insurance to cover any injury or damage that may occur while participating in Zip Line Tour activities or on {{ hotel_settings.zipline_company_name }}. property, or I agree to bear the costs myself.</p>
+                </div>
+
+                <!-- Mandatory Acceptance Checkbox -->
+                <div class="pt-0.5">
+                    <label class="flex items-start gap-2 sm:gap-2.5 cursor-pointer text-[10px] sm:text-[11px] leading-tight select-none">
+                        <input type="checkbox" name="waiver_accepted" x-model="waiverAccepted"
+                               @change="touched.waiverAccepted = true; errors.waiverAccepted = validateWaiver()"
+                               required
+                               class="mt-0.5 rounded border-gray-400 text-luxuryGold-500 focus:ring-luxuryGold-400 shrink-0 cursor-pointer w-4 h-4 sm:w-4 sm:h-4">
+                        <span>I have read, understood, and voluntarily agree to the <strong>{{ hotel_settings.zipline_company_name }} Waiver &amp; Release of Liability Form</strong>. <span class="text-red-500">*</span></span>
+                    </label>
+                    <p x-show="errors.waiverAccepted && touched.waiverAccepted" class="text-[10px] sm:text-[11px] text-red-500 mt-1 flex items-center gap-1">
+                        <i class="fa-solid fa-circle-exclamation text-[10px]"></i>
+                        <span x-text="errors.waiverAccepted"></span>
+                    </p>
+                </div>
             </div>
 
             <!-- Footer Actions -->

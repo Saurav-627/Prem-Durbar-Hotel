@@ -49,10 +49,16 @@ class HotelSettings(models.Model):
     )
     theme = models.CharField(max_length=20, choices=THEME_CHOICES, default='luxury')
     
-    # Contact Info
-    contact_phone = models.CharField(max_length=20, default="+977-1-4XXXXXX")
+    # Contact Info & Company VAT Details
+    contact_phone = models.CharField(max_length=50, default="+977-015145351, +977-9851160380")
     contact_email = models.EmailField(default="info@premdurbar.com")
     address = models.CharField(max_length=255, default="Nagarkot, Nepal")
+    vat_no = models.CharField(max_length=50, default="609554676", help_text="Company VAT/PAN Registration Number")
+    
+    # Official Zipline Entity Details
+    zipline_company_name = models.CharField(max_length=150, default="NAGARKOT ZIPLINE PVT. LTD", help_text="Official registered name of zipline company")
+    zipline_address = models.CharField(max_length=255, default="Chagunarayan-07, Bhaktapur, Nepal", help_text="Registered address of zipline company")
+    zipline_phone = models.CharField(max_length=100, default="+977-015145351, +977-9851160380", help_text="Official zipline contact phone numbers")
     google_maps_iframe = models.TextField(blank=True, null=True, help_text="Google Maps HTML embed iframe")
 
     # Social Links

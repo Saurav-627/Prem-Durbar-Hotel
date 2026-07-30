@@ -40,6 +40,10 @@ class Booking(models.Model):
     flight_date = models.DateField(null=True, blank=True, help_text="Date for Zipline flight")
     slot_time = models.CharField(max_length=50, blank=True, null=True, help_text="Preferred time slot e.g. 10:00 AM")
     
+    # Liability Waiver Consent Proof
+    waiver_accepted = models.BooleanField(default=False, help_text="Whether guest agreed to NAGARKOT ZIPLINE PVT. LTD Waiver & Release of Liability Form")
+    waiver_accepted_at = models.DateTimeField(null=True, blank=True, help_text="Timestamp when waiver consent was given")
+    
     # Pricing fields
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
     currency_code = models.CharField(max_length=10, default='USD', help_text="Currency ISO code used when booking was created")

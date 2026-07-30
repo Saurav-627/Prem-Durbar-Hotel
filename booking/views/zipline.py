@@ -79,6 +79,10 @@ def create_zipline_booking(request, package_id):
 
     total = subtotal - discount
 
+    from django.utils import timezone
+    waiver_raw = request.POST.get('waiver_accepted')
+    waiver_accepted = waiver_raw in ['on', 'true', '1', True]
+
     booking = Booking.objects.create(
         booking_type='zipline',
         user=request.user if request.user.is_authenticated else None,
@@ -89,6 +93,8 @@ def create_zipline_booking(request, package_id):
         num_tickets=no_of_flights,
         flight_date=flight_date,
         slot_time=slot_time,
+        waiver_accepted=waiver_accepted,
+        waiver_accepted_at=timezone.now() if waiver_accepted else None,
         subtotal=subtotal,
         currency_code=selected_currency,
         coupon=coupon,

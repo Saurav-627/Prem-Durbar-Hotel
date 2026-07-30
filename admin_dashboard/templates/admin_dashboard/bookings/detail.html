@@ -247,6 +247,25 @@
                         {{ booking.num_tickets }} flyer(s)
                     </strong>
                 </div>
+                <div class="col-span-1 sm:col-span-2 p-3.5 rounded-xl border bg-emerald-500/10 border-emerald-500/30">
+                    <span class="text-xs text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider block flex items-center gap-2">
+                        <i class="fa-solid fa-shield-halved text-sm"></i> Liability Waiver Consent
+                    </span>
+                    <div class="mt-1 text-xs text-neutral-800 dark:text-neutral-200 font-medium space-y-0.5">
+                        <p class="font-bold text-emerald-700 dark:text-emerald-300">NAGARKOT ZIPLINE PVT. LTD Waiver &amp; Release of Liability Form</p>
+                        <p class="opacity-80">
+                            Status: 
+                            {% if booking.waiver_accepted %}
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500 text-white">Accepted</span>
+                                {% if booking.waiver_accepted_at %}
+                                    <span class="opacity-75">on {{ booking.waiver_accepted_at|date:"M d, Y H:i:s" }}</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500 text-white">Pending Consent</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
                 {% else %}
                 <div>
                     <span class="text-xs text-neutral-400 uppercase font-semibold block">Check-In Date</span>
