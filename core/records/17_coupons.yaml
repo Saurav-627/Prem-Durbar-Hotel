@@ -22,8 +22,6 @@ coupons:
         min_spend: 2000
       - currency: USD
         min_spend: 15
-      - currency: EUR
-        min_spend: 14
 
   - code: ROOMSTAY10
     description: "10% off Room Stays — any currency"
@@ -38,8 +36,6 @@ coupons:
         min_spend: 5000
       - currency: USD
         min_spend: 40
-      - currency: EUR
-        min_spend: 36
 
   - code: WELCOME20
     description: "20% off any booking — welcome discount for new guests"

@@ -14,12 +14,6 @@ dining_items:
     base_price: 850.00
   - currency: USD
     base_price: 7.00
-  - currency: EUR
-    base_price: 6.50
-  - currency: GBP
-    base_price: 5.50
-  - currency: INR
-    base_price: 530.00
 
 - title: Traditional Newari Haasko Chhoyela
   slug: traditional-newari-haasko-chhoyela
@@ -36,12 +30,6 @@ dining_items:
     base_price: 650.00
   - currency: USD
     base_price: 5.50
-  - currency: EUR
-    base_price: 5.00
-  - currency: GBP
-    base_price: 4.20
-  - currency: INR
-    base_price: 400.00
 
 - title: Organic Kodo Nachos Salsa
   slug: organic-kodo-nachos-salsa
@@ -59,12 +47,6 @@ dining_items:
     base_price: 450.00
   - currency: USD
     base_price: 3.80
-  - currency: EUR
-    base_price: 3.50
-  - currency: GBP
-    base_price: 3.00
-  - currency: INR
-    base_price: 280.00
 
 - title: Nagarkot Wild Himalayan Herbal Tea
   slug: nagarkot-wild-himalayan-herbal-tea
@@ -82,9 +64,3 @@ dining_items:
     base_price: 250.00
   - currency: USD
     base_price: 2.00
-  - currency: EUR
-    base_price: 1.80
-  - currency: GBP
-    base_price: 1.50
-  - currency: INR
-    base_price: 160.00

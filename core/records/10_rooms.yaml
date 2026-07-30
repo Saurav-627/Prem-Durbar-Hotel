@@ -23,15 +23,6 @@ rooms:
   - currency: USD
     base_price: 30.00
     discount_price: 26.00
-  - currency: EUR
-    base_price: 28.00
-    discount_price: 24.00
-  - currency: GBP
-    base_price: 24.00
-    discount_price: 21.00
-  - currency: INR
-    base_price: 2200.00
-    discount_price: 2000.00
   images: []
   policies:
   - title: Check-in / Check-out
