@@ -8,10 +8,10 @@ def global_settings(request):
         'site_name': 'Prem Durbar',
         'theme': 'luxury',
         'contact_phone': '+977-1-4XXXXXX',
-        'contact_email': 'info@hotelichchha.com',
-        'address': 'Bara, Nepal',
-        'about_text': 'A premium 5-star experience of hospitality and luxury.',
-        'copyright_text': '&copy; 2026 Prem Durbar. All Rights Reserved.',
+        'contact_email': 'info@premdurbar.com',
+        'address': 'Nagarkot, Nepal',
+        'about_text': 'A premier adventure and luxury hospitality destination in Nagarkot.',
+        'copyright_text': '&copy; 2026 Prem Durbar Hotel & Nagarkot Zipline. All Rights Reserved.',
     }
     
     header_menu = []
@@ -29,9 +29,9 @@ def global_settings(request):
                 site_name='Prem Durbar',
                 theme='luxury',
                 contact_phone='+977-1-4XXXXXX',
-                contact_email='info@hotelichchha.com',
-                address='Bara, Nepal',
-                about_text='A premium 5-star experience of hospitality and luxury.'
+                contact_email='info@premdurbar.com',
+                address='Nagarkot, Nepal',
+                about_text='A premier adventure and luxury hospitality destination in Nagarkot.'
             )
 
         # Retrieve menus

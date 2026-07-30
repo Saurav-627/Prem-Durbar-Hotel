@@ -3,24 +3,24 @@ version: '3.8'
 services:
   db:
     image: postgres:15-alpine
-    container_name: hotel_ichchha_db
+    container_name: prem_durbar_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB=hotel_ichchha
-      - POSTGRES_USER=ichchha_user
-      - POSTGRES_PASSWORD=ichchha_secure_pass_2026
+      - POSTGRES_DB=prem_durbar
+      - POSTGRES_USER=prem_durbar_user
+      - POSTGRES_PASSWORD=prem_durbar_secure_pass_2026
     ports:
       - "5432:5432"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ichchha_user -d hotel_ichchha"]
+      test: ["CMD-SHELL", "pg_isready -U prem_durbar_user -d prem_durbar"]
       interval: 10s
       timeout: 5s
       retries: 5
 
   redis:
     image: redis:7-alpine
-    container_name: hotel_ichchha_redis
+    container_name: prem_durbar_redis
     ports:
       - "6379:6379"
     healthcheck:
@@ -31,7 +31,7 @@ services:
 
   web:
     build: .
-    container_name: hotel_ichchha_web
+    container_name: prem_durbar_web
     command: >
       bash -c "python manage.py migrate &&
                python manage.py collectstatic --noinput &&
@@ -44,7 +44,7 @@ services:
       - SECRET_KEY=django-insecure-luxury-hotel-secret-key-2026
       - DEBUG=True
       - ALLOWED_HOSTS=*
-      - DATABASE_URL=postgres://ichchha_user:ichchha_secure_pass_2026@db:5432/hotel_ichchha
+      - DATABASE_URL=postgres://prem_durbar_user:prem_durbar_secure_pass_2026@db:5432/prem_durbar
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
     depends_on:
@@ -55,14 +55,14 @@ services:
 
   celery_worker:
     build: .
-    container_name: hotel_ichchha_celery
+    container_name: prem_durbar_celery
     command: celery -A config worker --loglevel=info
     volumes:
       - .:/app
     environment:
       - SECRET_KEY=django-insecure-luxury-hotel-secret-key-2026
       - DEBUG=True
-      - DATABASE_URL=postgres://ichchha_user:ichchha_secure_pass_2026@db:5432/hotel_ichchha
+      - DATABASE_URL=postgres://prem_durbar_user:prem_durbar_secure_pass_2026@db:5432/prem_durbar
       - REDIS_URL=redis://redis:6379/0
       - CELERY_BROKER_URL=redis://redis:6379/1
     depends_on:

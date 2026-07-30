@@ -44,15 +44,15 @@ class HotelSettings(models.Model):
     )
     admin_label = models.CharField(
         max_length=100,
-        default="Ichchha Portal",
+        default="Prem Durbar Portal",
         help_text="Admin sidebar header label"
     )
     theme = models.CharField(max_length=20, choices=THEME_CHOICES, default='luxury')
     
     # Contact Info
     contact_phone = models.CharField(max_length=20, default="+977-1-4XXXXXX")
-    contact_email = models.EmailField(default="info@hotelichchha.com")
-    address = models.CharField(max_length=255, default="Bara, Nepal")
+    contact_email = models.EmailField(default="info@premdurbar.com")
+    address = models.CharField(max_length=255, default="Nagarkot, Nepal")
     google_maps_iframe = models.TextField(blank=True, null=True, help_text="Google Maps HTML embed iframe")
 
     # Social Links
@@ -77,5 +77,6 @@ class HotelSettings(models.Model):
         # Override save to ensure only one instance of HotelSettings exists
         if not self.pk and HotelSettings.objects.exists():
             # If dynamic save occurs, replace the existing one
+            # pyrefly: ignore [missing-attribute]
             self.pk = HotelSettings.objects.first().pk
         super().save(*args, **kwargs)

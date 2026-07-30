@@ -91,255 +91,106 @@ The admin can fully manage all navigation links site-wide without touching code:
 **Admin path:** `Settings Manager -> Currencies`
 **Model:** `settings_manager/models/currency.py`
 
-Supported Currencies: **NPR**, **USD**, **EUR**, **GBP**, **INR**.
+Supported Currencies: **NPR (Nepalese Rupee)** and **USD (US Dollar)**.
 
 | Field | Description |
 |---|---|
-| `iso_code` | e.g. USD, NPR, EUR, GBP, INR |
+| `iso_code` | e.g. USD, NPR |
 | `name` | e.g. "US Dollar", "Nepalese Rupee" |
-| `symbol` | e.g. $, Rs., €, £, ₹ |
-| `sequence` | Display order in the currency switcher dropdown |
-| `is_published` | Show/hide currency from the frontend switcher |
-
-> **Multi-Currency Pricing Architecture:**
-> - **Rooms (`RoomBasePrice`)**: Staff can set nightly base and discount rates per currency.
-> - **Dining Food Items (`DiningItemBasePrice`)**: Staff can set food item prices in multiple currencies via an inline formset (at least one currency price is required).
-> - **Frontend Switcher**: Server-side cookie-driven currency switcher instantly formats prices across rooms and dining items.
+| `symbol` | e.g. $, Rs. |
+| `sequence` | Display order in currency switcher |
+| `is_published` | Publish/unpublish currency across site |
 
 ---
 
 ### 4. Homepage — Hero Slides
-**Admin path:** `CMS Content -> Hero Slides`
+**Admin path:** `Homepage Manager -> Hero Slides`
 **Model:** `homepage/models/hero_slide.py`
 
-The full-screen carousel at the top of the homepage:
+| Field | Description |
+|---|---|
+| `title` | Hero main heading |
+| `subtitle` | Small uppercase text above heading |
+| `description` | Subheading description paragraph |
+| `background_image` | Fullscreen background image |
+| `cta_primary_text` / `cta_primary_url` | Primary button text & link |
+| `cta_secondary_text` / `cta_secondary_url` | Secondary button text & link |
+| `order` | Slide sequence order |
+| `is_active` | Enable/disable slide |
+
+---
+
+### 5. Rooms & Accommodation
+**Admin path:** `Rooms Manager -> Rooms`
+**Models:** `rooms/models/` (`Room`, `RoomCategory`, `RoomFacility`, `RoomBasePrice`, `RoomSeasonalPrice`, `RoomImage`, `RoomPolicy`)
 
 | Field | Description |
 |---|---|
-| `title` | Main large heading on the slide |
-| `subtitle` | Smaller supporting text |
-| `background_image` | Upload a hero background photo |
-| `background_video_url` | YouTube or MP4 video link as background |
-| `overlay_opacity` | Dark overlay strength (0.00 - 1.00) |
-| `cta_text` | First call-to-action button label |
-| `cta_url` | First button link (e.g. /rooms/) |
-| `cta2_text` | Second button label |
-| `cta2_url` | Second button link (e.g. /booking/) |
-| `order` | Slide display order |
-| `is_active` | Toggle individual slide on/off |
+| `title` / `slug` | Chamber title and URL slug |
+| `category` | Chamber category (Standard, Family, Deluxe) |
+| `description` | Chamber detailed description |
+| `room_size` | Size in square feet |
+| `bed_type` | Bed configuration label |
+| `max_adults` / `max_children` | Occupancy caps |
+| `total_rooms` | Total physical room inventory |
+| `facilities` | Linked room amenities checklist |
+| `base_prices` | Multi-currency base pricing (NPR, USD) |
+| `seasonal_prices` | Overriding seasonal date range pricing |
+| `images` | Gallery photos |
+| `policies` | House rules, check-in/out policies |
 
 ---
 
-### 5. Homepage — About Preview
-**Admin path:** `CMS Content -> About Preview (Homepage)`
-**Model:** `homepage/models/about_preview.py`
-**Type:** Singleton (only one record)
-
-The "About the Hotel" intro section on the main homepage `/`:
+### 6. Zipline Packages & CMS
+**Admin path:** `Admin Dashboard -> Zipline Manager`
+**Models:** `homepage/models/zipline_package.py`, `homepage/models/zipline_cms.py`
 
 | Field | Description |
 |---|---|
-| `title` | Section heading (e.g. "Nepal's Premier Adventure & Luxury Resort") |
-| `subtitle` | Supporting tagline |
-| `content` | Main descriptive paragraph |
-| `image` | Featured photo shown in the about section |
-| `video_url` | Promo video YouTube/Vimeo link |
-| `stat1_value / stat1_label` | First stat counter (e.g. "36" / "Chambers & Suites") |
-| `stat2_value / stat2_label` | Second stat counter (e.g. "1" / "Longest Zipline in Nepal") |
-| `stat3_value / stat3_label` | Third stat counter (e.g. "100%" / "Organic Farm-to-Table") |
-| `stat4_value / stat4_label` | Fourth stat counter (e.g. "5k+" / "Happy Adventurers") |
-
----
-
-### 6. Rooms & Accommodation
-**Admin path:** `Rooms -> Rooms`
-**Models:** `rooms/models/room.py`, `room_category.py`, `room_image.py`, `room_facility.py`, `room_seasonal_price.py`, `room_policy.py`, `room_availability.py`, `room_base_price.py`
-
-#### Room (Main Record)
-| Field | Description |
-|---|---|
-| `title` | Room name (e.g. "Deluxe Room Jungle View") |
-| `category` | ForeignKey to Room Category |
-| `description` | Full room description |
-| `highlights` | Bullet highlights |
-| `tax_percentage` | VAT/tax rate (default 13%) |
-| `room_size` | Size in sq. ft. or sq. meters |
-| `max_adults / max_children` | Guest capacities |
-| `bed_type` | e.g. "King Size", "Twin" |
-| `facilities` | Linked room facilities (many-to-many) |
-| `is_featured` | Pin to "Featured Rooms" on homepage |
-| `is_published` | Show/hide room from listings |
-
-#### Room Base Price (Inline on Room form)
-| Field | Description |
-|---|---|
-| `currency` | Linked currency (USD / NPR / EUR / GBP / INR) |
-| `base_price` | Standard nightly base price |
-| `discount_price` | Optional discounted price |
-
----
-
-### 7. Dining Items & Food Menu
-**Admin path:** `Dining Items -> Food Menu Items`
-**Models:** `dining/models/item.py` (`DiningCategory`, `DiningItem`, `DiningItemBasePrice`)
-
-| Field | Description |
-|---|---|
-| `category` | Category FK (e.g. "Nepali Khaja & Thali", "Starters", "Soups & Salads") |
-| `title` | Dish name (e.g. "Prem Durbar Special Mutton Thali Set") |
-| `slug` | Auto-generated URL slug |
-| `description` | Full ingredients & dish description |
-| `image / image_url` | Photo upload or image URL |
-| `is_vegetarian` | Veg badge tag |
-| `is_vegan` | Vegan badge tag |
-| `is_spicy` | Spicy badge tag |
-| `is_chef_special` | Chef's Special badge tag |
-| `is_published` | Show/hide from food menu listings |
-
-#### Dining Item Base Price (Inline Formset)
-| Field | Description |
-|---|---|
-| `currency` | Linked currency (USD / NPR / EUR / GBP / INR) |
-| `base_price` | Dish price in specified currency (at least 1 required) |
-
----
-
-### 8. About Us, Zipline & Sustainability CMS
-**Admin path:** `CMS Content -> About Us Page CMS / Zipline CMS & Video / Sustainability CMS`
-**Models:** `homepage/models/about_cms.py`, `zipline_cms.py`, `sustainability_cms.py`
-
-#### About Us Page CMS (`AboutCMS`)
-| Field | Description |
-|---|---|
-| `hero_subtitle / hero_title / hero_description` | Hero banner text for `/about/` |
-| `story_subtitle / story_title / story_content` | Valley Artistry story section text |
-| `video_url` | Optional promo tour video link |
-
-#### Zipline Adventure Page CMS (`ZiplineCMS`)
-| Field | Description |
-|---|---|
-| `hero_subtitle / hero_title / hero_description` | Hero banner text for `/zipline/` |
-| `video_file` | Upload MP4 video file to play on live Zipline page |
-| `video_url` | External YouTube/Vimeo embed URL for video preview player |
-| `spec_length / spec_speed / spec_elevation / spec_safety` | Flight specification badges |
-| `overview_subtitle / overview_title / overview_content` | Zipline flight overview body text |
-
-#### Sustainability Page CMS (`SustainabilityCMS` & `SustainabilityPillar`)
-| Field | Description |
-|---|---|
-| `hero_subtitle / hero_title / hero_description` | Banner text for `/sustainability/` |
-| `intro_subtitle / intro_title` | Section headers for sustainability pillars |
-| `SustainabilityPillar` | Individual pillars (Icon class, Title, Description, Display Order, Published status) |
-
----
-
-### 9. Gallery
-**Admin path:** `CMS Content -> Gallery bulk`
-**Models:** `gallery/models/category.py`, `gallery/models/item.py`
-
----
-
-### 10. Conference & Event Venues
-**Admin path:** `Conference -> Event Venues`
-**Model:** `conference/models/venue.py`
-
----
-
-### 11. Contact — Branch Offices
-**Admin path:** `Contact -> Hotel Branches`
-**Model:** `contact/models/branch.py`
-
----
-
-### 12. Blog Posts
-**Admin path:** `Blogs -> Blog Posts`
-**Model:** `blogs/models/post.py`
-
----
-
-### 13. Nearby Places & Attractions
-**Admin path:** `Nearby Places -> Attractions`
-**Model:** `nearby_places/models/attraction.py`
-
----
-
-### 14. Testimonials & Reviews
-**Admin path:** `CMS Content -> Testimonials`
-**Model:** `testimonials/models/testimonial.py`
-
----
-
-### 15. Booking Coupons & Discounts
-**Admin path:** `Booking -> Coupons`
-**Model:** `booking/models/coupon.py`
-
----
-
-### 16. SEO & Page Banners
-**Admin path:** `CMS Content -> SEO Meta tags`
-**Model:** `seo/models/seo_data.py`
-
----
-
-### 17. User Accounts
-**Admin path:** `Accounts -> Users`
+| `name` / `slug` | Flight package name & URL slug |
+| `flight_type` | Category flight harness type (*Classic Seated*, *Superman*, *Tandem*) |
+| `duration` | Flight duration & distance specs |
+| `description` / `highlights` | Flight overview & bullet points |
+| `image_url` | Flight cover image |
+| `base_prices` | Multi-currency rates in NPR & USD |
+| `homepage_heading` / `homepage_description` | CMS copy for homepage zipline section |
+| `video_url` | Embedded YouTube/Vimeo action flight preview |
 
 ---
 
 ## Guest/User-Submitted Data (Read-Only in Admin)
 
-| Data | Admin Path | What Admin Can Do |
-|---|---|---|
-| Room Bookings | `Booking -> Bookings` | View details, change status (Pending / Confirmed / Checked In / Checked Out / Cancelled) |
-| Payments | `Payments -> Payments` | View gateway, transaction ID, amount, status, raw gateway response (read-only) |
-| Conference/Event Inquiries | `Conference -> Event Inquiries` | View guest, venue, event date, catering needs, notes; update status |
-| Contact Inquiries | `Contact -> Contact Inquiries` | View name, email, subject, message, category (read-only) |
+1. **Bookings (`booking/models/booking.py`)**:
+   - `booking_reference`: Unique UUID tracking code (e.g., `BK-8F3A1C9D`).
+   - `booking_type`: Room chamber vs. Zipline flight package.
+   - `guest_name`, `guest_email`, `guest_phone`: Contact specs.
+   - `check_in`, `check_out` / `flight_date`: Travel dates.
+   - `total_price`, `currency`: Total payable amount & currency.
+   - `payment_status`: Payment transaction state (`draft`, `pending`, `paid`, `cancelled`).
+
+2. **Payments (`payments/models/payment.py`)**:
+   - Transaction reference UUIDs, gateway responses (Stripe, eSewa, Khalti), status timestamps.
+
+3. **Contact Inquiries (`contact/models/contact.py`)**:
+   - Guest inquiry name, email, phone, message content, status (`unread`, `read`, `replied`).
 
 ---
 
 ## Static / Hardcoded Content
 
-| Item | Location | Notes |
-|---|---|---|
-| Payment gateways | `payments/models/payment.py` | Stripe, eSewa, Khalti — hardcoded choices |
-| Booking status flow | `booking/models/booking.py` | Pending / Confirmed / Checked In / Checked Out / Cancelled |
-| Hero banner fallback text | All listing templates | Default subtitle/title/description when no SEO record is set |
-| Page URL routing | Each app's `urls.py` | URL patterns like `/rooms/<slug>/` — developer-managed |
-| TailwindCSS design tokens | `static/` and tailwind config | Green nature palette, typography, spacing |
-| Alpine.js theme logic | `templates/base.html` | Light/Dark/Luxury/Festival theme switcher |
+1. **Brand Logos**: Fallback logo asset at `static/images/hotel-logo.png` when no custom logo is uploaded in `HotelSettings`.
+2. **Template Layout Grid System**: Responsive layout structures, dynamic theme colors (`Light`, `Dark`, `Luxury Gold`, `Festival`), and safe-area insets.
+3. **AirDatepicker Ergonomics**: `readOnly` input handling and dynamic left/right space tracking function in `base.html`.
 
 ---
 
 ## Summary Table
 
-| Section | Admin Controlled | Guest Submitted | Static / Hardcoded |
-|---|:---:|:---:|:---:|
-| Hotel name, logos, favicon, admin title & label, theme | YES | | |
-| Navigation menus | YES | | |
-| Currencies (NPR, USD, EUR, GBP, INR) | YES | | |
-| Homepage hero slides | YES | | |
-| Homepage about section (`AboutPreview`) | YES | | |
-| About Us Page CMS (`AboutCMS`) | YES | | |
-| Zipline CMS & Video Player (`ZiplineCMS`) | YES | | |
-| Sustainability CMS & Pillars | YES | | |
-| Rooms (content, pricing, images) | YES | | |
-| Room seasonal prices | YES | | |
-| Room policies & facilities | YES | | |
-| Dining Food Items & Multi-Currency Prices | YES | | |
-| Gallery (photos/videos) | YES | | |
-| Conference/event venues | YES | | |
-| Contact branch offices | YES | | |
-| Blog posts | YES | | |
-| Nearby attractions | YES | | |
-| Guest testimonials | YES | | |
-| Discount coupons | YES | | |
-| Page SEO & banner text/image | YES | | |
-| User accounts | YES | | |
-| Room bookings | | YES (admin manages status) | |
-| Payments | | YES (read-only in admin) | |
-| Conference inquiries | | YES (admin manages status) | |
-| Contact form messages | | YES (read-only in admin) | |
-
----
-
-*Updated: July 2026 | Prem Durbar Platform v1.0*
+| Feature / Module | Admin CMS Controlled | User Submitted | Static Asset Fallback |
+|---|---|---|---|
+| Hotel Branding & Theme | YES | NO | `hotel-logo.png` |
+| Multi-Currency Rates (NPR, USD) | YES | NO | Default USD |
+| Room Suites & Seasonal Rates | YES | NO | Default pricing |
+| Zipline Packages & Flight Rates | YES | NO | Default pricing |
+| Room & Zipline Bookings | NO | YES | N/A |
+| Contact & Concierge Messages | NO | YES | N/A |
