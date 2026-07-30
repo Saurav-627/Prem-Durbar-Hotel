@@ -55,6 +55,7 @@ class HomeView(TemplateView):
         
         # Zipline packages with multi-currency pricing
         from homepage.models.zipline_package import ZiplinePackage, ZiplinePackageBasePrice
+        from homepage.models.zipline_cms import ZiplineCMS
         zipline_packages = list(ZiplinePackage.objects.filter(
             is_published=True
         ).prefetch_related(
@@ -67,6 +68,12 @@ class HomeView(TemplateView):
         for pkg in zipline_packages:
             pkg.set_active_currency(selected_currency)
         context['zipline_packages'] = zipline_packages
+
+        # Zipline CMS for homepage section (badge, heading, description)
+        zipline_cms = ZiplineCMS.objects.first()
+        if not zipline_cms:
+            zipline_cms = ZiplineCMS.objects.create()
+        context['zipline_cms'] = zipline_cms
 
         return context
 

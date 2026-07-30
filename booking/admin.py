@@ -1,13 +1,20 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models.coupon import Coupon
+from .models.coupon import Coupon, CouponMinSpend
 from .models.booking import Booking
+
+
+class CouponMinSpendInline(admin.TabularInline):
+    model = CouponMinSpend
+    extra = 2
+
 
 @admin.register(Coupon)
 class CouponAdmin(admin.ModelAdmin):
-    list_display = ('code', 'discount_type', 'discount_value', 'min_spend', 'valid_from', 'valid_to', 'is_active')
-    list_filter = ('discount_type', 'is_active')
+    list_display = ('code', 'discount_type', 'discount_value', 'applicable_to', 'use_count', 'max_uses', 'valid_from', 'valid_to', 'is_active')
+    list_filter = ('discount_type', 'is_active', 'applicable_to')
     search_fields = ('code',)
+    inlines = [CouponMinSpendInline]
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):

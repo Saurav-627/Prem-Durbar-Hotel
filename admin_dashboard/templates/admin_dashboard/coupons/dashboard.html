@@ -1,0 +1,142 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block content %}
+<div class="space-y-8 animate__animated animate__fadeIn">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-neutral-200 dark:border-neutral-800 pb-6">
+        <div>
+            <h1 class="text-2xl font-bold font-serif text-neutral-900 dark:text-neutral-100 flex items-center gap-3">
+                <i class="fa-solid fa-ticket text-brand-gold"></i> Promo & Coupon Codes Manager
+            </h1>
+            <p class="text-xs text-neutral-500 mt-1">Create and manage discount codes for room reservations and zipline flight bookings.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="{% url 'admin_dashboard:coupon_create' %}" class="btn-gold-gradient px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-brand-forestDark shadow-md">
+                <i class="fa-solid fa-plus mr-1.5"></i> Add New Coupon
+            </a>
+        </div>
+    </div>
+
+    <!-- Coupons Table Card -->
+    <div class="custom-card rounded-2xl p-8 bg-white/50 dark:bg-neutral-900/50 shadow-xl">
+        <div class="flex items-center justify-between pb-4 border-b border-neutral-200 dark:border-neutral-800 mb-6">
+            <div>
+                <h4 class="text-base font-bold text-neutral-900 dark:text-neutral-100 font-serif">
+                    Active & Past Discount Coupons
+                </h4>
+                <p class="text-xs text-neutral-500 mt-1">Codes can be applied at guest checkout for percentage or fixed amount discounts.</p>
+            </div>
+            <a href="{% url 'admin_dashboard:coupon_create' %}" class="btn-gold-gradient px-4 py-2 text-brand-forestDark font-bold rounded-xl text-xs shadow-md">
+                <i class="fa-solid fa-plus mr-1"></i> Add Coupon
+            </a>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+                        <th class="px-4 py-3 font-semibold">Coupon Code</th>
+                        <th class="px-4 py-3 font-semibold">Applicable To</th>
+                        <th class="px-4 py-3 font-semibold">Discount</th>
+                        <th class="px-4 py-3 font-semibold">Min Spend</th>
+                        <th class="px-4 py-3 font-semibold">Validity</th>
+                        <th class="px-4 py-3 font-semibold">Redeemed</th>
+                        <th class="px-4 py-3 font-semibold">Status</th>
+                        <th class="px-4 py-3 text-right font-semibold">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                    {% for coupon in coupons %}
+                    <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10 transition">
+                        <td class="px-4 py-3">
+                            <span class="px-3 py-1.5 rounded-lg bg-brand-gold/15 text-brand-gold font-mono font-extrabold tracking-wider border border-brand-gold/30">
+                                {{ coupon.code }}
+                            </span>
+                            {% if coupon.description %}
+                            <div class="text-[11px] text-neutral-400 mt-1 italic">{{ coupon.description }}</div>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 text-xs font-semibold">
+                            {% if coupon.applicable_to == 'room' %}
+                            <span class="px-2.5 py-1 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/30"><i class="fa-solid fa-hotel mr-1"></i> Rooms Only</span>
+                            {% elif coupon.applicable_to == 'zipline' %}
+                            <span class="px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30"><i class="fa-solid fa-bolt mr-1"></i> Zipline Only</span>
+                            {% else %}
+                            <span class="px-2.5 py-1 rounded-full bg-purple-500/15 text-purple-400 border border-purple-500/30"><i class="fa-solid fa-layer-group mr-1"></i> All Products</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 font-bold text-neutral-900 dark:text-neutral-100">
+                            {% if coupon.discount_type == 'percentage' %}
+                            <span class="text-emerald-500"><i class="fa-solid fa-percent mr-1"></i>{{ coupon.discount_value }}% OFF</span>
+                            {% else %}
+                            <span class="text-emerald-500"><i class="fa-solid fa-tag mr-1"></i>{{ coupon.discount_value }} OFF</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 text-xs text-neutral-600 dark:text-neutral-400">
+                            {% with spends=coupon.min_spends.all %}
+                            {% if spends %}
+                            <div class="space-y-0.5">
+                                {% for ms in spends %}
+                                <div class="font-semibold text-neutral-700 dark:text-neutral-300">{{ ms.currency.iso_code }} {{ ms.min_spend }}</div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <span class="text-neutral-400 italic">No minimum</span>
+                            {% endif %}
+                            {% endwith %}
+                        </td>
+                        <td class="px-4 py-3 text-xs text-neutral-600 dark:text-neutral-400">
+                            <div><i class="fa-regular fa-calendar-check mr-1 text-emerald-400"></i> {{ coupon.valid_from|date:"M d, Y H:i" }}</div>
+                            <div class="text-[11px] opacity-75 mt-0.5">
+                                {% if coupon.is_expired_now %}
+                                <i class="fa-regular fa-calendar-xmark mr-1 text-red-400"></i>
+                                <span class="text-red-400 font-semibold">Expired {{ coupon.valid_to|date:"M d, Y" }}</span>
+                                {% else %}
+                                <i class="fa-regular fa-calendar-xmark mr-1 text-neutral-400"></i>to {{ coupon.valid_to|date:"M d, Y H:i" }}
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-xs text-neutral-600 dark:text-neutral-400">
+                            <div class="font-bold text-neutral-900 dark:text-neutral-100">{{ coupon.use_count }}</div>
+                            {% if coupon.max_uses %}
+                            <div class="text-[11px] opacity-75">of {{ coupon.max_uses }} max</div>
+                            {% if coupon.use_count >= coupon.max_uses %}
+                            <div class="mt-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-red-500/10 text-red-400 border border-red-500/20 w-fit">LIMIT REACHED</div>
+                            {% endif %}
+                            {% else %}
+                            <div class="text-[11px] opacity-75">unlimited</div>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 text-xs">
+                            {% if coupon.is_expired_now %}
+                            <span class="px-2.5 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20 font-bold">Expired</span>
+                            {% elif not coupon.is_active %}
+                            <span class="px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30 font-bold">Disabled</span>
+                            {% elif coupon.max_uses and coupon.use_count >= coupon.max_uses %}
+                            <span class="px-2.5 py-1 rounded-full bg-neutral-500/15 text-neutral-400 border border-neutral-500/30 font-bold">Exhausted</span>
+                            {% else %}
+                            <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 font-bold">Active</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-4 py-3 text-right">
+                            <div class="flex items-center justify-end gap-3 text-sm">
+                                <a href="{% url 'admin_dashboard:coupon_edit' coupon.id %}" class="text-neutral-400 hover:text-brand-primaryLight" title="Edit Coupon">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <a href="{% url 'admin_dashboard:coupon_delete' coupon.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete Coupon">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="px-4 py-8 text-center text-xs text-neutral-500">No promo coupons configured yet. Click "Add New Coupon" above to create your first discount code.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

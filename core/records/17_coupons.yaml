@@ -1,13 +1,52 @@
 coupons:
-- code: ZIPLINE10
-  discount_type: percentage
-  discount_value: 10
-  min_spend: 0
-  valid_days_from_now: 365
-  is_active: true
-- code: NAGARKOT15
-  discount_type: percentage
-  discount_value: 15
-  min_spend: 2000
-  valid_days_from_now: 365
-  is_active: true
+  - code: ZIPLINE10
+    description: "10% off all Zipline Flight packages"
+    discount_type: percentage
+    discount_value: 10
+    applicable_to: zipline
+    max_uses: null
+    valid_days_from_now: 365
+    is_active: true
+    min_spends: []
+
+  - code: NAGARKOT15
+    description: "15% off Zipline with minimum NPR 2000 or USD 15 spend"
+    discount_type: percentage
+    discount_value: 15
+    applicable_to: zipline
+    max_uses: 100
+    valid_days_from_now: 365
+    is_active: true
+    min_spends:
+      - currency: NPR
+        min_spend: 2000
+      - currency: USD
+        min_spend: 15
+      - currency: EUR
+        min_spend: 14
+
+  - code: ROOMSTAY10
+    description: "10% off Room Stays — any currency"
+    discount_type: percentage
+    discount_value: 10
+    applicable_to: room
+    max_uses: 50
+    valid_days_from_now: 180
+    is_active: true
+    min_spends:
+      - currency: NPR
+        min_spend: 5000
+      - currency: USD
+        min_spend: 40
+      - currency: EUR
+        min_spend: 36
+
+  - code: WELCOME20
+    description: "20% off any booking — welcome discount for new guests"
+    discount_type: percentage
+    discount_value: 20
+    applicable_to: all
+    max_uses: 30
+    valid_days_from_now: 90
+    is_active: true
+    min_spends: []

@@ -23,6 +23,22 @@ class ZiplineCMS(models.Model):
     spec_safety = models.CharField(max_length=50, default="100% International Certified")
     spec_safety_label = models.CharField(max_length=50, default="Safety Standard")
 
+    # Homepage teaser section (the right column on the homepage)
+    homepage_badge_text = models.CharField(
+        max_length=120,
+        default="2nd Destination • Nagarkot Zipline",
+        help_text="Badge label shown above the heading on the homepage zipline section",
+    )
+    homepage_heading = models.CharField(
+        max_length=200,
+        default="Nepal's Longest Zipline Flight",
+        help_text="Main heading for the zipline section on the homepage",
+    )
+    homepage_description = models.TextField(
+        default="Soar above lush pine forests facing snow-capped Himalayan peaks. Select a zipline package and book instantly!",
+        help_text="Short description shown under the heading on the homepage zipline section",
+    )
+
     booking_url = models.URLField(default="https://www.facebook.com/ziplinenagarkot", help_text="External URL for booking zipline (e.g. Facebook page or booking engine)")
     booking_button_text = models.CharField(max_length=100, default="Book Zipline Flight / Facebook Page")
 

@@ -98,12 +98,16 @@ def create_booking(request, room_id):
     coupon = None
     if promo_code:
         coupon_obj = Coupon.objects.filter(code__iexact=promo_code, is_active=True).first()
-        if coupon_obj and coupon_obj.is_valid(subtotal):
-            coupon = coupon_obj
-            discount = coupon_obj.calculate_discount(subtotal)
-            messages.success(request, f"Promo code '{promo_code}' applied successfully!")
+        if coupon_obj:
+            is_valid, err_msg = coupon_obj.is_valid(order_amount=subtotal, product_type='room', active_currency_code=selected_currency)
+            if is_valid:
+                coupon = coupon_obj
+                discount = coupon_obj.calculate_discount(subtotal)
+                messages.success(request, f"Promo code '{promo_code}' applied successfully!")
+            else:
+                messages.warning(request, f"Promo code '{promo_code}': {err_msg}")
         else:
-            messages.warning(request, "Invalid or expired promo code.")
+            messages.warning(request, f"Invalid or expired promo code '{promo_code}'.")
 
     taxable_amount = subtotal - discount
     tax = Decimal('0.00')
@@ -130,5 +134,9 @@ def create_booking(request, room_id):
         special_requests=special_requests,
         status='draft'
     )
+
+    # Track coupon redemption
+    if coupon:
+        coupon.redeem()
 
     return redirect('booking:checkout_page', booking_uid=booking.booking_uid)

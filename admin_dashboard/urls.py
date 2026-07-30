@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import auth, home, settings, rooms, bookings, payments, dining, contact, cms, users, zipline
+from .views import auth, home, settings, rooms, bookings, payments, dining, contact, cms, users, zipline, coupons
 
 app_name = 'admin_dashboard'
 
@@ -16,6 +16,12 @@ urlpatterns = [
     path('bookings/<int:pk>/', bookings.BookingDetailView.as_view(), name='booking_detail'),
     path('bookings/<int:pk>/update-status/', bookings.BookingUpdateStatusView.as_view(), name='booking_update_status'),
     path('bookings/<int:pk>/invoice/', bookings.BookingInvoiceView.as_view(), name='booking_invoice'),
+
+    # Promo & Coupon Manager
+    path('coupons/', coupons.CouponDashboardView.as_view(), name='coupon_dashboard'),
+    path('coupons/add/', coupons.CouponCreateView.as_view(), name='coupon_create'),
+    path('coupons/<int:pk>/edit/', coupons.CouponUpdateView.as_view(), name='coupon_edit'),
+    path('coupons/<int:pk>/delete/', coupons.CouponDeleteView.as_view(), name='coupon_delete'),
     
     # Rooms
     path('rooms/', rooms.RoomDashboardView.as_view(), name='room_dashboard'),

@@ -451,6 +451,12 @@
                     <span x-show="sidebarOpen">Zipline Packages</span>
                 </a>
 
+                <!-- Promo & Coupon Manager -->
+                <a href="{% url 'admin_dashboard:coupon_dashboard' %}" class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-luxuryGold-500/10 hover:text-luxuryGold-600 transition group {% if 'coupons' in request.path %}bg-luxuryGold-500/10 text-luxuryGold-600 font-semibold{% else %}text-neutral-600{% endif %}">
+                    <i class="fa-solid fa-ticket text-lg w-5 text-center"></i>
+                    <span x-show="sidebarOpen">Coupons & Promos</span>
+                </a>
+
                 <!-- Homepage CMS -->
                 <a href="{% url 'admin_dashboard:cms_dashboard' %}" class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-luxuryGold-500/10 hover:text-luxuryGold-600 transition group {% if 'cms' in request.path %}bg-luxuryGold-500/10 text-luxuryGold-600 font-semibold{% else %}text-neutral-600{% endif %}">
                     <div class="w-5 text-center"><i class="fa-solid fa-file-pen text-lg"></i></div>

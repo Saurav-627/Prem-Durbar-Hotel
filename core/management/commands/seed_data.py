@@ -74,6 +74,23 @@ def post_process_item(key, obj, item):
                         currency=curr
                     )
 
+    if key == "coupons":
+        min_spends_data = item.get("min_spends") or []
+        if min_spends_data:
+            from booking.models.coupon import CouponMinSpend
+            from settings_manager.models.currency import Currency
+            for ms in min_spends_data:
+                ccode = ms.get("currency")
+                min_spend_val = ms.get("min_spend")
+                if ccode and min_spend_val is not None:
+                    curr = Currency.objects.filter(iso_code=ccode).first()
+                    if curr:
+                        CouponMinSpend.objects.update_or_create(
+                            coupon=obj,
+                            currency=curr,
+                            defaults={"min_spend": min_spend_val}
+                        )
+
 
 class Command(BaseCommand):
     help = (

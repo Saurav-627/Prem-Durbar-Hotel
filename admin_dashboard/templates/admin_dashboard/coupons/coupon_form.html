@@ -1,0 +1,286 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block content %}
+<div class="space-y-8 animate__animated animate__fadeIn">
+
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-neutral-200 dark:border-neutral-800 pb-6">
+        <div>
+            <h1 class="text-2xl font-bold font-serif text-neutral-900 dark:text-neutral-100 flex items-center gap-3">
+                <i class="fa-solid fa-ticket text-brand-gold"></i> {{ title }}
+            </h1>
+            <p class="text-xs text-neutral-500 mt-1">Configure the promo code, discount value, validity window, and per-currency minimum spends.</p>
+        </div>
+        <a href="{% url 'admin_dashboard:coupon_dashboard' %}" class="flex items-center gap-2 text-xs text-neutral-400 hover:text-brand-gold transition">
+            <i class="fa-solid fa-arrow-left"></i> Back to Coupons
+        </a>
+    </div>
+
+    <!-- Main Form -->
+    <form method="post" id="couponForm" novalidate>
+        {% csrf_token %}
+
+        <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+            <!-- LEFT: Core coupon details -->
+            <div class="xl:col-span-2 space-y-6">
+
+                <!-- Code & Description -->
+                <div class="custom-card rounded-2xl p-6 bg-white/50 dark:bg-neutral-900/50 shadow-xl">
+                    <h3 class="text-sm font-bold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-5 flex items-center gap-2">
+                        <i class="fa-solid fa-tag text-brand-gold"></i> Coupon Identity
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Code -->
+                        <div class="md:col-span-1">
+                            <label class="block text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1.5 uppercase tracking-wide">
+                                Coupon Code <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.code }}
+                            {% if form.code.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.code.errors|join:", " }}</p>
+                            {% endif %}
+                        </div>
+                        <!-- Description -->
+                        <div class="md:col-span-1">
+                            <label class="block text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1.5 uppercase tracking-wide">
+                                Internal Note <span class="text-neutral-400 font-normal">(not shown to guests)</span>
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.description.errors|join:", " }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Discount Config -->
+                <div class="custom-card rounded-2xl p-6 bg-white/50 dark:bg-neutral-900/50 shadow-xl">
+                    <h3 class="text-sm font-bold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-5 flex items-center gap-2">
+                        <i class="fa-solid fa-percent text-brand-gold"></i> Discount Configuration
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Discount Type -->
+                        <div>
+                            <label class="block text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1.5 uppercase tracking-wide">
+                                Discount Type <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.discount_type }}
+                            {% if form.discount_type.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.discount_type.errors|join:", " }}</p>
+                            {% endif %}
+                        </div>
+                        <!-- Discount Value -->
+                        <div>
+                            <label class="block text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1.5 uppercase tracking-wide">
+                                Discount Value <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.discount_value }}
+                            <p class="text-[11px] text-neutral-400 mt-1">{{ form.discount_value.help_text }}</p>
+                            {% if form.discount_value.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.discount_value.errors|join:", " }}</p>
+                            {% endif %}
+                        </div>
+                        <!-- Applicable To -->
+                        <div>
+                            <label class="block text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1.5 uppercase tracking-wide">
+                                Applicable To <span class="text-red-500">*</span>
+                            </label>
+                            {{ form.applicable_to }}
+                            {% if form.applicable_to.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.applicable_to.errors|join:", " }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Validity Window -->
+                <div class="custom-card rounded-2xl p-6 bg-white/50 dark:bg-neutral-900/50 shadow-xl">
+                    <h3 class="text-sm font-bold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-5 flex items-center gap-2">
+                        <i class="fa-regular fa-calendar-range text-brand-gold"></i> Validity Window
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Valid From -->
+                        <div>
+                            <label class="block text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1.5 uppercase tracking-wide">
+                                Valid From <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-neutral-400 text-sm">
+                                    <i class="fa-regular fa-calendar-check"></i>
+                                </span>
+                                <div class="pl-8">{{ form.valid_from }}</div>
+                            </div>
+                            {% if form.valid_from.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.valid_from.errors|join:", " }}</p>
+                            {% endif %}
+                        </div>
+                        <!-- Valid To -->
+                        <div>
+                            <label class="block text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1.5 uppercase tracking-wide">
+                                Expires On <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-neutral-400 text-sm">
+                                    <i class="fa-regular fa-calendar-xmark"></i>
+                                </span>
+                                <div class="pl-8">{{ form.valid_to }}</div>
+                            </div>
+                            {% if form.valid_to.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.valid_to.errors|join:", " }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Per-Currency Minimum Spend Inlines -->
+                <div class="custom-card rounded-2xl p-6 bg-white/50 dark:bg-neutral-900/50 shadow-xl">
+                    <h3 class="text-sm font-bold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-coins text-brand-gold"></i> Minimum Spend Per Currency
+                    </h3>
+                    <p class="text-xs text-neutral-400 mb-5">Add the minimum order amount required in each currency. Leave rows empty to skip. Only currencies guests are actively using need to be listed.</p>
+
+                    {{ min_spend_formset.management_form }}
+
+                    <div class="space-y-3" id="min-spend-rows">
+                        {% for ms_form in min_spend_formset %}
+                        <div class="min-spend-row grid grid-cols-12 gap-3 items-end p-3 rounded-xl border border-neutral-200 dark:border-neutral-700 bg-neutral-50/60 dark:bg-neutral-800/40 relative">
+                            <div class="col-span-5">
+                                <label class="block text-[11px] font-semibold text-neutral-500 uppercase tracking-wide mb-1">Currency</label>
+                                {{ ms_form.currency }}
+                                {% if ms_form.currency.errors %}
+                                <p class="text-red-500 text-xs mt-0.5">{{ ms_form.currency.errors|join:", " }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="col-span-5">
+                                <label class="block text-[11px] font-semibold text-neutral-500 uppercase tracking-wide mb-1">Min Spend</label>
+                                {{ ms_form.min_spend }}
+                                {% if ms_form.min_spend.errors %}
+                                <p class="text-red-500 text-xs mt-0.5">{{ ms_form.min_spend.errors|join:", " }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="col-span-2 flex items-center justify-end gap-2 pb-0.5">
+                                {% if ms_form.instance.pk %}
+                                <div class="flex items-center gap-1">
+                                    <label class="text-[11px] text-red-400 font-semibold cursor-pointer">Del</label>
+                                    {{ ms_form.DELETE }}
+                                </div>
+                                {% endif %}
+                                {{ ms_form.id }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div><!-- end LEFT col -->
+
+            <!-- RIGHT: Sidebar settings -->
+            <div class="space-y-6">
+
+                <!-- Status & Redemption -->
+                <div class="custom-card rounded-2xl p-6 bg-white/50 dark:bg-neutral-900/50 shadow-xl">
+                    <h3 class="text-sm font-bold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-5 flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-brand-gold"></i> Status & Limits
+                    </h3>
+                    <div class="space-y-5">
+                        <!-- Is Active -->
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-neutral-50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700">
+                            <div>
+                                <span class="text-xs font-semibold text-neutral-700 dark:text-neutral-300 block">Active</span>
+                                <span class="text-[11px] text-neutral-400">Guests can apply this code when active</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                {{ form.is_active }}
+                                <div class="peer-checked:bg-brand-primary bg-neutral-300 dark:bg-neutral-600 peer-focus:ring-2 peer-focus:ring-brand-primary/40 w-11 h-6 rounded-full ml-2 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5 pointer-events-none"></div>
+                            </label>
+                        </div>
+                        <!-- Max Uses -->
+                        <div>
+                            <label class="block text-xs font-semibold text-neutral-600 dark:text-neutral-400 mb-1.5 uppercase tracking-wide">
+                                Redemption Limit
+                            </label>
+                            {{ form.max_uses }}
+                            <p class="text-[11px] text-neutral-400 mt-1">{{ form.max_uses.help_text }}</p>
+                            {% if form.max_uses.errors %}
+                            <p class="text-red-500 text-xs mt-1">{{ form.max_uses.errors|join:", " }}</p>
+                            {% endif %}
+                        </div>
+                        {% if is_edit and coupon %}
+                        <!-- Redemption stats -->
+                        <div class="p-3 rounded-xl bg-brand-primary/5 border border-brand-primary/20">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-semibold text-neutral-600 dark:text-neutral-400">Times Redeemed</span>
+                                <span class="text-lg font-extrabold text-brand-primary">{{ coupon.use_count }}</span>
+                            </div>
+                            {% if coupon.max_uses %}
+                            <div class="mt-2">
+                                <div class="flex justify-between text-[11px] text-neutral-400 mb-1">
+                                    <span>{{ coupon.use_count }} used</span>
+                                    <span>{{ coupon.max_uses }} limit</span>
+                                </div>
+                                <div class="w-full bg-neutral-200 dark:bg-neutral-700 rounded-full h-1.5">
+                                    <div class="bg-brand-primary h-1.5 rounded-full transition-all" style="width: {% widthratio coupon.use_count coupon.max_uses 100 %}%"></div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Submit -->
+                <div class="flex flex-col gap-3">
+                    <button type="submit" class="w-full btn-gold-gradient px-6 py-3 rounded-xl text-sm font-bold uppercase tracking-wider text-brand-forestDark shadow-lg hover:shadow-brand-gold/30 transition-all duration-200 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i> {{ action_label }}
+                    </button>
+                    <a href="{% url 'admin_dashboard:coupon_dashboard' %}" class="w-full text-center px-6 py-3 rounded-xl text-sm font-semibold text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 border border-neutral-300 dark:border-neutral-700 hover:border-neutral-400 transition-all duration-200">
+                        Cancel
+                    </a>
+                </div>
+
+            </div><!-- end RIGHT sidebar -->
+
+        </div><!-- end grid -->
+    </form>
+</div>
+
+<!-- AirDatepicker -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/air-datepicker@3.5.3/air-datepicker.min.css">
+<script src="https://cdn.jsdelivr.net/npm/air-datepicker@3.5.3/air-datepicker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/air-datepicker@3.5.3/locale/en.js"></script>
+<script>
+(function() {
+    const sharedOpts = {
+        locale: AirDatepickerLocaleEn,
+        timepicker: true,
+        dateFormat: 'yyyy-MM-dd',
+        timeFormat: 'HH:mm',
+        autoClose: true,
+        position: 'bottom left',
+    };
+
+    const fromEl = document.querySelector('.air-datepicker-from');
+    const toEl = document.querySelector('.air-datepicker-to');
+    let dpFrom, dpTo;
+
+    if (fromEl) {
+        dpFrom = new AirDatepicker(fromEl, {
+            ...sharedOpts,
+            onSelect({ date }) {
+                if (dpTo) dpTo.update({ minDate: date });
+            }
+        });
+    }
+
+    if (toEl) {
+        dpTo = new AirDatepicker(toEl, {
+            ...sharedOpts,
+            onSelect({ date }) {
+                if (dpFrom) dpFrom.update({ maxDate: date });
+            }
+        });
+    }
+})();
+</script>
+{% endblock %}

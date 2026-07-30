@@ -193,9 +193,65 @@ class BookingForm(TailwindFormMixin, forms.ModelForm):
         fields = '__all__'
 
 class CouponForm(TailwindFormMixin, forms.ModelForm):
+    valid_from = forms.DateTimeField(
+        input_formats=['%Y-%m-%dT%H:%M', '%Y-%m-%d %H:%M', '%Y-%m-%d'],
+        widget=forms.DateTimeInput(
+            attrs={
+                'type': 'text',
+                'class': 'w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all duration-200 cursor-pointer air-datepicker-from',
+                'placeholder': 'Select start date & time...',
+                'autocomplete': 'off',
+            }
+        ),
+    )
+    valid_to = forms.DateTimeField(
+        input_formats=['%Y-%m-%dT%H:%M', '%Y-%m-%d %H:%M', '%Y-%m-%d'],
+        widget=forms.DateTimeInput(
+            attrs={
+                'type': 'text',
+                'class': 'w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all duration-200 cursor-pointer air-datepicker-to',
+                'placeholder': 'Select expiry date & time...',
+                'autocomplete': 'off',
+            }
+        ),
+    )
+
     class Meta:
         model = Coupon
-        fields = '__all__'
+        exclude = ['use_count']
+
+
+from booking.models.coupon import CouponMinSpend
+
+class CouponMinSpendForm(TailwindFormMixin, forms.ModelForm):
+    class Meta:
+        model = CouponMinSpend
+        fields = ['currency', 'min_spend']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['currency'].queryset = Currency.objects.filter(is_published=True).order_by('sequence', 'name')
+        self.fields['currency'].required = False
+        self.fields['min_spend'].required = False
+
+    def has_changed(self):
+        """Ignore rows where currency or min_spend is blank."""
+        prefix = self.prefix
+        curr_key = f"{prefix}-currency" if prefix else "currency"
+        ms_key = f"{prefix}-min_spend" if prefix else "min_spend"
+        if not self.data.get(curr_key) and not self.data.get(ms_key):
+            return False
+        return super().has_changed()
+
+    def clean(self):
+        cleaned_data = super().clean()
+        currency = cleaned_data.get('currency')
+        min_spend = cleaned_data.get('min_spend')
+        if currency and min_spend is None:
+            self.add_error('min_spend', 'Min spend is required when currency is selected.')
+        elif min_spend is not None and not currency:
+            self.add_error('currency', 'Currency is required when min spend is entered.')
+        return cleaned_data
 
 class GalleryCategoryForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
