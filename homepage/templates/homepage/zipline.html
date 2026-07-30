@@ -17,19 +17,19 @@
 }">
 
 <!-- Zipline Hero Banner -->
-<div class="relative py-12 sm:py-20 md:py-24 bg-adventureGradient text-white overflow-hidden shadow-luxury">
+<div class="relative py-8 sm:py-16 md:py-24 bg-adventureGradient text-white overflow-hidden shadow-luxury">
     <div class="absolute inset-0 bg-cover bg-center opacity-30 scale-105 transition-transform duration-1000"
          style="background-image: url('{% if seo_raw and seo_raw.header_image %}{{ seo_raw.header_image.url }}{% else %}https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?q=80&w=1920&auto=format&fit=crop{% endif %}');"></div>
     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
     
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <span class="animate__animated animate__fadeInDown inline-block px-3.5 py-1 sm:px-4 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-widest bg-white/20 text-brand-champagne border border-white/30 mb-3 sm:mb-4 backdrop-blur-md shadow-glow">
+        <span class="animate__animated animate__fadeInDown inline-block px-3 py-1 sm:px-4 sm:py-1.5 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-widest bg-white/20 text-brand-champagne border border-white/30 mb-2 sm:mb-4 backdrop-blur-md shadow-glow">
             <i class="fa-solid fa-bolt mr-1 animate__animated animate__flash animate__infinite animate__slower"></i> {{ seo_raw.header_subtitle|default:zipline_cms.hero_subtitle }}
         </span>
-        <h1 class="animate__animated animate__zoomIn font-heading text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white mb-4 sm:mb-6">
+        <h1 class="animate__animated animate__zoomIn font-heading text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-3 sm:mb-6 leading-tight">
             {{ seo_raw.header_title|default:zipline_cms.hero_title }}
         </h1>
-        <p class="animate__animated animate__fadeInUp animate__delay-1s max-w-3xl mx-auto text-sm sm:text-lg text-brand-champagne/95 font-light leading-relaxed">
+        <p class="animate__animated animate__fadeInUp animate__delay-1s max-w-3xl mx-auto text-xs sm:text-base md:text-lg text-brand-champagne/95 font-light leading-relaxed">
             {{ seo_raw.header_description|default:zipline_cms.hero_description }}
         </p>
     </div>
@@ -37,13 +37,13 @@
 
 {% if zipline_packages|length == 1 %}
 <!-- SINGLE PACKAGE + VIDEO PREVIEW SIDE-BY-SIDE IN ONE ROW -->
-<section class="py-10 sm:py-16 border-t border-brand-gold/20"
+<section class="py-8 sm:py-14 border-t border-brand-gold/20"
          :class="{ 'bg-[#EEF5F0] text-gray-900': currentTheme === 'light', 'bg-[#0B1E17] text-white': currentTheme !== 'light' }">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div class="text-center max-w-3xl mx-auto space-y-2">
-            <span class="text-xs font-bold uppercase tracking-widest text-brand-gold"><i class="fa-solid fa-bolt mr-1"></i> Adventure Flight Experience</span>
-            <h2 class="font-heading text-3xl sm:text-4xl font-bold">Select Package & Video Preview</h2>
-            <p class="text-sm opacity-80">Book your flight package below and preview the real flight experience in Nagarkot.</p>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-8">
+        <div class="text-center max-w-3xl mx-auto space-y-1.5 sm:space-y-2">
+            <span class="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-brand-gold"><i class="fa-solid fa-bolt mr-1"></i> Adventure Flight Experience</span>
+            <h2 class="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold">Select Package &amp; Video Preview</h2>
+            <p class="text-xs sm:text-sm opacity-80">Book your flight package below and preview the real flight experience in Nagarkot.</p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
@@ -53,14 +53,14 @@
                 <div class="rounded-3xl overflow-hidden border shadow-xl flex flex-col justify-between h-full group hover:-translate-y-1 duration-500"
                      :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#153429] border-brand-gold/20': currentTheme !== 'light' }">
                     <div>
-                        <div class="relative h-52 sm:h-60 overflow-hidden">
+                        <div class="relative h-44 sm:h-56 lg:h-60 overflow-hidden">
                             <img src="{{ pkg.display_image }}" alt="{{ pkg.name }}" class="w-full h-full object-cover group-hover:scale-105 duration-700">
-                            <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-400 text-neutral-950 shadow-md">
+                            <span class="absolute top-3 left-3 sm:top-4 sm:left-4 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-400 text-neutral-950 shadow-md">
                                 {{ pkg.flight_type }}
                             </span>
                         </div>
-                        <div class="p-6 space-y-4">
-                            <h3 class="font-heading text-2xl font-bold">{{ pkg.name }}</h3>
+                        <div class="p-4 sm:p-6 space-y-3 sm:space-y-4">
+                            <h3 class="font-heading text-xl sm:text-2xl font-bold">{{ pkg.name }}</h3>
                             <p class="text-xs opacity-85 leading-relaxed">{{ pkg.description }}</p>
                             <div class="pt-2 border-t border-brand-gold/15 flex items-center justify-between text-xs opacity-80">
                                 <span><i class="fa-solid fa-clock text-brand-gold mr-1"></i> {{ pkg.duration }}</span>
@@ -68,16 +68,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="p-6 pt-0 border-t border-brand-gold/10 flex items-center justify-between gap-4 mt-4">
+                    <div class="p-4 sm:p-6 pt-0 border-t border-brand-gold/10 flex items-center justify-between gap-3 sm:gap-4 mt-2 sm:mt-4">
                         <div>
-                            <span class="text-[10px] uppercase font-bold opacity-60 block">Price Per Person</span>
-                            <span class="text-xl sm:text-2xl font-extrabold text-brand-gold font-luxury-title whitespace-nowrap">
+                            <span class="text-[9px] sm:text-[10px] uppercase font-bold opacity-60 block">Price Per Person</span>
+                            <span class="text-lg sm:text-2xl font-extrabold text-brand-gold font-luxury-title whitespace-nowrap">
                                 {{ pkg.currency.iso_code }} {{ pkg.final_price }}
                             </span>
                         </div>
                         <button type="button" 
                                 @click="openPackageModal({ id: {{ pkg.id }}, name: '{{ pkg.name|escapejs }}', duration: '{{ pkg.duration|escapejs }}', price: '{{ pkg.final_price }}', currency_code: '{{ pkg.currency.iso_code|escapejs }}' })"
-                                class="btn-gold-gradient px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider text-brand-forestDark shadow-md hover:scale-105 duration-300 cursor-pointer text-center whitespace-nowrap">
+                                class="btn-gold-gradient px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl text-xs font-bold uppercase tracking-wider text-brand-forestDark shadow-md hover:scale-105 duration-300 cursor-pointer text-center whitespace-nowrap">
                             Book Package
                         </button>
                     </div>
@@ -113,13 +113,13 @@
 </section>
 {% else %}
 <!-- MULTI-PACKAGE GRID SHOWCASE -->
-<section class="py-10 sm:py-16 border-t border-brand-gold/20"
+<section class="py-8 sm:py-14 border-t border-brand-gold/20"
          :class="{ 'bg-[#EEF5F0] text-gray-900': currentTheme === 'light', 'bg-[#0B1E17] text-white': currentTheme !== 'light' }">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
-        <div class="text-center max-w-3xl mx-auto space-y-2.5">
-            <span class="text-xs font-bold uppercase tracking-widest text-brand-gold"><i class="fa-solid fa-tags mr-1"></i> Adventure Flight Packages</span>
-            <h2 class="font-heading text-3xl sm:text-4xl font-bold">Select & Book Your Flight Package</h2>
-            <p class="text-sm opacity-80">Choose your preferred harness position or dual flight combo. Prices change automatically based on your selected currency and unit of people.</p>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 sm:space-y-10">
+        <div class="text-center max-w-3xl mx-auto space-y-1.5 sm:space-y-2.5">
+            <span class="text-[11px] sm:text-xs font-bold uppercase tracking-widest text-brand-gold"><i class="fa-solid fa-tags mr-1"></i> Adventure Flight Packages</span>
+            <h2 class="font-heading text-2xl sm:text-3xl lg:text-4xl font-bold">Select &amp; Book Your Flight Package</h2>
+            <p class="text-xs sm:text-sm opacity-80">Choose your preferred harness position or dual flight combo. Prices change automatically based on your selected currency and unit of people.</p>
         </div>
 
         <div class="grid grid-cols-1 {% if zipline_packages|length == 2 %}md:grid-cols-2 max-w-4xl{% else %}md:grid-cols-3{% endif %} gap-6 sm:gap-8 mx-auto">
@@ -128,17 +128,17 @@
                  :class="{ 'bg-white border-gray-200': currentTheme === 'light', 'bg-[#153429] border-brand-gold/20': currentTheme !== 'light' }">
                 <div>
                     <!-- Package Image -->
-                    <div class="relative h-48 sm:h-56 overflow-hidden">
+                    <div class="relative h-44 sm:h-56 overflow-hidden">
                         <img src="{{ pkg.display_image }}" alt="{{ pkg.name }}" class="w-full h-full object-cover group-hover:scale-105 duration-700">
-                        <span class="absolute top-4 left-4 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-400 text-neutral-950 shadow-md">
+                        <span class="absolute top-3 left-3 sm:top-4 sm:left-4 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-amber-400 text-neutral-950 shadow-md">
                             {{ pkg.flight_type }}
                         </span>
                     </div>
 
                     <!-- Package Details -->
-                    <div class="p-6 space-y-4">
+                    <div class="p-4 sm:p-6 space-y-3 sm:space-y-4">
                         <div class="flex items-start justify-between gap-2">
-                            <h3 class="font-heading text-xl font-bold">{{ pkg.name }}</h3>
+                            <h3 class="font-heading text-lg sm:text-xl font-bold">{{ pkg.name }}</h3>
                         </div>
                         <p class="text-xs opacity-85 leading-relaxed line-clamp-3">{{ pkg.description }}</p>
                         
@@ -150,16 +150,16 @@
                 </div>
 
                 <!-- Price & Booking Trigger -->
-                <div class="p-6 pt-0 border-t border-brand-gold/10 flex items-center justify-between gap-4 mt-4">
+                <div class="p-4 sm:p-6 pt-0 border-t border-brand-gold/10 flex items-center justify-between gap-3 sm:gap-4 mt-2 sm:mt-4">
                     <div>
-                        <span class="text-[10px] uppercase font-bold opacity-60 block">Price Per Person</span>
-                        <span class="text-xl sm:text-2xl font-extrabold text-brand-gold font-luxury-title whitespace-nowrap">
+                        <span class="text-[9px] sm:text-[10px] uppercase font-bold opacity-60 block">Price Per Person</span>
+                        <span class="text-lg sm:text-2xl font-extrabold text-brand-gold font-luxury-title whitespace-nowrap">
                             {{ pkg.currency.iso_code }} {{ pkg.final_price }}
                         </span>
                     </div>
                     <button type="button" 
                             @click="openPackageModal({ id: {{ pkg.id }}, name: '{{ pkg.name|escapejs }}', duration: '{{ pkg.duration|escapejs }}', price: '{{ pkg.final_price }}', currency_code: '{{ pkg.currency.iso_code|escapejs }}' })"
-                            class="btn-gold-gradient px-6 py-3 rounded-xl text-xs font-bold uppercase tracking-wider text-brand-forestDark shadow-md hover:scale-105 duration-300 cursor-pointer text-center whitespace-nowrap">
+                            class="btn-gold-gradient px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl text-xs font-bold uppercase tracking-wider text-brand-forestDark shadow-md hover:scale-105 duration-300 cursor-pointer text-center whitespace-nowrap">
                         Book Package
                     </button>
                 </div>
@@ -195,45 +195,45 @@
 {% endif %}
 
 <!-- Main Zipline Content & Specs -->
-<section class="py-12 sm:py-20 md:py-28"
+<section class="py-8 sm:py-16 md:py-24"
          :class="{ 'bg-brand-light text-brand-text': currentTheme === 'light', 'bg-brand-forestDark text-brand-champagne': currentTheme !== 'light' }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-10 lg:gap-16 items-center">
             
-            <div class="space-y-4 sm:space-y-6 animate__animated animate__fadeInLeft">
-                <div class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-brand-gold">
-                    <span class="w-8 h-[2px] bg-brand-gold"></span>
+            <div class="space-y-3 sm:space-y-6 animate__animated animate__fadeInLeft">
+                <div class="inline-flex items-center gap-2 text-[11px] sm:text-xs font-semibold uppercase tracking-widest text-brand-gold">
+                    <span class="w-6 sm:w-8 h-[2px] bg-brand-gold"></span>
                     <span>{{ zipline_cms.overview_subtitle }}</span>
                 </div>
-                <h2 class="font-heading text-2xl sm:text-4xl font-bold tracking-tight">
+                <h2 class="font-heading text-xl sm:text-3xl lg:text-4xl font-bold tracking-tight leading-tight">
                     {{ zipline_cms.overview_title }}
                 </h2>
-                <p class="text-sm sm:text-base leading-relaxed opacity-85 whitespace-pre-line">
+                <p class="text-xs sm:text-base leading-relaxed opacity-85 whitespace-pre-line">
                     {{ zipline_cms.overview_content }}
                 </p>
 
                 <!-- Spec List -->
-                <div class="grid grid-cols-2 gap-3 sm:gap-4 pt-2 sm:pt-4 text-center">
-                    <div class="p-3 sm:p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
+                <div class="grid grid-cols-2 gap-2.5 sm:gap-4 pt-2 sm:pt-4 text-center">
+                    <div class="p-2.5 sm:p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
                          :class="{ 'bg-white border-brand-lightgray': currentTheme === 'light', 'bg-brand-forest border-brand-gold/20': currentTheme !== 'light' }">
-                        <span class="block text-lg sm:text-xl font-bold text-brand-gold">{{ zipline_cms.spec_length }}</span>
-                        <span class="text-[11px] sm:text-xs opacity-75">{{ zipline_cms.spec_length_label|default:"Flight Length" }}</span>
+                        <span class="block text-base sm:text-xl font-bold text-brand-gold">{{ zipline_cms.spec_length }}</span>
+                        <span class="text-[10px] sm:text-xs opacity-75">{{ zipline_cms.spec_length_label|default:"Flight Length" }}</span>
                     </div>
-                    <div class="p-3 sm:p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
+                    <div class="p-2.5 sm:p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
                          :class="{ 'bg-white border-brand-lightgray': currentTheme === 'light', 'bg-brand-forest border-brand-gold/20': currentTheme !== 'light' }">
-                        <span class="block text-lg sm:text-xl font-bold text-brand-gold">{{ zipline_cms.spec_speed }}</span>
-                        <span class="text-[11px] sm:text-xs opacity-75">{{ zipline_cms.spec_speed_label|default:"Top Speed" }}</span>
+                        <span class="block text-base sm:text-xl font-bold text-brand-gold">{{ zipline_cms.spec_speed }}</span>
+                        <span class="text-[10px] sm:text-xs opacity-75">{{ zipline_cms.spec_speed_label|default:"Top Speed" }}</span>
                     </div>
-                    <div class="p-3 sm:p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
+                    <div class="p-2.5 sm:p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
                          :class="{ 'bg-white border-brand-lightgray': currentTheme === 'light', 'bg-brand-forest border-brand-gold/20': currentTheme !== 'light' }">
-                        <span class="block text-lg sm:text-xl font-bold text-brand-gold">{{ zipline_cms.spec_safety }}</span>
-                        <span class="text-[11px] sm:text-xs opacity-75">{{ zipline_cms.spec_safety_label|default:"Safety Standard" }}</span>
+                        <span class="block text-base sm:text-xl font-bold text-brand-gold">{{ zipline_cms.spec_safety }}</span>
+                        <span class="text-[10px] sm:text-xs opacity-75">{{ zipline_cms.spec_safety_label|default:"Safety Standard" }}</span>
                     </div>
-                    <div class="p-3 sm:p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
+                    <div class="p-2.5 sm:p-4 rounded-xl border transition-all duration-300 hover:shadow-card"
                          :class="{ 'bg-white border-brand-lightgray': currentTheme === 'light', 'bg-brand-forest border-brand-gold/20': currentTheme !== 'light' }">
-                        <span class="block text-lg sm:text-xl font-bold text-brand-gold">{{ zipline_cms.spec_elevation }}</span>
-                        <span class="text-[11px] sm:text-xs opacity-75">{{ zipline_cms.spec_elevation_label|default:"Altitude Elevation" }}</span>
+                        <span class="block text-base sm:text-xl font-bold text-brand-gold">{{ zipline_cms.spec_elevation }}</span>
+                        <span class="text-[10px] sm:text-xs opacity-75">{{ zipline_cms.spec_elevation_label|default:"Altitude Elevation" }}</span>
                     </div>
                 </div>
             </div>
@@ -242,13 +242,13 @@
             <div class="relative animate__animated animate__fadeInRight">
                 <img src="{% if zipline_cms.overview_image %}{{ zipline_cms.overview_image.url }}{% else %}https://images.unsplash.com/photo-1533587851505-d119e13fa0d7?q=80&w=800&auto=format&fit=crop{% endif %}" 
                      alt="Nagarkot Zipline Flight" 
-                     class="rounded-3xl shadow-luxury w-full h-64 sm:h-[400px] md:h-[450px] object-cover hover:scale-[1.02] transition-transform duration-500">
-                <div class="absolute bottom-3 sm:bottom-6 left-3 sm:left-6 right-3 sm:right-6 p-3 sm:p-4 rounded-2xl bg-black/80 backdrop-blur-md border border-white/20 text-white flex items-center justify-between">
+                     class="rounded-3xl shadow-luxury w-full h-52 sm:h-[380px] md:h-[450px] object-cover hover:scale-[1.02] transition-transform duration-500">
+                <div class="absolute bottom-2.5 sm:bottom-6 left-2.5 sm:left-6 right-2.5 sm:right-6 p-2.5 sm:p-4 rounded-2xl bg-black/80 backdrop-blur-md border border-white/20 text-white flex items-center justify-between">
                     <div>
-                        <h4 class="font-heading font-bold text-xs sm:text-sm">{{ zipline_cms.image_caption_title|default:"Superman Flying Harness" }}</h4>
-                        <p class="text-[10px] sm:text-xs text-brand-champagne">{{ zipline_cms.image_caption_subtitle|default:"Head-first aerial view of Everest range" }}</p>
+                        <h4 class="font-heading font-bold text-[11px] sm:text-sm">{{ zipline_cms.image_caption_title|default:"Superman Flying Harness" }}</h4>
+                        <p class="text-[9px] sm:text-xs text-brand-champagne">{{ zipline_cms.image_caption_subtitle|default:"Head-first aerial view of Everest range" }}</p>
                     </div>
-                    <span class="px-2.5 py-1 bg-brand-adventure rounded-lg text-[10px] sm:text-xs font-bold uppercase shrink-0">Popular</span>
+                    <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-brand-adventure rounded-lg text-[9px] sm:text-xs font-bold uppercase shrink-0">Popular</span>
                 </div>
             </div>
 

@@ -19,7 +19,9 @@
                     Secure Check-out
                 {% endif %}
             </h1>
-            <p class="text-[11px] opacity-75">Booking Reference: <span class="font-mono font-semibold break-all">{{ booking.booking_uid }}</span></p>
+            <p class="text-[11px] opacity-75 leading-relaxed">
+                Booking Reference: <span class="font-mono font-semibold break-all block sm:inline mt-0.5 sm:mt-0 text-luxuryGold-400">{{ booking.booking_uid }}</span>
+            </p>
             {% if booking.status == 'draft' %}
             <div class="mt-2.5 max-w-sm mx-auto rounded-xl border px-3 py-2 text-left text-[11px]" :class="{ 'border-brand-primary/20 bg-[#EEF5F0] text-brand-primaryDark': currentTheme === 'light', 'border-brand-primary/30 bg-brand-primary/20 text-white': currentTheme !== 'light' }">
                 <p class="font-semibold mb-0.5">Draft booking</p>
@@ -29,18 +31,18 @@
         </div>
 
         <!-- Product & Summary details block -->
-        <div class="p-4 sm:p-5 rounded-xl border max-w-md mx-auto text-left space-y-3.5"
+        <div class="p-3.5 sm:p-5 rounded-xl border max-w-md mx-auto text-left space-y-3.5"
              :class="{ 'bg-[#EEF5F0] border-gray-200': currentTheme === 'light', 'bg-[#0A2017] border-brand-primary/20 text-white': currentTheme !== 'light' }">
             {% if booking.booking_type == 'zipline' and booking.zipline_package %}
-            <div class="flex items-center justify-between pb-2.5 border-b border-luxuryGold-400/20">
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-brand-gold text-black">
-                    <i class="fa-solid fa-bolt mr-1"></i> Zipline Adventure Package
+            <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-luxuryGold-400/20 flex-wrap sm:flex-nowrap">
+                <span class="px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider bg-amber-400 text-neutral-950 shadow-sm inline-flex items-center gap-1.5 shrink-0">
+                    <i class="fa-solid fa-bolt text-neutral-950"></i> Zipline Adventure Package
                 </span>
-                <span class="text-[11px] font-semibold opacity-75">{{ booking.zipline_package.duration }}</span>
+                <span class="text-[11px] font-semibold opacity-75 shrink-0 ml-auto sm:ml-0">{{ booking.zipline_package.duration }}</span>
             </div>
             <div>
-                <h3 class="font-luxury-title text-lg font-bold">{{ booking.zipline_package.name }}</h3>
-                <p class="text-[11px] opacity-80 mt-0.5 line-clamp-2">{{ booking.zipline_package.description }}</p>
+                <h3 class="font-luxury-title text-base sm:text-lg font-bold">{{ booking.zipline_package.name }}</h3>
+                <p class="text-[11px] opacity-80 mt-0.5 line-clamp-2 leading-relaxed">{{ booking.zipline_package.description }}</p>
             </div>
             <div class="grid grid-cols-2 gap-2.5 text-[11px] pt-2 border-t border-luxuryGold-400/15">
                 <div>
@@ -51,9 +53,9 @@
                     <span class="opacity-60 block text-[9px] uppercase font-semibold">Phone</span>
                     <span class="font-semibold">{{ booking.guest_phone }}</span>
                 </div>
-                <div>
+                <div class="col-span-2 sm:col-span-1">
                     <span class="opacity-60 block text-[9px] uppercase font-semibold">Ticket Delivery Email</span>
-                    <span class="font-semibold text-luxuryGold-500 break-all">{{ booking.guest_email }}</span>
+                    <span class="font-semibold text-luxuryGold-500 dark:text-luxuryGold-400 break-all leading-tight block">{{ booking.guest_email }}</span>
                 </div>
                 <div>
                     <span class="opacity-60 block text-[9px] uppercase font-semibold">Flights / People</span>
@@ -73,14 +75,14 @@
                 {% endif %}
             </div>
             {% elif booking.room %}
-            <div class="flex items-center justify-between pb-2.5 border-b border-luxuryGold-400/20">
-                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider bg-luxuryGold-500/15 text-luxuryGold-600 border border-luxuryGold-400/35">
-                    <i class="fa-solid fa-hotel mr-1"></i> Room Chamber Stay
+            <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-luxuryGold-400/20 flex-wrap sm:flex-nowrap">
+                <span class="px-2.5 py-1 rounded-full text-[10px] sm:text-[11px] font-bold uppercase tracking-wider bg-amber-400 text-neutral-950 shadow-sm inline-flex items-center gap-1.5 shrink-0">
+                    <i class="fa-solid fa-hotel text-neutral-950"></i> Room Chamber Stay
                 </span>
-                <span class="text-[11px] font-semibold opacity-75">{{ booking.nights }} Night(s)</span>
+                <span class="text-[11px] font-semibold opacity-75 shrink-0 ml-auto sm:ml-0">{{ booking.nights }} Night(s)</span>
             </div>
             <div>
-                <h3 class="font-luxury-title text-lg font-bold">{{ booking.room.title }}</h3>
+                <h3 class="font-luxury-title text-base sm:text-lg font-bold">{{ booking.room.title }}</h3>
                 <p class="text-[11px] opacity-80 mt-0.5">{{ booking.guest_name }} • {{ booking.adults }} Adult(s), {{ booking.children }} Child(ren)</p>
             </div>
             <div class="grid grid-cols-2 gap-2.5 text-[11px] pt-2 border-t border-luxuryGold-400/15">
@@ -95,13 +97,13 @@
             </div>
             {% endif %}
 
-            <div class="pt-3 border-t border-luxuryGold-400/20 flex items-center justify-between">
+            <div class="pt-3 border-t border-luxuryGold-400/20 flex items-center justify-between gap-2">
                 <div>
                     <span class="text-[9px] uppercase tracking-wider opacity-75 block">Payable Total</span>
-                    <h2 class="font-luxury-title text-xl sm:text-2xl font-extrabold text-luxuryGold-500 mt-0.5">{{ booking.currency_code }} {{ booking.total|floatformat:2 }}</h2>
+                    <h2 class="font-luxury-title text-lg sm:text-2xl font-extrabold text-luxuryGold-500 mt-0.5">{{ booking.currency_code }} {{ booking.total|floatformat:2 }}</h2>
                 </div>
                 {% if booking.discount > 0 %}
-                    <span class="text-xs text-green-500 dark:text-green-400 font-semibold"><i class="fa-solid fa-tags mr-1"></i>Saved {{ booking.currency_code }} {{ booking.discount|floatformat:2 }}</span>
+                    <span class="text-xs text-emerald-600 dark:text-emerald-400 font-bold shrink-0"><i class="fa-solid fa-tags mr-1"></i>Saved {{ booking.currency_code }} {{ booking.discount|floatformat:2 }}</span>
                 {% endif %}
             </div>
         </div>

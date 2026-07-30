@@ -31,13 +31,16 @@
     }
 }" class="relative bg-[#0A2017] text-white overflow-hidden border-b border-luxuryGold-400/20">
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-8">
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 items-stretch">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-5 sm:py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 md:gap-5 sm:gap-6 lg:gap-6 items-stretch">
             
             <!-- LEFT COLUMN (1st Branding): HOTEL SANCTUARY & ROOM SEARCH -->
             <div class="lg:col-span-6 flex flex-col justify-start space-y-5">
                 <!-- Slideshow Frame -->
-                <div class="relative h-[320px] sm:h-[390px] lg:h-[410px] rounded-2xl overflow-hidden shadow-2xl border border-luxuryGold-400/30 group">
+                <div class="relative h-[220px] sm:h-[360px] lg:h-[410px] rounded-2xl overflow-hidden shadow-2xl border border-luxuryGold-400/30 group"
+                     x-data="{ touchStartX: 0 }"
+                     @touchstart.passive="touchStartX = $event.changedTouches[0].clientX"
+                     @touchend.passive="const dx = $event.changedTouches[0].clientX - touchStartX; if (Math.abs(dx) > 40) { dx < 0 ? leftNext() : leftPrev() }">
                     {% for slide in hero_slides %}
                     <div x-show="leftActiveSlide === {{ forloop.counter0 }}" 
                          x-transition:enter="transition ease-out duration-1000"
@@ -49,11 +52,11 @@
                          class="absolute inset-0 w-full h-full bg-cover bg-center"
                          style="background-image: url('{% if slide.background_image %}{{ slide.background_image.url }}{% else %}https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920{% endif %}'); display: none;">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent"></div>
-                        <div class="absolute bottom-6 left-6 right-6 space-y-2">
-                            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-luxuryGold-400">
+                        <div class="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 space-y-1 sm:space-y-2">
+                            <span class="text-[9px] sm:text-xs font-bold uppercase tracking-widest text-luxuryGold-400">
                                 1st Sanctuary • {{ slide.subtitle }}
                             </span>
-                            <h2 class="font-luxury-title text-2xl sm:text-3xl font-bold text-white leading-tight">
+                            <h2 class="font-luxury-title text-lg sm:text-2xl lg:text-3xl font-bold text-white leading-tight">
                                 {{ slide.title }}
                             </h2>
                         </div>
@@ -61,18 +64,18 @@
                     {% empty %}
                     <div class="absolute inset-0 w-full h-full bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920');">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent"></div>
-                        <div class="absolute bottom-6 left-6 right-6 space-y-2">
-                            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-luxuryGold-400">1st Sanctuary • Prem Durbar Resort</span>
-                            <h2 class="font-luxury-title text-2xl sm:text-3xl font-bold text-white">Experience Elite Hospitality</h2>
+                        <div class="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 space-y-1 sm:space-y-2">
+                             <span class="text-[9px] sm:text-xs font-bold uppercase tracking-widest text-luxuryGold-400">1st Sanctuary • Prem Durbar Resort</span>
+                             <h2 class="font-luxury-title text-lg sm:text-2xl lg:text-3xl font-bold text-white">Experience Elite Hospitality</h2>
                         </div>
                     </div>
                     {% endfor %}
 
                     {% if hero_slides|length > 1 %}
-                    <button @click="leftPrev()" class="absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full border border-white/20 bg-black/40 hover:bg-black/70 text-white text-xs z-20">
+                    <button @click="leftPrev()" class="hidden sm:flex absolute left-2 top-1/2 -translate-y-1/2 p-2 rounded-full border border-white/20 bg-black/40 hover:bg-black/70 text-white text-xs z-20">
                         <i class="fa-solid fa-chevron-left"></i>
                     </button>
-                    <button @click="leftNext()" class="absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full border border-white/20 bg-black/40 hover:bg-black/70 text-white text-xs z-20">
+                    <button @click="leftNext()" class="hidden sm:flex absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full border border-white/20 bg-black/40 hover:bg-black/70 text-white text-xs z-20">
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
                     
@@ -118,24 +121,27 @@
             </div>
 
             <!-- RIGHT COLUMN (2nd Branding): NAGARKOT ZIPLINE & PACKAGE CAROUSEL -->
-            <div class="lg:col-span-5 flex flex-col justify-between space-y-6">
+            <div class="lg:col-span-5 flex flex-col justify-between space-y-4 sm:space-y-6">
                 
                 <!-- Zipline Header Badge -->
-                <div class="space-y-2">
-                    <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-widest bg-luxuryGold-500/15 text-luxuryGold-300 border border-luxuryGold-400/35 backdrop-blur-md shadow-sm">
+                <div class="space-y-1.5 sm:space-y-2">
+                    <div class="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-widest bg-luxuryGold-500/15 text-luxuryGold-300 border border-luxuryGold-400/35 backdrop-blur-md shadow-sm">
                         <i class="fa-solid fa-bolt text-amber-400"></i>
                         <span>{{ zipline_cms.homepage_badge_text }}</span>
                     </div>
-                    <h2 class="font-luxury-title text-2xl sm:text-3xl font-bold text-white tracking-wide">
+                    <h2 class="font-luxury-title text-xl sm:text-2xl lg:text-3xl font-bold text-white tracking-wide leading-tight">
                         {{ zipline_cms.homepage_heading }}
                     </h2>
-                    <p class="text-xs text-brand-champagne/90 leading-relaxed">
+                    <p class="text-[11px] sm:text-xs text-brand-champagne/90 leading-relaxed">
                         {{ zipline_cms.homepage_description }}
                     </p>
                 </div>
 
                 <!-- Auto-Swiping Zipline Packages Card Carousel -->
-                <div class="relative h-[320px] sm:h-[390px] lg:h-[410px] rounded-2xl overflow-hidden shadow-2xl border border-luxuryGold-400/30 group">
+                <div class="relative h-[240px] sm:h-[360px] lg:h-[410px] rounded-2xl overflow-hidden shadow-2xl border border-luxuryGold-400/30 group"
+                     x-data="{ touchStartX: 0 }"
+                     @touchstart.passive="touchStartX = $event.changedTouches[0].clientX"
+                     @touchend.passive="const dx = $event.changedTouches[0].clientX - touchStartX; if (Math.abs(dx) > 40) { dx < 0 ? rightNext() : rightPrev() }">
                     {% for pkg in zipline_packages %}
                     <div x-show="rightActiveSlide === {{ forloop.counter0 }}" 
                          x-transition:enter="transition ease-out duration-700"
@@ -144,7 +150,7 @@
                          x-transition:leave="transition ease-in duration-500"
                          x-transition:leave-start="opacity-100 scale-100"
                          x-transition:leave-end="opacity-0 scale-95"
-                         class="absolute inset-0 w-full h-full bg-cover bg-center flex flex-col justify-end p-5 sm:p-6"
+                         class="absolute inset-0 w-full h-full bg-cover bg-center flex flex-col justify-end p-3.5 sm:p-6"
                          style="background-image: url('{{ pkg.display_image }}'); display: none;">
                         
                         <!-- Dark luxury gradient overlay for maximum readability -->
@@ -161,18 +167,18 @@
                             </div>
 
                             <div>
-                                <h3 class="font-luxury-title text-xl sm:text-2xl font-bold text-white leading-snug">
+                                <h3 class="font-luxury-title text-base sm:text-xl lg:text-2xl font-bold text-white leading-snug">
                                     {{ pkg.name }}
                                 </h3>
-                                <p class="text-xs text-white/80 line-clamp-2 mt-1 leading-relaxed">
+                                <p class="text-[11px] sm:text-xs text-white/80 line-clamp-2 mt-0.5 sm:mt-1 leading-relaxed">
                                     {{ pkg.description }}
                                 </p>
                             </div>
 
-                            <div class="pt-2 flex items-center justify-between border-t border-white/20">
+                            <div class="pt-1.5 sm:pt-2 flex items-center justify-between border-t border-white/20">
                                 <div>
-                                    <span class="text-[10px] uppercase opacity-75 font-semibold block text-luxuryGold-400">Rate Per Person</span>
-                                    <strong class="text-lg sm:text-xl font-extrabold text-white font-luxury-title">
+                                    <span class="text-[9px] sm:text-[10px] uppercase opacity-75 font-semibold block text-luxuryGold-400">Rate Per Person</span>
+                                    <strong class="text-base sm:text-lg lg:text-xl font-extrabold text-white font-luxury-title">
                                         {{ pkg.currency.iso_code }} {{ pkg.final_price }}
                                     </strong>
                                 </div>
@@ -192,10 +198,10 @@
 
                     <!-- Swiper Controls for Zipline (if multiple packages) -->
                     {% if zipline_packages|length > 1 %}
-                    <button @click="rightPrev()" class="absolute left-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full border border-white/20 bg-black/50 hover:bg-black/80 text-white text-xs z-20 transition">
+                    <button @click="rightPrev()" class="hidden sm:flex absolute left-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full border border-white/20 bg-black/50 hover:bg-black/80 text-white text-xs z-20 transition">
                         <i class="fa-solid fa-chevron-left"></i>
                     </button>
-                    <button @click="rightNext()" class="absolute right-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full border border-white/20 bg-black/50 hover:bg-black/80 text-white text-xs z-20 transition">
+                    <button @click="rightNext()" class="hidden sm:flex absolute right-2.5 top-1/2 -translate-y-1/2 p-2 rounded-full border border-white/20 bg-black/50 hover:bg-black/80 text-white text-xs z-20 transition">
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
 
@@ -233,7 +239,7 @@
         
         <div class="text-center max-w-2xl mx-auto space-y-4 mb-10 sm:mb-16" data-animate="fadeInUp">
             <span class="text-xs font-semibold tracking-widest uppercase text-brand-primaryLight">Premium Sanctuary</span>
-            <h2 class="font-luxury-title text-3xl sm:text-5xl font-bold">Rooms & Suites</h2>
+            <h2 class="font-luxury-title text-2xl sm:text-4xl lg:text-5xl font-bold">Rooms &amp; Suites</h2>
             <p class="text-sm opacity-80">Explore our signature guest chambers designed for ultimate relaxation and comfort.</p>
         </div>
 
@@ -304,7 +310,7 @@
 <section class="py-12 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center max-w-2xl mx-auto space-y-4 mb-10 sm:mb-16" data-animate="fadeInUp">
         <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-500">Elite Hospitality</span>
-        <h2 class="font-luxury-title text-3xl sm:text-5xl font-bold">Resort Services & Facilities</h2>
+        <h2 class="font-luxury-title text-2xl sm:text-4xl font-bold">Resort Services &amp; Facilities</h2>
         <p class="text-sm opacity-80">Indulge in our carefully curated amenities, designed to elevate your stay to a world-class level.</p>
     </div>
 
@@ -386,7 +392,7 @@
             <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-500">
                 {{ about_preview.subtitle }}
             </span>
-            <h2 class="font-luxury-title text-3xl sm:text-4xl font-bold leading-tight">
+            <h2 class="font-luxury-title text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight">
                 {{ about_preview.title }}
             </h2>
             <div class="text-sm opacity-80 leading-relaxed space-y-4">
@@ -396,19 +402,19 @@
             <!-- Statistics Counters with Micro-animations -->
             <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 pt-6 border-t border-amber-900/10">
                 <div class="text-center hover:scale-105 duration-300">
-                    <h4 class="font-luxury-title text-2xl sm:text-3xl font-bold text-luxuryGold-400">{{ about_preview.stat1_value }}</h4>
+                    <h4 class="font-luxury-title text-xl sm:text-2xl lg:text-3xl font-bold text-luxuryGold-400">{{ about_preview.stat1_value }}</h4>
                     <p class="text-[10px] sm:text-xs uppercase tracking-wider opacity-75 mt-1">{{ about_preview.stat1_label }}</p>
                 </div>
                 <div class="text-center hover:scale-105 duration-300">
-                    <h4 class="font-luxury-title text-2xl sm:text-3xl font-bold text-luxuryGold-400">{{ about_preview.stat2_value }}</h4>
+                    <h4 class="font-luxury-title text-xl sm:text-2xl lg:text-3xl font-bold text-luxuryGold-400">{{ about_preview.stat2_value }}</h4>
                     <p class="text-[10px] sm:text-xs uppercase tracking-wider opacity-75 mt-1">{{ about_preview.stat2_label }}</p>
                 </div>
                 <div class="text-center hover:scale-105 duration-300">
-                    <h4 class="font-luxury-title text-2xl sm:text-3xl font-bold text-luxuryGold-400">{{ about_preview.stat3_value }}</h4>
+                    <h4 class="font-luxury-title text-xl sm:text-2xl lg:text-3xl font-bold text-luxuryGold-400">{{ about_preview.stat3_value }}</h4>
                     <p class="text-[10px] sm:text-xs uppercase tracking-wider opacity-75 mt-1">{{ about_preview.stat3_label }}</p>
                 </div>
                 <div class="text-center hover:scale-105 duration-300">
-                    <h4 class="font-luxury-title text-2xl sm:text-3xl font-bold text-luxuryGold-400">{{ about_preview.stat4_value }}</h4>
+                    <h4 class="font-luxury-title text-xl sm:text-2xl lg:text-3xl font-bold text-luxuryGold-400">{{ about_preview.stat4_value }}</h4>
                     <p class="text-[10px] sm:text-xs uppercase tracking-wider opacity-75 mt-1">{{ about_preview.stat4_label }}</p>
                 </div>
             </div>
@@ -425,7 +431,7 @@
 }" x-init="if (itemsCount > 1) setInterval(() => next(), 6000)">
     <div class="text-center max-w-2xl mx-auto space-y-4 mb-10 sm:mb-16" data-animate="fadeInUp">
         <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-500">Guest Memoirs</span>
-        <h2 class="font-luxury-title text-3xl sm:text-5xl font-bold">What Our Guests Say</h2>
+        <h2 class="font-luxury-title text-2xl sm:text-4xl lg:text-5xl font-bold">What Our Guests Say</h2>
     </div>
 
     <!-- Review Slides -->
@@ -495,7 +501,7 @@
     <div class="absolute inset-0 bg-black/85"></div>
     <div class="relative max-w-4xl mx-auto px-4 space-y-6 z-10 text-white" data-animate="fadeInUp">
         <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-300">Newsletter Subscription</span>
-        <h2 class="font-luxury-title text-3xl sm:text-5xl font-bold text-white">Join The Elite Guild</h2>
+        <h2 class="font-luxury-title text-2xl sm:text-4xl lg:text-5xl font-bold text-white">Join The Elite Guild</h2>
         <p class="text-sm text-white/80 max-w-xl mx-auto leading-relaxed">
             Subscribe to receive exclusive offers, luxury travel logs, seasonal booking discounts, and resort news.
         </p>
