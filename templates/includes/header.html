@@ -20,10 +20,10 @@
                 <!-- Home -->
                 <a href="{% url 'homepage:home' %}" 
                    class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
-                   :class="(currentPath === '/' || currentPath === '/home/') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
-                   {% if request.path == '/' or request.path == '/home/' %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase py-1"{% endif %}>
+                   :class="(currentPath === '/' || currentPath === '/home/') ? (currentTheme === 'light' ? 'text-brand-primary' : 'text-brand-primaryLight') : 'hover:text-brand-primaryLight'">
                     <span>Home</span>
-                    <span x-show="!(currentPath === '/' || currentPath === '/home/')" class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
+                    <span class="absolute bottom-0 left-0 h-[2px] bg-luxuryGold-400 transition-all duration-300"
+                          :class="(currentPath === '/' || currentPath === '/home/') ? 'w-full' : 'w-0 group-hover:w-full'"></span>
                 </a>
                 
                 <!-- Dynamic Navigation Items -->
@@ -32,10 +32,11 @@
                         <!-- Dropdown / Mega Menu -->
                         <div class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false">
                             <button class="relative flex items-center gap-1.5 text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 focus:outline-none group"
-                                    :class="(currentPath !== '/' && currentPath.includes('{{ item.url }}')) ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'">
+                                    :class="(currentPath !== '/' && currentPath.includes('{{ item.url }}')) ? (currentTheme === 'light' ? 'text-brand-primary' : 'text-brand-primaryLight') : 'hover:text-brand-primaryLight'">
                                 <span>{{ item.name }}</span>
                                 <i class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300 ease-in-out" :class="{ 'rotate-180': open }"></i>
-                                <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
+                                <span class="absolute bottom-0 left-0 h-[2px] bg-luxuryGold-400 transition-all duration-300"
+                                      :class="(currentPath !== '/' && currentPath.includes('{{ item.url }}')) ? 'w-full' : 'w-0 group-hover:w-full'"></span>
                             </button>
                             <div x-show="open" 
                                  x-transition:enter="transition ease-out duration-150"
@@ -53,7 +54,7 @@
                                     {% for child in item.children.all %}
                                         <a href="{{ child.url }}" 
                                            class="block px-4 py-3 text-sm tracking-wide transition-colors duration-200"
-                                           :class="currentPath.includes('{{ child.url }}') ? (currentTheme === 'light' ? 'text-brand-primary font-bold bg-brand-primary/10' : 'text-brand-primaryLight font-bold bg-brand-primary/20') : 'hover:bg-brand-primary/20 hover:text-luxuryGold-400'">
+                                           :class="currentPath.includes('{{ child.url }}') ? (currentTheme === 'light' ? 'text-brand-primary bg-brand-primary/10' : 'text-brand-primaryLight bg-brand-primary/20') : 'hover:bg-brand-primary/20 hover:text-luxuryGold-400'">
                                             {{ child.name }}
                                         </a>
                                     {% endfor %}
@@ -63,61 +64,62 @@
                     {% else %}
                         <a href="{{ item.url }}" 
                            class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
-                           :class="((currentPath === '/' && '{{ item.url }}' === '/') || (currentPath !== '/' && '{{ item.url }}' !== '/' && currentPath.includes('{{ item.url }}'))) ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'">
+                           :class="((currentPath === '/' && '{{ item.url }}' === '/') || (currentPath !== '/' && '{{ item.url }}' !== '/' && currentPath.includes('{{ item.url }}'))) ? (currentTheme === 'light' ? 'text-brand-primary' : 'text-brand-primaryLight') : 'hover:text-brand-primaryLight'">
                             <span>{{ item.name }}</span>
-                            <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
+                            <span class="absolute bottom-0 left-0 h-[2px] bg-luxuryGold-400 transition-all duration-300"
+                                  :class="((currentPath === '/' && '{{ item.url }}' === '/') || (currentPath !== '/' && '{{ item.url }}' !== '/' && currentPath.includes('{{ item.url }}'))) ? 'w-full' : 'w-0 group-hover:w-full'"></span>
                         </a>
                     {% endif %}
                 {% empty %}
                     <!-- Fallback menus if database is empty -->
                     <a href="{% url 'homepage:about' %}" 
                        class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
-                       :class="currentPath.includes('/about') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
-                       {% if '/about' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase py-1"{% endif %}>
+                       :class="currentPath.includes('/about') ? (currentTheme === 'light' ? 'text-brand-primary' : 'text-brand-primaryLight') : 'hover:text-brand-primaryLight'">
                         <span>About Us</span>
-                        <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
+                        <span class="absolute bottom-0 left-0 h-[2px] bg-luxuryGold-400 transition-all duration-300"
+                              :class="currentPath.includes('/about') ? 'w-full' : 'w-0 group-hover:w-full'"></span>
                     </a>
                     <a href="{% url 'rooms:room_list' %}" 
                        class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
-                       :class="currentPath.includes('/rooms') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
-                       {% if '/rooms' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase py-1"{% endif %}>
+                       :class="currentPath.includes('/rooms') ? (currentTheme === 'light' ? 'text-brand-primary' : 'text-brand-primaryLight') : 'hover:text-brand-primaryLight'">
                         <span>Rooms &amp; Suites</span>
-                        <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
+                        <span class="absolute bottom-0 left-0 h-[2px] bg-luxuryGold-400 transition-all duration-300"
+                              :class="currentPath.includes('/rooms') ? 'w-full' : 'w-0 group-hover:w-full'"></span>
                     </a>
                     <a href="{% url 'dining:dining_list' %}" 
                        class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
-                       :class="currentPath.includes('/dining') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
-                       {% if '/dining' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase py-1"{% endif %}>
+                       :class="currentPath.includes('/dining') ? (currentTheme === 'light' ? 'text-brand-primary' : 'text-brand-primaryLight') : 'hover:text-brand-primaryLight'">
                         <span>Dining</span>
-                        <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
+                        <span class="absolute bottom-0 left-0 h-[2px] bg-luxuryGold-400 transition-all duration-300"
+                              :class="currentPath.includes('/dining') ? 'w-full' : 'w-0 group-hover:w-full'"></span>
                     </a>
                     <a href="{% url 'homepage:zipline' %}" 
                        class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
-                       :class="currentPath.includes('/zipline') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
-                       {% if '/zipline' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase py-1"{% endif %}>
+                       :class="currentPath.includes('/zipline') ? (currentTheme === 'light' ? 'text-brand-primary' : 'text-brand-primaryLight') : 'hover:text-brand-primaryLight'">
                         <span>Zipline</span>
-                        <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
+                        <span class="absolute bottom-0 left-0 h-[2px] bg-luxuryGold-400 transition-all duration-300"
+                              :class="currentPath.includes('/zipline') ? 'w-full' : 'w-0 group-hover:w-full'"></span>
                     </a>
                     <a href="{% url 'homepage:sustainability' %}" 
                        class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
-                       :class="currentPath.includes('/sustainability') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
-                       {% if '/sustainability' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase py-1"{% endif %}>
+                       :class="currentPath.includes('/sustainability') ? (currentTheme === 'light' ? 'text-brand-primary' : 'text-brand-primaryLight') : 'hover:text-brand-primaryLight'">
                         <span>Sustainability</span>
-                        <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
+                        <span class="absolute bottom-0 left-0 h-[2px] bg-luxuryGold-400 transition-all duration-300"
+                              :class="currentPath.includes('/sustainability') ? 'w-full' : 'w-0 group-hover:w-full'"></span>
                     </a>
                     <a href="{% url 'gallery:gallery_list' %}" 
                        class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
-                       :class="currentPath.includes('/gallery') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
-                       {% if '/gallery' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase py-1"{% endif %}>
+                       :class="currentPath.includes('/gallery') ? (currentTheme === 'light' ? 'text-brand-primary' : 'text-brand-primaryLight') : 'hover:text-brand-primaryLight'">
                         <span>Gallery</span>
-                        <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
+                        <span class="absolute bottom-0 left-0 h-[2px] bg-luxuryGold-400 transition-all duration-300"
+                              :class="currentPath.includes('/gallery') ? 'w-full' : 'w-0 group-hover:w-full'"></span>
                     </a>
                     <a href="{% url 'contact:contact_page' %}" 
                        class="relative text-sm font-medium tracking-wide uppercase transition-colors duration-200 py-1 group"
-                       :class="currentPath.includes('/contact') ? (currentTheme === 'light' ? 'text-brand-primary font-bold border-b-2 border-brand-primary' : 'text-brand-primaryLight font-bold border-b-2 border-brand-primaryLight') : 'hover:text-brand-primaryLight'"
-                       {% if '/contact' in request.path %}class="text-brand-primary font-bold border-b-2 border-brand-primary text-sm tracking-wide uppercase py-1"{% endif %}>
+                       :class="currentPath.includes('/contact') ? (currentTheme === 'light' ? 'text-brand-primary' : 'text-brand-primaryLight') : 'hover:text-brand-primaryLight'">
                         <span>Contact</span>
-                        <span class="absolute bottom-0 left-0 w-0 h-[2px] bg-luxuryGold-400 transition-all duration-300 group-hover:w-full"></span>
+                        <span class="absolute bottom-0 left-0 h-[2px] bg-luxuryGold-400 transition-all duration-300"
+                              :class="currentPath.includes('/contact') ? 'w-full' : 'w-0 group-hover:w-full'"></span>
                     </a>
                 {% endfor %}
             </nav>
