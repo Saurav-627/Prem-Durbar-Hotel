@@ -14,17 +14,17 @@
              'bg-[#1A3A32] border-brand-primary/30 text-white': currentTheme !== 'light'
          }">
         <div class="flex items-center justify-between pb-4 border-b border-brand-primary/10">
-            <h3 class="font-luxury-title text-xl font-medium tracking-wide">Search Resort</h3>
+            <h3 class="font-luxury-title text-xl font-medium tracking-wide">{{ hotel_settings.search_modal_title|default:"Search Resort" }}</h3>
             <button @click="searchOpen = false" class="p-2 rounded-lg hover:bg-brand-primary/10">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
         <form action="{% url 'rooms:room_list' %}" method="GET" class="mt-6 flex gap-3">
-            <input type="text" name="category" placeholder="Search room categories, dining, amenities..." 
+            <input type="text" name="category" placeholder="{{ hotel_settings.search_modal_placeholder|default:'Search room categories, dining, amenities...' }}" 
                    class="flex-1 px-4 py-3 rounded-lg border focus:outline-none focus:ring-1 focus:ring-brand-primaryLight bg-transparent text-inherit"
                    :class="{ 'border-gray-300': currentTheme === 'light', 'border-brand-primary/40': currentTheme !== 'light' }">
             <button type="submit" class="btn-gold-gradient px-6 py-3 rounded-lg font-bold text-sm uppercase tracking-wider text-white shadow-md">
-                Search
+                {{ hotel_settings.search_modal_button_text|default:"Search" }}
             </button>
         </form>
     </div>

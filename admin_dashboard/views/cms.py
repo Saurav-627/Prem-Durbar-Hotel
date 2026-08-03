@@ -138,7 +138,8 @@ class AboutCMSUpdateView(StaffRequiredMixin, View):
             form.save()
             messages.success(request, "About page CMS content updated successfully.")
         else:
-            messages.error(request, "Error updating About page CMS content.")
+            err_msg = ", ".join([f"{k}: {v[0]}" for k, v in form.errors.items()])
+            messages.error(request, f"Error updating About page CMS content. Details: {err_msg}")
         return redirect(reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=about_cms")
 
 # Zipline Page CMS View
@@ -150,7 +151,8 @@ class ZiplineCMSUpdateView(StaffRequiredMixin, View):
             form.save()
             messages.success(request, "Zipline page CMS content & video preview updated successfully.")
         else:
-            messages.error(request, "Error updating Zipline page CMS content.")
+            err_msg = ", ".join([f"{k}: {v[0]}" for k, v in form.errors.items()])
+            messages.error(request, f"Error updating Zipline page CMS content. Details: {err_msg}")
         return redirect(reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=zipline_cms")
 
 # Sustainability Page CMS View
@@ -162,7 +164,8 @@ class SustainabilityCMSUpdateView(StaffRequiredMixin, View):
             form.save()
             messages.success(request, "Sustainability page CMS content updated successfully.")
         else:
-            messages.error(request, "Error updating Sustainability page CMS content.")
+            err_msg = ", ".join([f"{k}: {v[0]}" for k, v in form.errors.items()])
+            messages.error(request, f"Error updating Sustainability page CMS content. Details: {err_msg}")
         return redirect(reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=sustainability_cms")
 
 class SustainabilityPillarCreateView(StaffRequiredMixin, CreateView):

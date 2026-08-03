@@ -24,7 +24,6 @@ GLOBAL_MODEL_REGISTRY = {
     "about_cms": ("homepage", "AboutCMS", None, True),
     "team_members": ("homepage", "TeamMember", ["name"], False),
     "zipline_cms": ("homepage", "ZiplineCMS", None, True),
-    "zipline_packages": ("homepage", "ZiplinePackage", ["slug"], False),
     "sustainability_cms": ("homepage", "SustainabilityCMS", None, True),
     "sustainability_pillars": ("homepage", "SustainabilityPillar", ["title"], False),
 
@@ -38,6 +37,7 @@ GLOBAL_MODEL_REGISTRY = {
     # Other Apps
     "testimonials": ("testimonials", "Testimonial", ["guest_name", "source"], False),
     "branches": ("contact", "Branch", ["name"], False),
+    "contact_inquiry_categories": ("contact", "ContactInquiryCategory", ["slug"], False),
     "coupons": ("booking", "Coupon", ["code"], False),
 }
 
@@ -67,6 +67,7 @@ def post_process_item(key, obj, item):
             from payments.models.payment_processor import PaymentProcessorCurrency
             from settings_manager.models.currency import Currency
             for ccode in currencies_list:
+                # pyrefly: ignore [missing-attribute]
                 curr = Currency.objects.get_queryset().set_active_test(enabled=False).filter(iso_code=ccode).first()
                 if curr:
                     PaymentProcessorCurrency.objects.get_or_create(
@@ -138,6 +139,7 @@ class Command(BaseCommand):
 
         # -- 1. Ensure Superuser Admin
         if not User.objects.filter(username="admin").exists():
+            # pyrefly: ignore [missing-attribute]
             User.objects.create_superuser(
                 "admin", "info@premdurbar.com", "admin123",
                 phone="+01-5145351", is_hotel_admin=True, is_guest=False
@@ -221,6 +223,7 @@ class Command(BaseCommand):
                         elif model_name == "PaymentProcessor" and "code" in item:
                             existing = model._base_manager.filter(code=item["code"]).first()
                         else:
+                            # pyrefly: ignore [not-iterable]
                             lookup_kwargs = {field: item.get(field) for field in lookup_fields if item.get(field) is not None}
                             if not lookup_kwargs:
                                 continue
@@ -260,8 +263,9 @@ class Command(BaseCommand):
                 from rooms.models.room_policy import RoomPolicy
                 from settings_manager.models.currency import Currency
 
-                if do_update:
-                    Room.objects.all().delete()
+                count_created = 0
+                count_updated = 0
+                count_skipped = 0
 
                 for room_data in data.get("rooms", []):
                     slug = room_data.get("slug")
@@ -279,10 +283,20 @@ class Command(BaseCommand):
 
                     valid_room_fields = filter_model_fields(Room, room_data)
 
-                    room_obj, created = Room.objects.get_or_create(
-                        slug=slug,
-                        defaults=valid_room_fields
-                    )
+                    existing = Room.objects.filter(slug=slug).first()
+                    if existing:
+                        if do_update:
+                            for k, v in valid_room_fields.items():
+                                setattr(existing, k, v)
+                            existing.save()
+                            room_obj = existing
+                            count_updated += 1
+                        else:
+                            count_skipped += 1
+                            continue
+                    else:
+                        room_obj = Room.objects.create(slug=slug, **valid_room_fields)
+                        count_created += 1
 
                     for p_data in prices_data:
                         ccode = p_data.get("currency")
@@ -317,7 +331,11 @@ class Command(BaseCommand):
                             defaults={"description": pol.get("description")}
                         )
 
-                    self.stdout.write(self.style.SUCCESS(f"  - Processed room: {room_obj.title}"))
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"  - Processed Room: {count_created} created, {count_updated} updated, {count_skipped} skipped."
+                    )
+                )
 
             # -- 4. Dining Items with Category FK & Multi-Currency Base Prices
             if "dining_items" in data:
@@ -325,8 +343,9 @@ class Command(BaseCommand):
                 from settings_manager.models.currency import Currency
                 from django.utils.text import slugify
 
-                if do_update:
-                    DiningItem.objects.all().delete()
+                count_created = 0
+                count_updated = 0
+                count_skipped = 0
 
                 for item_data in data.get("dining_items", []):
                     cat_identifier = item_data.pop("category", None)
@@ -346,10 +365,20 @@ class Command(BaseCommand):
                     valid_fields = filter_model_fields(DiningItem, item_data)
                     valid_fields["category"] = cat_obj
 
-                    item_obj, created = DiningItem.objects.update_or_create(
-                        slug=slug,
-                        defaults=valid_fields
-                    )
+                    existing = DiningItem.objects.filter(slug=slug).first()
+                    if existing:
+                        if do_update:
+                            for k, v in valid_fields.items():
+                                setattr(existing, k, v)
+                            existing.save()
+                            item_obj = existing
+                            count_updated += 1
+                        else:
+                            count_skipped += 1
+                            continue
+                    else:
+                        item_obj = DiningItem.objects.create(slug=slug, **valid_fields)
+                        count_created += 1
 
                     for p_data in prices_data:
                         ccode = p_data.get("currency")
@@ -361,7 +390,11 @@ class Command(BaseCommand):
                                 defaults={'base_price': p_data.get("base_price")}
                             )
 
-                    self.stdout.write(self.style.SUCCESS(f"  - Processed dining item: {item_obj.title}"))
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"  - Processed DiningItem: {count_created} created, {count_updated} updated, {count_skipped} skipped."
+                    )
+                )
 
             # -- 5. Zipline Packages with Multi-Currency Base Prices
             if "zipline_packages" in data:
@@ -369,8 +402,9 @@ class Command(BaseCommand):
                 from settings_manager.models.currency import Currency
                 from django.utils.text import slugify
 
-                if do_update:
-                    ZiplinePackage.objects.all().delete()
+                count_created = 0
+                count_updated = 0
+                count_skipped = 0
 
                 for item_data in data.get("zipline_packages", []):
                     prices_data = item_data.pop("prices", [])
@@ -381,10 +415,20 @@ class Command(BaseCommand):
                     slug = item_data.get("slug") or slugify(name)
                     valid_fields = filter_model_fields(ZiplinePackage, item_data)
 
-                    pkg_obj, created = ZiplinePackage.objects.update_or_create(
-                        slug=slug,
-                        defaults=valid_fields
-                    )
+                    existing = ZiplinePackage.objects.filter(slug=slug).first()
+                    if existing:
+                        if do_update:
+                            for k, v in valid_fields.items():
+                                setattr(existing, k, v)
+                            existing.save()
+                            pkg_obj = existing
+                            count_updated += 1
+                        else:
+                            count_skipped += 1
+                            continue
+                    else:
+                        pkg_obj = ZiplinePackage.objects.create(slug=slug, **valid_fields)
+                        count_created += 1
 
                     for p_data in prices_data:
                         ccode = p_data.get("currency")
@@ -396,6 +440,10 @@ class Command(BaseCommand):
                                 defaults={'base_price': p_data.get("base_price")}
                             )
 
-                    self.stdout.write(self.style.SUCCESS(f"  - Processed zipline package: {pkg_obj.name}"))
+                self.stdout.write(
+                    self.style.SUCCESS(
+                        f"  - Processed ZiplinePackage: {count_created} created, {count_updated} updated, {count_skipped} skipped."
+                    )
+                )
 
         self.stdout.write(self.style.SUCCESS("\nAll data import tasks completed successfully!"))

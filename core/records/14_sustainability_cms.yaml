@@ -4,6 +4,10 @@ sustainability_cms:
   hero_description: Preserving Nagarkot’s natural pine beauty and supporting local mountain communities while providing luxurious guest comfort.
   intro_subtitle: Pillars of Action
   intro_title: Our Environmental & Community Commitments
+  callout_title: Have Questions About Our Eco Policies?
+  callout_desc: Get in touch with our Nagarkot team for corporate sustainability inquiries.
+  callout_btn_text: Contact Us
+
 
 sustainability_pillars:
 - icon_class: fa-solid fa-solar-panel

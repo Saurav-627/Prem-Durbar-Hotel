@@ -6,7 +6,8 @@ from django.contrib import messages
 from admin_dashboard.mixins import StaffRequiredMixin
 from contact.models.branch import Branch
 from contact.models.inquiry import ContactInquiry
-from admin_dashboard.forms import BranchForm
+from contact.models.category import ContactInquiryCategory
+from admin_dashboard.forms import BranchForm, ContactInquiryCategoryForm
 
 class ContactDashboardView(StaffRequiredMixin, View):
     def get(self, request):
@@ -14,11 +15,13 @@ class ContactDashboardView(StaffRequiredMixin, View):
         branches = Branch.objects.all()
         # pyrefly: ignore [missing-attribute]
         inquiries = ContactInquiry.objects.all()
+        categories = ContactInquiryCategory.objects.all()
         active_tab = request.GET.get('tab', 'branches')
         
         return render(request, 'admin_dashboard/contact/dashboard.html', {
             'branches': branches,
             'inquiries': inquiries,
+            'categories': categories,
             'active_tab': active_tab,
         })
 
@@ -47,6 +50,32 @@ class BranchDeleteView(StaffRequiredMixin, DeleteView):
     def get_success_url(self):
         messages.success(self.request, "Branch deleted successfully.")
         return reverse_lazy('admin_dashboard:contact_dashboard') + "?tab=branches"
+
+class ContactInquiryCategoryCreateView(StaffRequiredMixin, CreateView):
+    model = ContactInquiryCategory
+    form_class = ContactInquiryCategoryForm
+    template_name = 'admin_dashboard/generic_form.html'
+    
+    def get_success_url(self):
+        messages.success(self.request, "Inquiry category created successfully.")
+        return reverse_lazy('admin_dashboard:contact_dashboard') + "?tab=categories"
+
+class ContactInquiryCategoryUpdateView(StaffRequiredMixin, UpdateView):
+    model = ContactInquiryCategory
+    form_class = ContactInquiryCategoryForm
+    template_name = 'admin_dashboard/generic_form.html'
+    
+    def get_success_url(self):
+        messages.success(self.request, "Inquiry category updated successfully.")
+        return reverse_lazy('admin_dashboard:contact_dashboard') + "?tab=categories"
+
+class ContactInquiryCategoryDeleteView(StaffRequiredMixin, DeleteView):
+    model = ContactInquiryCategory
+    template_name = 'admin_dashboard/confirm_delete.html'
+    
+    def get_success_url(self):
+        messages.success(self.request, "Inquiry category deleted successfully.")
+        return reverse_lazy('admin_dashboard:contact_dashboard') + "?tab=categories"
 
 class ContactInquiryDetailView(StaffRequiredMixin, DetailView):
     model = ContactInquiry

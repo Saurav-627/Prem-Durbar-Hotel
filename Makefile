@@ -61,7 +61,7 @@ seed-update: ## Sync and update existing hotel data from modular YAML files in c
 
 import-data: seed-data ## Alias for seed-data
 
-seed-all: seed-update ## Alias for seed-update
+# seed-all: seed-update ## Alias for seed-update
 
 superuser: ## Create an administrative superuser (interactive)
 	$(PYTHON) manage.py createsuperuser

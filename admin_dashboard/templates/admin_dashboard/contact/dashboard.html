@@ -14,6 +14,10 @@
     <a href="{% url 'admin_dashboard:branch_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
         <i class="fa-solid fa-plus mr-1.5"></i> Add Branch
     </a>
+    {% elif active_tab == 'categories' %}
+    <a href="{% url 'admin_dashboard:category_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
+        <i class="fa-solid fa-plus mr-1.5"></i> Add Category Choice
+    </a>
     {% endif %}
 </div>
 {% endblock %}
@@ -24,6 +28,10 @@
     <a href="?tab=branches" 
        class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'branches' %}border-brand-primary text-brand-primary dark:text-brand-secondary{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
         Hotel Branches
+    </a>
+    <a href="?tab=categories" 
+       class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'categories' %}border-brand-primary text-brand-primary dark:text-brand-secondary{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
+        Inquiry Dropdown Categories
     </a>
     <a href="?tab=inquiries" 
        class="px-5 py-3 border-b-2 font-semibold text-sm transition-all duration-200 {% if active_tab == 'inquiries' %}border-luxuryGold-500 text-luxuryGold-500{% else %}border-transparent text-neutral-400 hover:text-neutral-200{% endif %}">
@@ -75,6 +83,54 @@
             No hotel branch locations created yet. Click "Add Branch" to initialize.
         </div>
         {% endfor %}
+    </div>
+
+    {% elif active_tab == 'categories' %}
+    <!-- Inquiry Categories List table -->
+    <div class="custom-card rounded-2xl overflow-hidden shadow-sm">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
+                    <th class="px-6 py-4 font-semibold">Category Name</th>
+                    <th class="px-6 py-4 font-semibold">URL Slug</th>
+                    <th class="px-6 py-4 font-semibold">Display Order</th>
+                    <th class="px-6 py-4 font-semibold">Status</th>
+                    <th class="px-6 py-4 text-right font-semibold">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-neutral-200 dark:divide-neutral-800 text-sm">
+                {% for cat in categories %}
+                <tr class="hover:bg-neutral-50/30 dark:hover:bg-neutral-900/10 transition duration-150">
+                    <td class="px-6 py-4 font-bold text-neutral-900 dark:text-neutral-200">{{ cat.name }}</td>
+                    <td class="px-6 py-4 font-mono text-xs text-brand-gold">{{ cat.slug }}</td>
+                    <td class="px-6 py-4 text-xs font-semibold">{{ cat.ordering }}</td>
+                    <td class="px-6 py-4 text-xs">
+                        {% if cat.is_active %}
+                        <span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-500 font-bold">Active</span>
+                        {% else %}
+                        <span class="px-2 py-0.5 rounded bg-rose-500/10 text-rose-500 font-bold">Disabled</span>
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex items-center justify-end gap-3 text-sm">
+                            <a href="{% url 'admin_dashboard:category_edit' cat.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="{% url 'admin_dashboard:category_delete' cat.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="px-6 py-12 text-center text-sm text-neutral-500">
+                        No contact inquiry category options added yet. Click "Add Category Choice" above to create one.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 
     {% elif active_tab == 'inquiries' %}

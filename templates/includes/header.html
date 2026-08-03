@@ -11,7 +11,11 @@
             <!-- Brand Logo -->
             <div class="flex-shrink-0">
                 <a href="{% url 'homepage:home' %}" class="flex items-center gap-3">
+                    {% if hotel_settings.logo %}
+                    <img src="{{ hotel_settings.logo.url }}" alt="{{ hotel_settings.site_name }}" class="h-20 w-auto object-contain transition-opacity duration-200 hover:opacity-90">
+                    {% else %}
                     <img src="{% static 'images/hotel-logo.png' %}" alt="{{ hotel_settings.site_name }}" class="h-20 w-auto object-contain transition-opacity duration-200 hover:opacity-90">
+                    {% endif %}
                 </a>
             </div>
 
@@ -182,9 +186,9 @@
                 </button>
 
                 <!-- Primary Booking CTA -->
-                <a href="{% url 'rooms:room_list' %}" 
+                <a href="{{ hotel_settings.header_cta_url|default:'/rooms/' }}" 
                    class="btn-gold-gradient px-6 py-2.5 text-xs font-bold uppercase tracking-widest text-white rounded-full shadow-md transition-all duration-200 hover:brightness-110">
-                    Book A Stay
+                    {{ hotel_settings.header_cta_text|default:"Book A Stay" }}
                 </a>
             </div>
 

@@ -126,8 +126,8 @@
 
 
             <div class="pt-6">
-                <a href="{% url 'rooms:room_list' %}" class="btn-gold-gradient block text-center w-full py-3 text-sm font-semibold uppercase tracking-wider rounded-lg text-white shadow-md">
-                    Book A Stay
+                <a href="{{ hotel_settings.mobile_menu_cta_url|default:'/rooms/' }}" class="btn-gold-gradient block text-center w-full py-3 text-sm font-semibold uppercase tracking-wider rounded-lg text-white shadow-md">
+                    {{ hotel_settings.mobile_menu_cta_text|default:"Book A Stay" }}
                 </a>
             </div>
         </div>

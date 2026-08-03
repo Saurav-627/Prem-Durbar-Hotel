@@ -53,13 +53,13 @@
         <!-- Callout Banner -->
         <div class="mt-8 sm:mt-16 p-5 sm:p-8 md:p-12 rounded-3xl bg-sunriseGradient text-brand-forestDark flex flex-col md:flex-row items-center justify-between gap-5 sm:gap-8 shadow-luxury animate__animated animate__fadeInUp">
             <div class="space-y-1.5 sm:space-y-2 text-center md:text-left">
-                <h3 class="font-heading text-lg sm:text-2xl md:text-3xl font-bold">Have Questions About Our Eco Policies?</h3>
-                <p class="text-xs sm:text-sm font-medium text-brand-forestDark/80">Get in touch with our Nagarkot team for corporate sustainability inquiries.</p>
+                <h3 class="font-heading text-lg sm:text-2xl md:text-3xl font-bold">{{ sustainability_cms.callout_title|default:"Have Questions About Our Eco Policies?" }}</h3>
+                <p class="text-xs sm:text-sm font-medium text-brand-forestDark/80">{{ sustainability_cms.callout_desc|default:"Get in touch with our Nagarkot team for corporate sustainability inquiries." }}</p>
             </div>
             <div class="w-full md:w-auto shrink-0">
                 <a href="{% url 'contact:contact_page' %}" 
                    class="btn-gold-gradient w-full md:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 sm:px-8 sm:py-4 text-brand-forestDark font-bold rounded-xl text-xs sm:text-sm transition transform hover:scale-105 shadow-glow text-center">
-                    <span>Contact Us</span>
+                    <span>{{ sustainability_cms.callout_btn_text|default:"Contact Us" }}</span>
                     <i class="fa-solid fa-arrow-right"></i>
                 </a>
             </div>

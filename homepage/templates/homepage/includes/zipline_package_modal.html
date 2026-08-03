@@ -260,9 +260,13 @@
                     <select name="slot_time" 
                             class="w-full px-3 py-2 rounded-xl border bg-transparent text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-luxuryGold-400"
                             :class="{ 'border-gray-300': currentTheme === 'light', 'border-amber-900/40 bg-[#122A22]': currentTheme !== 'light' }">
+                        {% for slot in zipline_cms.time_slots_list %}
+                        <option value="{{ slot }}" {% if forloop.counter == 2 %}selected{% endif %}>{{ slot }}</option>
+                        {% empty %}
                         <option value="Morning (09:00 AM - 12:00 PM)">Morning (09:00 AM - 12:00 PM)</option>
                         <option value="Afternoon (12:00 PM - 03:00 PM)" selected>Afternoon (12:00 PM - 03:00 PM)</option>
                         <option value="Sunset Flight (03:00 PM - 06:00 PM)">Sunset Flight (03:00 PM - 06:00 PM)</option>
+                        {% endfor %}
                     </select>
                 </div>
 
@@ -306,39 +310,39 @@
 
                 <!-- Waiver Document Title -->
                 <div class="text-center space-y-0.5 pt-0.5">
-                    <h5 class="font-bold text-xs sm:text-sm uppercase tracking-wider text-luxuryGold-400 font-luxury-title">WAIVER &amp; RELEASE OF LIABILITY FORM</h5>
-                    <p class="font-semibold text-[9px] sm:text-[10px] uppercase tracking-widest opacity-80">PARTICIPANT USER AGREEMENT</p>
+                    <h5 class="font-bold text-xs sm:text-sm uppercase tracking-wider text-luxuryGold-400 font-luxury-title">{{ zipline_cms.waiver_title|default:"WAIVER & RELEASE OF LIABILITY FORM" }}</h5>
+                    <p class="font-semibold text-[9px] sm:text-[10px] uppercase tracking-widest opacity-80">{{ zipline_cms.waiver_subtitle|default:"PARTICIPANT USER AGREEMENT" }}</p>
                     <p class="text-[10px] sm:text-[11px] italic text-amber-600 dark:text-amber-400">This waiver is a legal document. Please read carefully.</p>
                 </div>
 
                 <!-- Scrollable Legal Terms Box -->
                 <div class="max-h-36 sm:max-h-48 overflow-y-auto p-2.5 sm:p-3 rounded-xl border bg-black/20 text-[10px] sm:text-[11px] leading-relaxed space-y-2 custom-scrollbar text-justify opacity-90 border-luxuryGold-400/15">
-                    <p>In consideration of {{ hotel_settings.zipline_company_name }} furnishing services and/or equipment to enable me to participate in activities associated with or enter upon the lands of {{ hotel_settings.zipline_company_name }}., their agents, owners, associates and all other persons or entities acting in any capacity on their behalf (hereinafter collectively referred to as "Zip Line Tour"), I hereby voluntarily agree to release, discharge, hold harmless and covenant not to sue Zip Line Tour on behalf of myself, my children, my parents, my heirs, assigns, personal representatives and/or estate for any and all claims of liability arising out of negligence, recklessness, strict liability, breach of contract, intentional acts or any other act or omission which causes illness, injury, death or damage of any nature in any way connected with my participation in this activity.</p>
-
-                    <p class="font-semibold text-[10px] sm:text-[11px] uppercase tracking-wide opacity-100 text-luxuryGold-400">I fully understand and acknowledge that:</p>
-
-                    <ul class="space-y-1.5 sm:space-y-2 list-none pl-0">
-                        <li class="flex items-start gap-1.5 sm:gap-2">
-                            <span class="font-bold text-luxuryGold-400 shrink-0">A.</span>
-                            <span>Outdoor recreational activities such as zip lines, canopy tours, challenge courses, mountain hiking and exploring have inherent risks, dangers and hazards, and such risks may exist in my use of {{ hotel_settings.zipline_company_name }}. property and equipment.</span>
-                        </li>
-                        <li class="flex items-start gap-1.5 sm:gap-2">
-                            <span class="font-bold text-luxuryGold-400 shrink-0">B.</span>
-                            <span>My participation in such activities and/or use of such equipment may result in injury or illness including, but not limited to, body injury, strains, fractures, partial or total paralysis, death, exposure to insects and snake bites, extreme temperatures, slips and falls, encounters with animals, collisions, and remote area medical limitations.</span>
-                        </li>
-                        <li class="flex items-start gap-1.5 sm:gap-2">
-                            <span class="font-bold text-luxuryGold-400 shrink-0">C.</span>
-                            <span>These risks and dangers may be caused by negligence of the owners, employees, officers or agents of {{ hotel_settings.zipline_company_name }}., negligence of participants, accidents, breaches of contract, forces of nature, or other causes, whether foreseeable or unforeseeable.</span>
-                        </li>
-                        <li class="flex items-start gap-1.5 sm:gap-2">
-                            <span class="font-bold text-luxuryGold-400 shrink-0">D.</span>
-                            <span>By participating in these activities, I assume all risks and responsibility for any loss or damage whether caused in whole or in part by negligence or other conduct of {{ hotel_settings.zipline_company_name }}. I also grant permission to {{ hotel_settings.zipline_company_name }}. to use photographs or recordings for promotional purposes without compensation.</span>
-                        </li>
-                    </ul>
-
-                    <p>I have read the above and fully understand that by signing this document I am waiving legal rights and confirm that I choose to sign it freely and voluntarily in full knowledge of the risks.</p>
-
-                    <p>I certify that I have adequate insurance to cover any injury or damage that may occur while participating in Zip Line Tour activities or on {{ hotel_settings.zipline_company_name }}. property, or I agree to bear the costs myself.</p>
+                    {% if zipline_cms.waiver_text %}
+                        {{ zipline_cms.waiver_text|linebreaks }}
+                    {% else %}
+                        <p>In consideration of {{ hotel_settings.zipline_company_name }} furnishing services and/or equipment to enable me to participate in activities associated with or enter upon the lands of {{ hotel_settings.zipline_company_name }}., their agents, owners, associates and all other persons or entities acting in any capacity on their behalf (hereinafter collectively referred to as "Zip Line Tour"), I hereby voluntarily agree to release, discharge, hold harmless and covenant not to sue Zip Line Tour on behalf of myself, my children, my parents, my heirs, assigns, personal representatives and/or estate for any and all claims of liability arising out of negligence, recklessness, strict liability, breach of contract, intentional acts or any other act or omission which causes illness, injury, death or damage of any nature in any way connected with my participation in this activity.</p>
+                        <p class="font-semibold text-[10px] sm:text-[11px] uppercase tracking-wide opacity-100 text-luxuryGold-400">I fully understand and acknowledge that:</p>
+                        <ul class="space-y-1.5 sm:space-y-2 list-none pl-0">
+                            <li class="flex items-start gap-1.5 sm:gap-2">
+                                <span class="font-bold text-luxuryGold-400 shrink-0">A.</span>
+                                <span>Outdoor recreational activities such as zip lines, canopy tours, challenge courses, mountain hiking and exploring have inherent risks, dangers and hazards, and such risks may exist in my use of {{ hotel_settings.zipline_company_name }}. property and equipment.</span>
+                            </li>
+                            <li class="flex items-start gap-1.5 sm:gap-2">
+                                <span class="font-bold text-luxuryGold-400 shrink-0">B.</span>
+                                <span>My participation in such activities and/or use of such equipment may result in injury or illness including, but not limited to, body injury, strains, fractures, partial or total paralysis, death, exposure to insects and snake bites, extreme temperatures, slips and falls, encounters with animals, collisions, and remote area medical limitations.</span>
+                            </li>
+                            <li class="flex items-start gap-1.5 sm:gap-2">
+                                <span class="font-bold text-luxuryGold-400 shrink-0">C.</span>
+                                <span>These risks and dangers may be caused by negligence of the owners, employees, officers or agents of {{ hotel_settings.zipline_company_name }}., negligence of participants, accidents, breaches of contract, forces of nature, or other causes, whether foreseeable or unforeseeable.</span>
+                            </li>
+                            <li class="flex items-start gap-1.5 sm:gap-2">
+                                <span class="font-bold text-luxuryGold-400 shrink-0">D.</span>
+                                <span>By participating in these activities, I assume all risks and responsibility for any loss or damage whether caused in whole or in part by negligence or other conduct of {{ hotel_settings.zipline_company_name }}. I also grant permission to {{ hotel_settings.zipline_company_name }}. to use photographs or recordings for promotional purposes without compensation.</span>
+                            </li>
+                        </ul>
+                        <p>I have read the above and fully understand that by signing this document I am waiving legal rights and confirm that I choose to sign it freely and voluntarily in full knowledge of the risks.</p>
+                        <p>I certify that I have adequate insurance to cover any injury or damage that may occur while participating in Zip Line Tour activities or on {{ hotel_settings.zipline_company_name }}. property, or I agree to bear the costs myself.</p>
+                    {% endif %}
                 </div>
 
                 <!-- Mandatory Acceptance Checkbox -->

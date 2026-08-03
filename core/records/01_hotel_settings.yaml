@@ -10,6 +10,34 @@ hotel_settings:
   zipline_phone: +977-015145351, +977-9851160380
   about_text: Prem Durbar is a premier adventure and luxury hospitality destination in Nagarkot featuring Nepal's longest zipline, scenic Himalayan views, traditional Newari brick and wood craftsmanship, organic farm-to-table dining, and wellness retreats.
   copyright_text: '&copy; 2026 PREM DURBAR HOTEL. All Rights Reserved.'
+  header_cta_text: Book A Stay
+  header_cta_url: /rooms/
+  footer_awards_text: 'Powered by PocketSoft Pvt Ltd'
+  footer_credits_url: ''
+  footer_show_visa: true
+  footer_show_mastercard: true
+  footer_show_stripe: true
+  footer_show_esewa: true
+  footer_show_khalti: true
   facebook_url: https://www.facebook.com/premdurbarhotel/
   instagram_url: https://www.instagram.com/premdurbarhotel/
   twitter_url: https://x.com/premdurbarhotel
+  mobile_menu_cta_text: Book A Stay
+  mobile_menu_cta_url: /rooms/
+  search_modal_title: Search Resort
+  search_modal_placeholder: Search room categories, dining, amenities...
+  search_modal_button_text: Search
+  rooms_section_subtitle: Premium Sanctuary
+  rooms_section_title: Rooms & Suites
+  rooms_section_desc: Explore our signature guest chambers designed for ultimate relaxation and comfort.
+  facilities_section_subtitle: Elite Hospitality
+  facilities_section_title: Resort Services & Facilities
+  facilities_section_desc: Indulge in our carefully curated amenities, designed to elevate your stay to a world-class level.
+  testimonials_section_subtitle: Guest Memoirs
+  testimonials_section_title: What Our Guests Say
+  newsletter_section_subtitle: Newsletter Subscription
+  newsletter_section_title: Join The Elite Guild
+  newsletter_section_desc: Subscribe to receive exclusive offers, luxury travel logs, seasonal booking discounts, and resort news.
+  newsletter_btn_text: Subscribe
+
+

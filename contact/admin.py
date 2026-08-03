@@ -1,6 +1,14 @@
 from django.contrib import admin
 from .models.branch import Branch
 from .models.inquiry import ContactInquiry
+from .models.category import ContactInquiryCategory
+
+@admin.register(ContactInquiryCategory)
+class ContactInquiryCategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug', 'ordering', 'is_active')
+    list_editable = ('ordering', 'is_active')
+    prepopulated_fields = {'slug': ('name',)}
+    search_fields = ('name',)
 
 @admin.register(Branch)
 class BranchAdmin(admin.ModelAdmin):

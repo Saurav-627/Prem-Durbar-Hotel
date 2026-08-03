@@ -62,11 +62,11 @@
                 </ul>
             </div>
 
-            <!-- OTA Partners Column -->
+            <!-- OTA Links Column -->
             <div>
                 <h4 class="font-luxury-title text-sm sm:text-base font-semibold uppercase tracking-widest mb-3 sm:mb-6"
                     :class="{ 'text-amber-800': currentTheme === 'light', 'text-luxuryGold-300': currentTheme !== 'light' }">
-                    OTA Partners
+                    OTA Links
                 </h4>
                 <ul class="space-y-2.5 sm:space-y-3 text-sm sm:text-base">
                     {% for link in footer_ota_links %}
@@ -107,11 +107,21 @@
                 {{ hotel_settings.copyright_text|safe }}
             </div>
             <div class="flex flex-col sm:flex-row items-center gap-3 sm:gap-6">
-                <span>Awards: World Luxury Hotel Winner 2026</span>
+                {% if hotel_settings.footer_awards_text %}
+                    {% if hotel_settings.footer_credits_url %}
+                    <a href="{{ hotel_settings.footer_credits_url }}" target="_blank" rel="noopener noreferrer" class="hover:text-amber-600 dark:hover:text-luxuryGold-400 font-semibold underline underline-offset-4 transition-colors">
+                        {{ hotel_settings.footer_awards_text }}
+                    </a>
+                    {% else %}
+                    <span>{{ hotel_settings.footer_awards_text }}</span>
+                    {% endif %}
+                {% endif %}
                 <div class="flex items-center gap-3 text-lg sm:text-xl opacity-80">
-                    <i class="fa-brands fa-cc-visa"></i>
-                    <i class="fa-brands fa-cc-mastercard"></i>
-                    <i class="fa-brands fa-cc-stripe"></i>
+                    {% if hotel_settings.footer_show_visa %}<i class="fa-brands fa-cc-visa" title="Visa"></i>{% endif %}
+                    {% if hotel_settings.footer_show_mastercard %}<i class="fa-brands fa-cc-mastercard" title="Mastercard"></i>{% endif %}
+                    {% if hotel_settings.footer_show_stripe %}<i class="fa-brands fa-cc-stripe" title="Stripe"></i>{% endif %}
+                    {% if hotel_settings.footer_show_esewa %}<span class="text-xs font-bold text-emerald-500 uppercase px-1.5 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20" title="eSewa">eSewa</span>{% endif %}
+                    {% if hotel_settings.footer_show_khalti %}<span class="text-xs font-bold text-purple-400 uppercase px-1.5 py-0.5 rounded bg-purple-500/10 border border-purple-500/20" title="Khalti">Khalti</span>{% endif %}
                 </div>
             </div>
         </div>

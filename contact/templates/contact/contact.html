@@ -194,11 +194,15 @@
                         <label class="block text-[10px] font-semibold uppercase tracking-wider mb-1 sm:mb-1.5 opacity-80">Inquiry Category</label>
                         <select name="category" class="w-full px-3.5 py-2 sm:px-4 sm:py-3 rounded-lg border bg-transparent text-xs focus:outline-none focus:ring-1 focus:ring-brand-primaryLight transition-all"
                                 :class="{ 'border-gray-300 bg-white text-gray-900': currentTheme === 'light', 'border-amber-900/40 bg-[#1A3A32] text-white': currentTheme !== 'light' }">
+                            {% for cat in inquiry_categories %}
+                            <option value="{{ cat.slug }}">{{ cat.name }}</option>
+                            {% empty %}
                             <option value="general">General Inquiry</option>
                             <option value="booking">Room Booking</option>
                             <option value="dining">Fine Dining Table</option>
                             <option value="event">Meetings &amp; Events</option>
                             <option value="feedback">Guest Feedback</option>
+                            {% endfor %}
                         </select>
                     </div>
 

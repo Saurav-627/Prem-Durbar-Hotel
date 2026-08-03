@@ -29,6 +29,7 @@ class AboutCMS(models.Model):
 
     team_subtitle = models.CharField(max_length=150, default="Passionate Hospitality Professionals")
     team_title = models.CharField(max_length=200, default="Meet Our Executive Leadership")
+    team_description = models.TextField(default="Our passionate team ensures your stay in Nagarkot is comfortable, memorable, and safe—from your luxury room to your zipline flight.", help_text="Description under team section title")
 
     class Meta:
         verbose_name = "About Page Content CMS"

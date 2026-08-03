@@ -137,7 +137,7 @@
             <span class="text-xs font-semibold uppercase tracking-widest text-brand-gold">{{ about_cms.team_subtitle }}</span>
             <h2 class="font-heading text-2xl sm:text-4xl font-bold tracking-tight">{{ about_cms.team_title }}</h2>
             <p class="text-sm sm:text-base opacity-75 font-light">
-                Our passionate team ensures your stay in Nagarkot is comfortable, memorable, and safe—from your luxury room to your zipline flight.
+                {{ about_cms.team_description|default:"Our passionate team ensures your stay in Nagarkot is comfortable, memorable, and safe—from your luxury room to your zipline flight." }}
             </p>
         </div>
 

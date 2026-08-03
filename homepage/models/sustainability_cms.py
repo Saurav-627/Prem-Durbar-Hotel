@@ -10,6 +10,10 @@ class SustainabilityCMS(models.Model):
     intro_subtitle = models.CharField(max_length=150, default="Pillars of Action")
     intro_title = models.CharField(max_length=200, default="Our Environmental & Community Commitments")
 
+    callout_title = models.CharField(max_length=200, default="Have Questions About Our Eco Policies?")
+    callout_desc = models.TextField(default="Get in touch with our Nagarkot team for corporate sustainability inquiries.")
+    callout_btn_text = models.CharField(max_length=100, default="Contact Us")
+
     class Meta:
         verbose_name = "Sustainability Page Content CMS"
         verbose_name_plural = "Sustainability Page Content CMS"

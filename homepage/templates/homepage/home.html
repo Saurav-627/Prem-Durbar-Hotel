@@ -238,9 +238,9 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div class="text-center max-w-2xl mx-auto space-y-4 mb-10 sm:mb-16" data-animate="fadeInUp">
-            <span class="text-xs font-semibold tracking-widest uppercase text-brand-primaryLight">Premium Sanctuary</span>
-            <h2 class="font-luxury-title text-2xl sm:text-4xl lg:text-5xl font-bold">Rooms &amp; Suites</h2>
-            <p class="text-sm opacity-80">Explore our signature guest chambers designed for ultimate relaxation and comfort.</p>
+            <span class="text-xs font-semibold tracking-widest uppercase text-brand-primaryLight">{{ hotel_settings.rooms_section_subtitle|default:"Premium Sanctuary" }}</span>
+            <h2 class="font-luxury-title text-2xl sm:text-4xl lg:text-5xl font-bold">{{ hotel_settings.rooms_section_title|default:"Rooms & Suites" }}</h2>
+            <p class="text-sm opacity-80">{{ hotel_settings.rooms_section_desc|default:"Explore our signature guest chambers designed for ultimate relaxation and comfort." }}</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
@@ -309,9 +309,9 @@
 <!-- SIGNATURE HOTEL FACILITIES SECTION -->
 <section class="py-12 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="text-center max-w-2xl mx-auto space-y-4 mb-10 sm:mb-16" data-animate="fadeInUp">
-        <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-500">Elite Hospitality</span>
-        <h2 class="font-luxury-title text-2xl sm:text-4xl font-bold">Resort Services &amp; Facilities</h2>
-        <p class="text-sm opacity-80">Indulge in our carefully curated amenities, designed to elevate your stay to a world-class level.</p>
+        <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-500">{{ hotel_settings.facilities_section_subtitle|default:"Elite Hospitality" }}</span>
+        <h2 class="font-luxury-title text-2xl sm:text-4xl font-bold">{{ hotel_settings.facilities_section_title|default:"Resort Services & Facilities" }}</h2>
+        <p class="text-sm opacity-80">{{ hotel_settings.facilities_section_desc|default:"Indulge in our carefully curated amenities, designed to elevate your stay to a world-class level." }}</p>
     </div>
 
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-8">
@@ -430,8 +430,8 @@
     prev() { this.activeIndex = (this.activeIndex - 1 + this.itemsCount) % this.itemsCount }
 }" x-init="if (itemsCount > 1) setInterval(() => next(), 6000)">
     <div class="text-center max-w-2xl mx-auto space-y-4 mb-10 sm:mb-16" data-animate="fadeInUp">
-        <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-500">Guest Memoirs</span>
-        <h2 class="font-luxury-title text-2xl sm:text-4xl lg:text-5xl font-bold">What Our Guests Say</h2>
+        <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-500">{{ hotel_settings.testimonials_section_subtitle|default:"Guest Memoirs" }}</span>
+        <h2 class="font-luxury-title text-2xl sm:text-4xl lg:text-5xl font-bold">{{ hotel_settings.testimonials_section_title|default:"What Our Guests Say" }}</h2>
     </div>
 
     <!-- Review Slides -->
@@ -500,10 +500,10 @@
     <!-- Overlay -->
     <div class="absolute inset-0 bg-black/85"></div>
     <div class="relative max-w-4xl mx-auto px-4 space-y-6 z-10 text-white" data-animate="fadeInUp">
-        <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-300">Newsletter Subscription</span>
-        <h2 class="font-luxury-title text-2xl sm:text-4xl lg:text-5xl font-bold text-white">Join The Elite Guild</h2>
+        <span class="text-xs font-semibold tracking-widest uppercase text-luxuryGold-300">{{ hotel_settings.newsletter_section_subtitle|default:"Newsletter Subscription" }}</span>
+        <h2 class="font-luxury-title text-2xl sm:text-4xl lg:text-5xl font-bold text-white">{{ hotel_settings.newsletter_section_title|default:"Join The Elite Guild" }}</h2>
         <p class="text-sm text-white/80 max-w-xl mx-auto leading-relaxed">
-            Subscribe to receive exclusive offers, luxury travel logs, seasonal booking discounts, and resort news.
+            {{ hotel_settings.newsletter_section_desc|default:"Subscribe to receive exclusive offers, luxury travel logs, seasonal booking discounts, and resort news." }}
         </p>
         
         <form class="flex flex-col sm:flex-row gap-3 max-w-lg mx-auto pt-4 sm:pt-6" x-data="{ success: false }" @submit.prevent="success = true">
@@ -511,7 +511,7 @@
                    class="flex-grow px-4 py-3.5 rounded-full border border-white/20 bg-black/40 text-sm text-white focus:outline-none focus:ring-1 focus:ring-luxuryGold-400">
             <button type="submit" 
                     class="btn-gold-gradient px-8 py-3.5 rounded-full text-xs font-bold uppercase tracking-widest text-white shadow-md transition-all">
-                Subscribe
+                {{ hotel_settings.newsletter_btn_text|default:"Subscribe" }}
             </button>
         </form>
     </div>

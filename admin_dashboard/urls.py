@@ -67,6 +67,9 @@ urlpatterns = [
     path('contact/branch/add/', contact.BranchCreateView.as_view(), name='branch_create'),
     path('contact/branch/<int:pk>/edit/', contact.BranchUpdateView.as_view(), name='branch_edit'),
     path('contact/branch/<int:pk>/delete/', contact.BranchDeleteView.as_view(), name='branch_delete'),
+    path('contact/category/add/', contact.ContactInquiryCategoryCreateView.as_view(), name='category_create'),
+    path('contact/category/<int:pk>/edit/', contact.ContactInquiryCategoryUpdateView.as_view(), name='category_edit'),
+    path('contact/category/<int:pk>/delete/', contact.ContactInquiryCategoryDeleteView.as_view(), name='category_delete'),
     path('contact/inquiry/<int:pk>/', contact.ContactInquiryDetailView.as_view(), name='contact_inquiry_detail'),
     
     # CMS Content

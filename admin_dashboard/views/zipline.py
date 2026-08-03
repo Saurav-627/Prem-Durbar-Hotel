@@ -37,9 +37,16 @@ class ZiplineCMSUpdateView(StaffRequiredMixin, View):
         if form.is_valid():
             form.save()
             messages.success(request, "Zipline page CMS content & video preview updated successfully.")
+            return redirect(reverse_lazy('admin_dashboard:zipline_dashboard') + "?tab=cms")
         else:
-            messages.error(request, "Error updating Zipline page CMS content.")
-        return redirect(reverse_lazy('admin_dashboard:zipline_dashboard') + "?tab=cms")
+            err_msg = ", ".join([f"{k}: {v[0]}" for k, v in form.errors.items()])
+            messages.error(request, f"Error updating Zipline page CMS content. Details: {err_msg}")
+            zipline_packages = ZiplinePackage.objects.all().prefetch_related('base_prices__currency')
+            return render(request, 'admin_dashboard/zipline/dashboard.html', {
+                'zipline_cms_form': form,
+                'zipline_packages': zipline_packages,
+                'active_tab': 'cms',
+            })
 
 
 class ZiplinePackageCreateView(StaffRequiredMixin, View):

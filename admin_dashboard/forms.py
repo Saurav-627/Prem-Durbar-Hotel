@@ -22,6 +22,7 @@ from gallery.models.category import GalleryCategory
 from gallery.models.item import GalleryItem
 from contact.models.branch import Branch
 from contact.models.inquiry import ContactInquiry
+from contact.models.category import ContactInquiryCategory
 from testimonials.models.testimonial import Testimonial
 from seo.models.seo_data import SEOData
 from django.contrib.auth import get_user_model
@@ -119,11 +120,14 @@ class RoomBasePriceForm(TailwindFormMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['currency'].required = False
         self.fields['base_price'].required = False
+        # pyrefly: ignore [missing-attribute]
         self.fields['currency'].queryset = Currency.objects.filter(is_published=True)
 
     def clean(self):
         cleaned_data = super().clean()
+        # pyrefly: ignore [missing-attribute]
         currency = cleaned_data.get('currency')
+        # pyrefly: ignore [missing-attribute]
         base_price = cleaned_data.get('base_price')
 
         # If one is provided, both must be provided
@@ -230,6 +234,7 @@ class CouponMinSpendForm(TailwindFormMixin, forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # pyrefly: ignore [missing-attribute]
         self.fields['currency'].queryset = Currency.objects.filter(is_published=True).order_by('sequence', 'name')
         self.fields['currency'].required = False
         self.fields['min_spend'].required = False
@@ -245,7 +250,9 @@ class CouponMinSpendForm(TailwindFormMixin, forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
+        # pyrefly: ignore [missing-attribute]
         currency = cleaned_data.get('currency')
+        # pyrefly: ignore [missing-attribute]
         min_spend = cleaned_data.get('min_spend')
         if currency and min_spend is None:
             self.add_error('min_spend', 'Min spend is required when currency is selected.')
@@ -283,11 +290,14 @@ class DiningItemBasePriceForm(TailwindFormMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['currency'].required = False
         self.fields['base_price'].required = False
+        # pyrefly: ignore [missing-attribute]
         self.fields['currency'].queryset = Currency.objects.filter(is_published=True)
 
     def clean(self):
         cleaned_data = super().clean()
+        # pyrefly: ignore [missing-attribute]
         currency = cleaned_data.get('currency')
+        # pyrefly: ignore [missing-attribute]
         base_price = cleaned_data.get('base_price')
 
         if currency and base_price is None:
@@ -389,6 +399,7 @@ class PaymentProcessorForm(TailwindFormMixin, forms.ModelForm):
         else:
             original_save_m2m = self.save_m2m
             def new_save_m2m():
+                # pyrefly: ignore [bad-argument-type]
                 original_save_m2m()
                 self.save_currencies(processor)
             self.save_m2m = new_save_m2m
@@ -418,6 +429,10 @@ class ZiplineCMSForm(TailwindFormMixin, forms.ModelForm):
         fields = '__all__'
         widgets = {
             'video_file': forms.ClearableFileInput(attrs={'accept': 'video/*'}),
+            'available_time_slots': forms.Textarea(attrs={
+                'placeholder': "Morning (09:00 AM - 12:00 PM)\nAfternoon (12:00 PM - 03:00 PM)\nSunset Flight (03:00 PM - 06:00 PM)",
+                'rows': 4
+            }),
         }
 
 
@@ -456,11 +471,14 @@ class ZiplinePackageBasePriceForm(TailwindFormMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['currency'].required = False
         self.fields['base_price'].required = False
+        # pyrefly: ignore [missing-attribute]
         self.fields['currency'].queryset = Currency.objects.filter(is_published=True)
 
     def clean(self):
         cleaned_data = super().clean()
+        # pyrefly: ignore [missing-attribute]
         currency = cleaned_data.get('currency')
+        # pyrefly: ignore [missing-attribute]
         base_price = cleaned_data.get('base_price')
 
         if currency and base_price is None:
@@ -481,4 +499,11 @@ class ZiplinePackageBasePriceForm(TailwindFormMixin, forms.ModelForm):
         if not curr_val and not price_val:
             return False
         return super().has_changed()
+
+
+class ContactInquiryCategoryForm(TailwindFormMixin, forms.ModelForm):
+    class Meta:
+        model = ContactInquiryCategory
+        fields = '__all__'
+
 

@@ -1,0 +1,21 @@
+contact_inquiry_categories:
+  - name: General Inquiry
+    slug: general
+    ordering: 1
+    is_active: true
+  - name: Room Booking
+    slug: booking
+    ordering: 2
+    is_active: true
+  - name: Fine Dining Table
+    slug: dining
+    ordering: 3
+    is_active: true
+  - name: Meetings & Events
+    slug: event
+    ordering: 4
+    is_active: true
+  - name: Guest Feedback
+    slug: feedback
+    ordering: 5
+    is_active: true

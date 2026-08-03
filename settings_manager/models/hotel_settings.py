@@ -68,9 +68,47 @@ class HotelSettings(models.Model):
     youtube_url = models.URLField(blank=True, null=True)
     tripadvisor_url = models.URLField(blank=True, null=True)
 
-    # Footer details
+    # Header CTA & Banner Settings
+    header_cta_text = models.CharField(max_length=100, default="Book A Stay", help_text="Text shown on header CTA button")
+    header_cta_url = models.CharField(max_length=255, default="/rooms/", help_text="Link URL for header CTA button")
+
+    # Footer details & Payment Icons
     about_text = models.TextField(default="A premium 5-star experience of hospitality and luxury.")
     copyright_text = models.CharField(max_length=255, default="&copy; 2026 Prem Durbar. All Rights Reserved.")
+    footer_awards_text = models.CharField(max_length=255, default="Powered by PocketSoft Pvt Ltd", help_text="Footer credits badge text (e.g. Powered by PocketSoft Pvt Ltd)")
+    footer_credits_url = models.CharField(max_length=255, default="", blank=True, null=True, help_text="Link URL for footer credits badge (optional)")
+    
+    footer_show_visa = models.BooleanField(default=True, help_text="Display Visa logo in footer")
+    footer_show_mastercard = models.BooleanField(default=True, help_text="Display Mastercard logo in footer")
+    footer_show_stripe = models.BooleanField(default=True, help_text="Display Stripe logo in footer")
+    footer_show_esewa = models.BooleanField(default=True, help_text="Display eSewa logo in footer")
+    footer_show_khalti = models.BooleanField(default=True, help_text="Display Khalti logo in footer")
+
+    # Mobile Menu Drawer CTA Settings
+    mobile_menu_cta_text = models.CharField(max_length=100, default="Book A Stay", help_text="Text shown on mobile menu CTA button")
+    mobile_menu_cta_url = models.CharField(max_length=255, default="/rooms/", help_text="Link URL for mobile menu CTA button")
+
+    # Search Modal Overlay Strings
+    search_modal_title = models.CharField(max_length=150, default="Search Resort", help_text="Title shown in search overlay modal")
+    search_modal_placeholder = models.CharField(max_length=255, default="Search room categories, dining, amenities...", help_text="Placeholder text in search input")
+    search_modal_button_text = models.CharField(max_length=50, default="Search", help_text="Button text in search modal")
+
+    # Homepage Section Headings & Subtitles
+    rooms_section_subtitle = models.CharField(max_length=150, default="Premium Sanctuary")
+    rooms_section_title = models.CharField(max_length=150, default="Rooms & Suites")
+    rooms_section_desc = models.TextField(default="Explore our signature guest chambers designed for ultimate relaxation and comfort.")
+
+    facilities_section_subtitle = models.CharField(max_length=150, default="Elite Hospitality")
+    facilities_section_title = models.CharField(max_length=150, default="Resort Services & Facilities")
+    facilities_section_desc = models.TextField(default="Indulge in our carefully curated amenities, designed to elevate your stay to a world-class level.")
+
+    testimonials_section_subtitle = models.CharField(max_length=150, default="Guest Memoirs")
+    testimonials_section_title = models.CharField(max_length=150, default="What Our Guests Say")
+
+    newsletter_section_subtitle = models.CharField(max_length=150, default="Newsletter Subscription")
+    newsletter_section_title = models.CharField(max_length=150, default="Join The Elite Guild")
+    newsletter_section_desc = models.TextField(default="Subscribe to receive exclusive offers, luxury travel logs, seasonal booking discounts, and resort news.")
+    newsletter_btn_text = models.CharField(max_length=50, default="Subscribe")
 
     class Meta:
         verbose_name = "Hotel Global Settings"
