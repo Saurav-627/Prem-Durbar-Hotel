@@ -295,7 +295,8 @@ class Command(BaseCommand):
                             count_skipped += 1
                             continue
                     else:
-                        room_obj = Room.objects.create(slug=slug, **valid_room_fields)
+                        valid_room_fields["slug"] = slug
+                        room_obj = Room.objects.create(**valid_room_fields)
                         count_created += 1
 
                     for p_data in prices_data:
@@ -377,7 +378,8 @@ class Command(BaseCommand):
                             count_skipped += 1
                             continue
                     else:
-                        item_obj = DiningItem.objects.create(slug=slug, **valid_fields)
+                        valid_fields["slug"] = slug
+                        item_obj = DiningItem.objects.create(**valid_fields)
                         count_created += 1
 
                     for p_data in prices_data:
@@ -427,7 +429,8 @@ class Command(BaseCommand):
                             count_skipped += 1
                             continue
                     else:
-                        pkg_obj = ZiplinePackage.objects.create(slug=slug, **valid_fields)
+                        valid_fields["slug"] = slug
+                        pkg_obj = ZiplinePackage.objects.create(**valid_fields)
                         count_created += 1
 
                     for p_data in prices_data:
