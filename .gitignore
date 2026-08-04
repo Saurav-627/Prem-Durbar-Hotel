@@ -16,6 +16,7 @@ wheels/
 .env
 .env*
 .env.*
+!.env.example
 
 # Database backups
 backups/
