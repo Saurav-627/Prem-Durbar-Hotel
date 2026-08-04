@@ -178,12 +178,19 @@
                             <div class="pt-1.5 sm:pt-2 flex items-center justify-between border-t border-white/20">
                                 <div>
                                     <span class="text-[9px] sm:text-[10px] uppercase opacity-75 font-semibold block text-luxuryGold-400">Rate Per Person</span>
-                                    <strong class="text-base sm:text-lg lg:text-xl font-extrabold text-white font-luxury-title">
-                                        {{ pkg.currency.iso_code }} {{ pkg.final_price }}
-                                    </strong>
+                                    <div class="flex items-baseline gap-1.5 flex-wrap">
+                                        <strong class="text-base sm:text-lg lg:text-xl font-extrabold text-white font-luxury-title">
+                                            {{ pkg.currency.iso_code }} {{ pkg.final_price }}
+                                        </strong>
+                                        {% if pkg.discount_price %}
+                                        <span class="line-through text-xs text-white/60 font-semibold">
+                                            {{ pkg.currency.iso_code }} {{ pkg.base_price }}
+                                        </span>
+                                        {% endif %}
+                                    </div>
                                 </div>
                                 <button type="button" 
-                                        @click="openPackageModal({ id: {{ pkg.id }}, name: '{{ pkg.name|escapejs }}', duration: '{{ pkg.duration|escapejs }}', price: '{{ pkg.final_price }}', currency_code: '{{ pkg.currency.iso_code|escapejs }}' })"
+                                        @click="openPackageModal({ id: {{ pkg.id }}, name: '{{ pkg.name|escapejs }}', duration: '{{ pkg.duration|escapejs }}', price: '{{ pkg.final_price }}', base_price: '{% if pkg.discount_price %}{{ pkg.base_price }}{% endif %}', currency_code: '{{ pkg.currency.iso_code|escapejs }}' })"
                                         class="px-4 py-2 text-xs font-bold uppercase tracking-wider btn-gold-gradient rounded-xl text-neutral-950 cursor-pointer shadow-lg hover:scale-105 transition-all">
                                     Book Flight <i class="fa-solid fa-arrow-right ml-1 text-[10px]"></i>
                                 </button>

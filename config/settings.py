@@ -188,3 +188,8 @@ KHALTI_CLIENT_ID = env('KHALTI_CLIENT_ID', default='')
 KHALTI_CLIENT_SECRET = env('KHALTI_CLIENT_SECRET', default='test_secret_key_5c8e3381e3cb41ee84e03d36b42b9e67')
 KHALTI_DEMO = env.bool('KHALTI_DEMO', default=True)
 
+# Stripe Payment Config
+STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY', default='')
+STRIPE_PUBLISHABLE_KEY = env('STRIPE_PUBLISHABLE_KEY', default='')
+STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET', default='')
+

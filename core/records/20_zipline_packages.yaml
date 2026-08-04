@@ -12,8 +12,10 @@ zipline_packages:
     prices:
       - currency: USD
         base_price: 45.00
+        discount_price: 35.00
       - currency: NPR
         base_price: 4500.00
+        discount_price: 3500.00
 
   - name: Tandem Dual Zip Flight
     slug: tandem-dual-zip-flight
@@ -28,8 +30,10 @@ zipline_packages:
     prices:
       - currency: USD
         base_price: 75.00
+        discount_price: 65.00
       - currency: NPR
         base_price: 7500.00
+        discount_price: 6500.00
 
   - name: Classic Seated Harness Zip
     slug: classic-seated-harness-zip
@@ -44,5 +48,7 @@ zipline_packages:
     prices:
       - currency: USD
         base_price: 35.00
+        discount_price: 28.00
       - currency: NPR
         base_price: 3500.00
+        discount_price: 2800.00

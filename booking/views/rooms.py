@@ -75,14 +75,16 @@ def create_booking(request, room_id):
         return redirect('rooms:room_detail', slug=room.slug)
 
     nights = (check_out - check_in).days
-    daily_price = room.base_price
+    daily_price = room.final_price
     
     # Seasonal price override
     seasonal = (
+        # pyrefly: ignore [missing-attribute]
         room.seasonal_prices.filter(
             start_date__lte=check_out, end_date__gte=check_in, is_active=True,
             currency__iso_code=selected_currency
         ).order_by('-start_date').first()
+        # pyrefly: ignore [missing-attribute]
         or room.seasonal_prices.filter(
             start_date__lte=check_out, end_date__gte=check_in, is_active=True,
             currency__isnull=True
@@ -91,6 +93,7 @@ def create_booking(request, room_id):
     if seasonal:
         daily_price = seasonal.price_override
 
+    # pyrefly: ignore [unsupported-operation]
     subtotal = daily_price * nights * num_rooms
     
     # Process promo code
@@ -111,7 +114,10 @@ def create_booking(request, room_id):
 
     taxable_amount = subtotal - discount
     tax = Decimal('0.00')
-    total = taxable_amount
+    if room.tax_percentage:
+        tax_pct = Decimal(str(room.tax_percentage))
+        tax = (taxable_amount * (tax_pct / Decimal('100.00'))).quantize(Decimal('0.01'))
+    total = taxable_amount + tax
 
     booking = Booking.objects.create(
         booking_type='room',

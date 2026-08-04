@@ -13,8 +13,16 @@
             <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-emerald-900/20 text-emerald-400 flex items-center justify-center text-2xl sm:text-3xl mx-auto border border-emerald-900/30">
                 <i class="fa-solid fa-circle-check"></i>
             </div>
-            <h1 class="font-luxury-title text-2xl sm:text-3xl font-bold tracking-wide text-emerald-500">Reservation Confirmed</h1>
-            <p class="text-xs sm:text-sm opacity-75 leading-relaxed">Thank you! Your stay at {{ hotel_settings.site_name }} has been successfully booked.</p>
+            <h1 class="font-luxury-title text-2xl sm:text-3xl font-bold tracking-wide text-emerald-500">
+                {% if booking.booking_type == 'zipline' or booking.zipline_package %}Zipline Booking Confirmed{% else %}Reservation Confirmed{% endif %}
+            </h1>
+            <p class="text-xs sm:text-sm opacity-75 leading-relaxed">
+                {% if booking.booking_type == 'zipline' or booking.zipline_package %}
+                    Thank you! Your zipline adventure at {{ hotel_settings.site_name }} has been successfully booked.
+                {% else %}
+                    Thank you! Your stay at {{ hotel_settings.site_name }} has been successfully booked.
+                {% endif %}
+            </p>
         </div>
         {% elif payment.status == 'pending' %}
         <div class="space-y-2 sm:space-y-3">
@@ -22,7 +30,13 @@
                 <i class="fa-solid fa-circle-exclamation animate-pulse"></i>
             </div>
             <h1 class="font-luxury-title text-2xl sm:text-3xl font-bold tracking-wide text-luxuryGold-500">Payment Pending</h1>
-            <p class="text-xs sm:text-sm opacity-75 leading-relaxed">Your transaction is currently pending verification. The booking remains a draft until payment is complete.</p>
+            <p class="text-xs sm:text-sm opacity-75 leading-relaxed">
+                {% if booking.booking_type == 'zipline' or booking.zipline_package %}
+                    Your zipline transaction is currently pending verification. The booking remains a draft until payment is complete.
+                {% else %}
+                    Your transaction is currently pending verification. The booking remains a draft until payment is complete.
+                {% endif %}
+            </p>
         </div>
         {% else %}
         <div class="space-y-2 sm:space-y-3">
@@ -30,7 +44,13 @@
                 <i class="fa-solid fa-circle-xmark"></i>
             </div>
             <h1 class="font-luxury-title text-2xl sm:text-3xl font-bold tracking-wide text-red-500">Payment Failed</h1>
-            <p class="text-xs sm:text-sm opacity-75 leading-relaxed">We were unable to verify your payment. The booking remains a draft and the room has not been reserved.</p>
+            <p class="text-xs sm:text-sm opacity-75 leading-relaxed">
+                {% if booking.booking_type == 'zipline' or booking.zipline_package %}
+                    We were unable to verify your payment. The zipline booking remains a draft.
+                {% else %}
+                    We were unable to verify your payment. The booking remains a draft and the room has not been reserved.
+                {% endif %}
+            </p>
         </div>
         {% endif %}
 

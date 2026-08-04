@@ -368,15 +368,12 @@
                 <div class="border-b pb-4 mb-6 border-gray-200" :class="{ 'border-gray-200': currentTheme === 'light', 'border-amber-900/10': currentTheme !== 'light' }">
                     <span class="text-xs uppercase opacity-75 font-semibold text-gray-500">Starting from</span>
                     <h3 class="font-luxury-title text-2xl font-extrabold mt-1" :class="{ 'text-luxuryGold-800': currentTheme === 'light', 'text-amber-250': currentTheme !== 'light' }">
-                        <span>{{ room.currency.iso_code }} {{ room.current_price }}</span>
-                        {% if room.base_price != room.current_price %}
-                        <span class="line-through text-sm opacity-40 ml-1">{{ room.currency.iso_code }} {{ room.base_price }}</span>
+                        <span>{{ room.currency.iso_code }} {{ room.final_price }}</span>
+                        {% if room.discount_price %}
+                        <span class="line-through text-sm opacity-40 ml-1.5">{{ room.currency.iso_code }} {{ room.base_price }}</span>
                         {% endif %}
                         <span class="text-sm font-normal opacity-75">/night</span>
                     </h3>
-                    {% if room.discount_price %}
-                    <p class="text-xs line-through opacity-50 mt-1">Was <span>{{ room.currency.iso_code }} {{ room.discount_price }}</span></p>
-                    {% endif %}
                     {% if room.active_seasonal %}
                     <div class="mt-3 px-3 py-2 rounded-lg bg-green-500/10 border border-green-500/20 text-xs">
                         <p class="font-bold text-green-600">🏷 {{ room.active_seasonal.name }}</p>
@@ -384,7 +381,7 @@
                     </div>
                     {% endif %}
                     {% if room.tax_percentage %}
-                    <p class="text-[10px] opacity-75 mt-2">Prices include {{ room.tax_percentage }}% Local Taxes &amp; VAT</p>
+                    <p class="text-[10px] opacity-75 mt-2">Prices will include {{ room.tax_percentage }}% Local Taxes &amp; VAT</p>
                     {% endif %}
 
                     <!-- Live Price Summary Widget in Sidebar -->

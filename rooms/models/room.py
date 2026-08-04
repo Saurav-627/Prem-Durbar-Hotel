@@ -11,7 +11,7 @@ class Room(models.Model):
         help_text="Room category (managed in admin under Room Categories)"
     )
     description = models.TextField()
-    highlights = models.TextField(help_text="Comma-separated or line-separated list of room highlights")
+    highlights = models.TextField(blank=True, null=True, help_text="Optional comma-separated or line-separated list of room highlights")
     tax_percentage = models.DecimalField(max_digits=5, decimal_places=2, blank=True, null=True, default=None, help_text="Optional tax percentage for this room listing")
     room_size = models.IntegerField(help_text="Size in sq. ft. or sq. meters")
     max_adults = models.IntegerField(default=2)
@@ -35,6 +35,7 @@ class Room(models.Model):
             matches = [p for p in self.active_currency_price if p.currency.iso_code == currency_code]
             self._active_price = matches[0] if matches else None
         else:
+            # pyrefly: ignore [missing-attribute]
             self._active_price = self.base_prices.filter(currency__iso_code=currency_code).first()
 
     @property
@@ -42,22 +43,26 @@ class Room(models.Model):
         active_price = getattr(self, '_active_price', None)
         if active_price:
             return active_price.base_price
+        # pyrefly: ignore [missing-attribute]
         first_price = self.base_prices.first()
         return first_price.base_price if first_price else None
 
     @property
     def discount_price(self):
         active_price = getattr(self, '_active_price', None)
-        if active_price:
-            return active_price.discount_price
-        first_price = self.base_prices.first()
-        return first_price.discount_price if first_price else None
+        # pyrefly: ignore [missing-attribute]
+        price_obj = active_price or self.base_prices.first()
+        if price_obj and price_obj.discount_price and price_obj.base_price:
+            if price_obj.discount_price < price_obj.base_price:
+                return price_obj.discount_price
+        return None
 
     @property
     def currency(self):
         active_price = getattr(self, '_active_price', None)
         if active_price:
             return active_price.currency
+        # pyrefly: ignore [missing-attribute]
         first_price = self.base_prices.first()
         return first_price.currency if first_price else None
 
@@ -79,6 +84,7 @@ class Room(models.Model):
         active_currency_code = getattr(self, '_active_currency_code', None)
         seasonal_qs = getattr(self, '_prefetched_objects_cache', {}).get('seasonal_prices', None)
         if seasonal_qs is None:
+            # pyrefly: ignore [missing-attribute]
             seasonal_qs = list(self.seasonal_prices.filter(is_active=True).select_related('currency'))
         for sp in seasonal_qs:
             if sp.start_date <= today <= sp.end_date and sp.is_active:
@@ -88,12 +94,14 @@ class Room(models.Model):
 
     @property
     def current_price(self):
-        """Return today's effective price: seasonal override or base_price."""
-        sp = self.active_seasonal
-        return sp.price_override if sp else self.base_price
+        """Return today's effective price: seasonal override, discount_price, or base_price."""
+        return self.final_price
 
     @property
     def final_price(self):
+        sp = self.active_seasonal
+        if sp:
+            return sp.price_override
         if self.discount_price:
             return self.discount_price
         return self.base_price
@@ -102,6 +110,7 @@ class Room(models.Model):
     def price_with_tax(self):
         price = self.final_price
         tax_pct = self.tax_percentage or 0
+        # pyrefly: ignore [unsupported-operation]
         return price + (price * (tax_pct / 100))
 
     @property
@@ -119,6 +128,7 @@ class Room(models.Model):
     @property
     def added_base_prices(self):
         """Returns only base prices greater than 0."""
+        # pyrefly: ignore [missing-attribute]
         return [p for p in self.base_prices.all() if p.base_price and p.base_price > 0]
 
 

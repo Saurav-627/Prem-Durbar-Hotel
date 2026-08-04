@@ -43,6 +43,15 @@ run: ## Start the local development server (accessible from other devices)
 shell: ## Open a Django shell with models and database access
 	$(PYTHON) manage.py shell
 
+stripe-listen: ## Forward local Stripe webhooks to your Django server using Stripe CLI
+	@STRIPE_KEY=$$(grep -E '^STRIPE_SECRET_KEY=' .env-local .env 2>/dev/null | cut -d '=' -f2 | tr -d '"' | tr -d "'" | head -n1); \
+	if [ -n "$$STRIPE_KEY" ]; then \
+		echo "Starting Stripe listener using key from environment..."; \
+		stripe listen --api-key "$$STRIPE_KEY" --forward-to 127.0.0.1:8000/payments/webhook/stripe/; \
+	else \
+		stripe listen --forward-to 127.0.0.1:8000/payments/webhook/stripe/; \
+	fi
+
 collectstatic: ## Collect static files into staticfiles directory
 	$(PYTHON) manage.py collectstatic --noinput --clear
 

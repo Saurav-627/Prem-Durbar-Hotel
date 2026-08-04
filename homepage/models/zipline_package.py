@@ -51,6 +51,7 @@ class ZiplinePackage(models.Model):
             matches = [p for p in self.active_currency_price if p.currency.iso_code == currency_code]
             self._active_price = matches[0] if matches else None
         else:
+            # pyrefly: ignore [missing-attribute]
             self._active_price = self.base_prices.filter(currency__iso_code=currency_code).first()
 
     @property
@@ -58,29 +59,34 @@ class ZiplinePackage(models.Model):
         active_price = getattr(self, '_active_price', None)
         if active_price and active_price.base_price:
             return active_price.base_price
+        # pyrefly: ignore [missing-attribute]
         first_price = self.base_prices.first()
         return first_price.base_price if first_price else None
 
     @property
     def discount_price(self):
         active_price = getattr(self, '_active_price', None)
-        if active_price and active_price.discount_price:
-            return active_price.discount_price
-        first_price = self.base_prices.first()
-        return first_price.discount_price if first_price else None
+        # pyrefly: ignore [missing-attribute]
+        price_obj = active_price or self.base_prices.first()
+        if price_obj and price_obj.discount_price and price_obj.base_price:
+            if price_obj.discount_price < price_obj.base_price:
+                return price_obj.discount_price
+        return None
 
     @property
     def currency(self):
         active_price = getattr(self, '_active_price', None)
         if active_price and active_price.currency:
             return active_price.currency
+        # pyrefly: ignore [missing-attribute]
         first_price = self.base_prices.first()
         return first_price.currency if first_price else None
 
     @property
     def final_price(self):
-        if self.discount_price:
-            return self.discount_price
+        disc = self.discount_price
+        if disc is not None:
+            return disc
         return self.base_price or 0
 
     @property
@@ -94,6 +100,7 @@ class ZiplinePackage(models.Model):
     @property
     def added_base_prices(self):
         """Returns base prices greater than 0."""
+        # pyrefly: ignore [missing-attribute]
         return [p for p in self.base_prices.all() if p.base_price and p.base_price > 0]
 
 
@@ -109,8 +116,8 @@ class ZiplinePackageBasePrice(models.Model):
         on_delete=models.PROTECT,
         related_name='zipline_package_base_prices'
     )
-    base_price = models.DecimalField(max_digits=10, decimal_places=2)
-    discount_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    base_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Base Price (Regular Rate)")
+    discount_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, verbose_name="Discounted Price (Sale Price) (Optional)", help_text="Optional offer price (must be less than Base Price)")
 
     class Meta:
         unique_together = ('package', 'currency')

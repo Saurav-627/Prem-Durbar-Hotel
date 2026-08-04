@@ -71,12 +71,19 @@
                     <div class="p-4 sm:p-6 pt-0 border-t border-brand-gold/10 flex items-center justify-between gap-3 sm:gap-4 mt-2 sm:mt-4">
                         <div>
                             <span class="text-[9px] sm:text-[10px] uppercase font-bold opacity-60 block">Price Per Person</span>
-                            <span class="text-lg sm:text-2xl font-extrabold text-brand-gold font-luxury-title whitespace-nowrap">
-                                {{ pkg.currency.iso_code }} {{ pkg.final_price }}
-                            </span>
+                            <div class="flex items-baseline gap-1.5 flex-wrap">
+                                <span class="text-lg sm:text-2xl font-extrabold text-brand-gold font-luxury-title whitespace-nowrap">
+                                    {{ pkg.currency.iso_code }} {{ pkg.final_price }}
+                                </span>
+                                {% if pkg.discount_price %}
+                                <span class="line-through text-xs sm:text-sm font-semibold opacity-50 text-gray-400 whitespace-nowrap">
+                                    {{ pkg.currency.iso_code }} {{ pkg.base_price }}
+                                </span>
+                                {% endif %}
+                            </div>
                         </div>
                         <button type="button" 
-                                @click="openPackageModal({ id: {{ pkg.id }}, name: '{{ pkg.name|escapejs }}', duration: '{{ pkg.duration|escapejs }}', price: '{{ pkg.final_price }}', currency_code: '{{ pkg.currency.iso_code|escapejs }}' })"
+                                @click="openPackageModal({ id: {{ pkg.id }}, name: '{{ pkg.name|escapejs }}', duration: '{{ pkg.duration|escapejs }}', price: '{{ pkg.final_price }}', base_price: '{% if pkg.discount_price %}{{ pkg.base_price }}{% endif %}', currency_code: '{{ pkg.currency.iso_code|escapejs }}' })"
                                 class="btn-gold-gradient px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl text-xs font-bold uppercase tracking-wider text-brand-forestDark shadow-md hover:scale-105 duration-300 cursor-pointer text-center whitespace-nowrap">
                             Book Package
                         </button>
@@ -153,12 +160,19 @@
                 <div class="p-4 sm:p-6 pt-0 border-t border-brand-gold/10 flex items-center justify-between gap-3 sm:gap-4 mt-2 sm:mt-4">
                     <div>
                         <span class="text-[9px] sm:text-[10px] uppercase font-bold opacity-60 block">Price Per Person</span>
-                        <span class="text-lg sm:text-2xl font-extrabold text-brand-gold font-luxury-title whitespace-nowrap">
-                            {{ pkg.currency.iso_code }} {{ pkg.final_price }}
-                        </span>
+                        <div class="flex items-baseline gap-1.5 flex-wrap">
+                            <span class="text-lg sm:text-2xl font-extrabold text-brand-gold font-luxury-title whitespace-nowrap">
+                                {{ pkg.currency.iso_code }} {{ pkg.final_price }}
+                            </span>
+                            {% if pkg.discount_price %}
+                            <span class="line-through text-xs sm:text-sm font-semibold opacity-50 text-gray-400 whitespace-nowrap">
+                                {{ pkg.currency.iso_code }} {{ pkg.base_price }}
+                            </span>
+                            {% endif %}
+                        </div>
                     </div>
                     <button type="button" 
-                            @click="openPackageModal({ id: {{ pkg.id }}, name: '{{ pkg.name|escapejs }}', duration: '{{ pkg.duration|escapejs }}', price: '{{ pkg.final_price }}', currency_code: '{{ pkg.currency.iso_code|escapejs }}' })"
+                            @click="openPackageModal({ id: {{ pkg.id }}, name: '{{ pkg.name|escapejs }}', duration: '{{ pkg.duration|escapejs }}', price: '{{ pkg.final_price }}', base_price: '{% if pkg.discount_price %}{{ pkg.base_price }}{% endif %}', currency_code: '{{ pkg.currency.iso_code|escapejs }}' })"
                             class="btn-gold-gradient px-4 py-2.5 sm:px-6 sm:py-3 rounded-xl text-xs font-bold uppercase tracking-wider text-brand-forestDark shadow-md hover:scale-105 duration-300 cursor-pointer text-center whitespace-nowrap">
                         Book Package
                     </button>

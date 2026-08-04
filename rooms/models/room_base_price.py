@@ -12,8 +12,8 @@ class RoomBasePrice(models.Model):
         on_delete=models.PROTECT,
         related_name='room_base_prices'
     )
-    base_price = models.DecimalField(max_digits=10, decimal_places=2)
-    discount_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    base_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Base Price (Regular Rate)")
+    discount_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True, verbose_name="Discounted Price (Sale Price) (Optional)", help_text="Optional offer price (must be less than Base Price)")
 
     class Meta:
         unique_together = ('room', 'currency')

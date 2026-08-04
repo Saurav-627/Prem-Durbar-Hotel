@@ -14,6 +14,8 @@ wheels/
 
 # Environment files
 .env
+.env*
+.env.*
 
 # Database backups
 backups/

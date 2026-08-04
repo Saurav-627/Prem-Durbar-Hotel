@@ -440,7 +440,10 @@ class Command(BaseCommand):
                             ZiplinePackageBasePrice.objects.update_or_create(
                                 package=pkg_obj,
                                 currency=c_obj,
-                                defaults={'base_price': p_data.get("base_price")}
+                                defaults={
+                                    'base_price': p_data.get("base_price"),
+                                    'discount_price': p_data.get("discount_price")
+                                }
                             )
 
                 self.stdout.write(

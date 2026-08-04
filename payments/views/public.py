@@ -1,7 +1,10 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db import transaction
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
+from django.conf import settings
 from booking.models.booking import Booking
 from ..models.payment import Payment
 from ..services import get_processor_by_gateway_name
@@ -9,6 +12,7 @@ from ..services.base_payment import PaymentValidationResult
 import uuid
 import json
 import logging
+import stripe
 
 logger = logging.getLogger(__name__)
 
@@ -65,18 +69,38 @@ def process_payment(request, booking_uid, gateway):
         status='pending'
     )
 
-
     if gateway == 'stripe':
-        # Keep simulated fallback for stripe
-        context = {
-            'booking': booking,
-            'gateway': gateway,
-            'payment': payment,
-            'api_url': reverse('payments:payment_callback', args=[payment.id]),
-            'form_method': 'GET',
-            'form_data': {}
-        }
-        return render(request, 'payments/process.html', context)
+        try:
+            processor = get_processor_by_gateway_name('stripe')
+            return_url = request.build_absolute_uri(reverse('payments:payment_callback', args=[payment.id]))
+            item_name = booking.room.title if booking.room else (booking.zipline_package.name if booking.zipline_package else "Resort Booking")
+            
+            result = processor.initiate_payment(
+                total_amount=float(booking.total),
+                transaction_id=transaction_id,
+                return_url=return_url,
+                cancel_url=request.build_absolute_uri(reverse('booking:checkout_page', args=[booking.booking_uid])),
+                currency=booking.currency_code.lower(),
+                display_name=f"Booking for {item_name}",
+                customer_info={
+                    'name': booking.guest_name,
+                    'email': booking.guest_email,
+                    'phone': booking.guest_phone,
+                },
+                booking_uid=booking.booking_uid,
+                payment_id=payment.id
+            )
+            
+            payment.gateway_response = json.dumps(result)
+            payment.save(update_fields=['gateway_response'])
+
+            return redirect(result['api_url'])
+        except Exception as e:
+            payment.status = 'failed'
+            payment.gateway_response = str(e)
+            payment.save()
+            logger.error(f"Stripe payment initiation failed for booking {booking_uid}: {e}")
+            return HttpResponse(f"Stripe payment initiation failed: {e}")
 
     try:
         processor = get_processor_by_gateway_name(gateway)
@@ -88,13 +112,16 @@ def process_payment(request, booking_uid, gateway):
 
         if gateway == 'khalti':
             item_name = booking.room.title if booking.room else (booking.zipline_package.name if booking.zipline_package else "Booking")
+            # pyrefly: ignore [bad-assignment]
             kwargs['display_name'] = f"Booking for {item_name}"
+            # pyrefly: ignore [bad-assignment]
             kwargs['customer_info'] = {
                 'name': booking.guest_name,
                 'email': booking.guest_email,
                 'phone': booking.guest_phone,
             }
             from ..services.utils import to_minor_units
+            # pyrefly: ignore [bad-assignment]
             kwargs['product_items'] = [{
                 'identity': str(booking.room.id if booking.room else (booking.zipline_package.id if booking.zipline_package else 1)),
                 'name': item_name,
@@ -145,28 +172,43 @@ def payment_callback(request, payment_id):
     gateway = payment.gateway
 
     if gateway == 'stripe':
-        # Keep simulated success for stripe
-        with transaction.atomic():
-            if booking.room_id:
-                from rooms.models.room import Room
-                Room.objects.select_for_update().get(pk=booking.room_id)
+        session_id = request.GET.get('session_id')
+        if session_id:
+            try:
+                processor = get_processor_by_gateway_name('stripe')
+                validation_result = processor.validate_payment(
+                    total_amount=float(payment.amount),
+                    # pyrefly: ignore [bad-argument-type]
+                    transaction_id=payment.transaction_id,
+                    session_id=session_id
+                )
+                if validation_result.status == PaymentValidationResult.Status.SUCCESS:
+                    with transaction.atomic():
+                        if booking.room_id:
+                            from rooms.models.room import Room
+                            Room.objects.select_for_update().get(pk=booking.room_id)
 
-            if not booking.has_room_availability():
-                payment.status = 'failed'
-                payment.gateway_response = 'Room inventory changed before confirmation.'
-                payment.save(update_fields=['status', 'gateway_response'])
-                booking.status = 'draft'
-                booking.save(update_fields=['status'])
-
-                message = 'Payment could not be confirmed because the room is no longer available. The booking remains a draft.'
-                return render(request, 'payments/success.html', {'booking': booking, 'payment': payment, 'message': message})
-
-            payment.status = 'success'
-            payment.save(update_fields=['status'])
-            booking.status = 'confirmed'
-            booking.save(update_fields=['status'])
-
-        message = f"Payment of {booking.currency_code} {payment.amount} successful via Stripe!"
+                        if booking.has_room_availability():
+                            payment.status = 'success'
+                            payment.gateway_response = json.dumps(validation_result.details or {})
+                            payment.save(update_fields=['status', 'gateway_response'])
+                            booking.status = 'confirmed'
+                            booking.save(update_fields=['status'])
+                            message = f"Payment of {booking.currency_code} {payment.amount} successful via STRIPE!"
+                        else:
+                            payment.status = 'failed'
+                            payment.gateway_response = 'Room inventory changed before confirmation.'
+                            payment.save(update_fields=['status', 'gateway_response'])
+                            message = "Payment succeeded, but the room is no longer available. The booking remains a draft."
+                else:
+                    payment.status = 'failed'
+                    payment.save(update_fields=['status'])
+                    message = f"Stripe payment failed: {validation_result.message}"
+            except Exception as e:
+                logger.error(f"Stripe validation exception: {e}")
+                message = f"Stripe validation error: {e}"
+        else:
+            message = "Stripe session reference missing."
         return render(request, 'payments/success.html', {'booking': booking, 'payment': payment, 'message': message})
 
     try:
@@ -184,6 +226,7 @@ def payment_callback(request, payment_id):
 
         validation_result = processor.validate_payment(
             total_amount=float(payment.amount),
+            # pyrefly: ignore [bad-argument-type]
             transaction_id=transaction_id
         )
 
@@ -266,4 +309,103 @@ def view_invoice(request, booking_uid):
         'print_date': timezone.now(),
     }
     return render(request, 'admin_dashboard/bookings/invoice.html', context)
+
+
+@csrf_exempt
+@require_POST
+def stripe_webhook(request):
+    """
+    Handles Stripe webhooks (checkout.session.completed, payment_intent.succeeded, payment_intent.payment_failed).
+    Verifies signature if STRIPE_WEBHOOK_SECRET is set in environment.
+    """
+    payload = request.body
+    sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
+    webhook_secret = getattr(settings, 'STRIPE_WEBHOOK_SECRET', '')
+
+    event = None
+    if webhook_secret and sig_header:
+        try:
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, webhook_secret
+            )
+        except ValueError as e:
+            logger.error(f"Invalid Stripe webhook payload: {e}")
+            return HttpResponse("Invalid payload", status=400)
+        except stripe.error.SignatureVerificationError as e:
+            logger.error(f"Invalid Stripe webhook signature: {e}")
+            return HttpResponse("Invalid signature", status=400)
+    else:
+        try:
+            event_dict = json.loads(payload.decode('utf-8'))
+            event = stripe.Event.construct_from(event_dict, stripe.api_key)
+        except Exception as e:
+            logger.error(f"Error parsing Stripe webhook JSON payload: {e}")
+            return HttpResponse("Invalid JSON", status=400)
+
+    try:
+        # pyrefly: ignore [missing-attribute]
+        event_type = event.type if hasattr(event, 'type') else event.get('type')
+        # pyrefly: ignore [missing-attribute]
+        event_data = event.data if hasattr(event, 'data') else event.get('data')
+
+        logger.info(f"Received Stripe Webhook event: {event_type}")
+
+        if event_type == 'checkout.session.completed':
+            session = event_data.object if hasattr(event_data, 'object') else (event_data.get('object', {}) if isinstance(event_data, dict) else {})
+            session_dict = session.to_dict() if hasattr(session, 'to_dict') else (dict(session) if isinstance(session, dict) else {})
+            metadata = session_dict.get('metadata') or {}
+            
+            booking_uid = metadata.get('booking_uid')
+            payment_id = metadata.get('payment_id')
+            transaction_id = session_dict.get('client_reference_id') or metadata.get('transaction_id')
+
+            payment = None
+            if payment_id and str(payment_id).isdigit():
+                payment = Payment.objects.filter(id=int(payment_id)).first()
+            if not payment and transaction_id:
+                payment = Payment.objects.filter(transaction_id=str(transaction_id)).first()
+            if not payment and booking_uid:
+                payment = Payment.objects.filter(booking__booking_uid=booking_uid, gateway='stripe').last()
+
+            if payment and payment.status != 'success':
+                booking = payment.booking
+                with transaction.atomic():
+                    if booking.room_id:
+                        from rooms.models.room import Room
+                        Room.objects.select_for_update().get(pk=booking.room_id)
+
+                    if booking.has_room_availability():
+                        payment.status = 'success'
+                        try:
+                            payment.gateway_response = json.dumps(session_dict, default=str)
+                        except Exception:
+                            payment.gateway_response = str(session_dict)
+                        payment.save(update_fields=['status', 'gateway_response'])
+
+                        booking.status = 'confirmed'
+                        booking.save(update_fields=['status'])
+                        logger.info(f"Booking {booking.booking_uid} successfully confirmed via Stripe Webhook.")
+                    else:
+                        payment.status = 'failed'
+                        payment.gateway_response = 'Room inventory unavailable at webhook confirmation.'
+                        payment.save(update_fields=['status', 'gateway_response'])
+                        logger.warning(f"Booking {booking.booking_uid} failed availability check on Stripe Webhook.")
+
+        elif event_type == 'payment_intent.payment_failed':
+            pi = event_data.object if hasattr(event_data, 'object') else (event_data.get('object', {}) if isinstance(event_data, dict) else {})
+            pi_dict = pi.to_dict() if hasattr(pi, 'to_dict') else (dict(pi) if isinstance(pi, dict) else {})
+            metadata = pi_dict.get('metadata') or {}
+            booking_uid = metadata.get('booking_uid')
+            if booking_uid:
+                payment = Payment.objects.filter(booking__booking_uid=booking_uid, gateway='stripe').last()
+                if payment:
+                    payment.status = 'failed'
+                    payment.save(update_fields=['status'])
+
+        return HttpResponse(status=200)
+
+    except Exception as exc:
+        # pyrefly: ignore [unbound-name]
+        logger.exception(f"Error handling Stripe webhook event ({event_type}): {exc}")
+        return HttpResponse(f"Webhook processing error: {exc}", status=500)
 

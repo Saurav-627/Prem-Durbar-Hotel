@@ -120,6 +120,8 @@ class RoomBasePriceForm(TailwindFormMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['currency'].required = False
         self.fields['base_price'].required = False
+        self.fields['base_price'].label = "Base Price (Regular Rate)"
+        self.fields['discount_price'].label = "Discounted Price (Sale Price) (Optional)"
         # pyrefly: ignore [missing-attribute]
         self.fields['currency'].queryset = Currency.objects.filter(is_published=True)
 
@@ -129,12 +131,17 @@ class RoomBasePriceForm(TailwindFormMixin, forms.ModelForm):
         currency = cleaned_data.get('currency')
         # pyrefly: ignore [missing-attribute]
         base_price = cleaned_data.get('base_price')
+        # pyrefly: ignore [missing-attribute]
+        discount_price = cleaned_data.get('discount_price')
 
         # If one is provided, both must be provided
         if currency and base_price is None:
             self.add_error('base_price', 'Base price is required when currency is selected.')
         elif base_price is not None and not currency:
             self.add_error('currency', 'Currency is required when base price is entered.')
+
+        if base_price and discount_price and discount_price >= base_price:
+            self.add_error('discount_price', 'Discount Price must be less than Base Price.')
             
         return cleaned_data
 
@@ -471,6 +478,8 @@ class ZiplinePackageBasePriceForm(TailwindFormMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['currency'].required = False
         self.fields['base_price'].required = False
+        self.fields['base_price'].label = "Base Price (Regular Rate)"
+        self.fields['discount_price'].label = "Discounted Price (Sale Price) (Optional)"
         # pyrefly: ignore [missing-attribute]
         self.fields['currency'].queryset = Currency.objects.filter(is_published=True)
 
@@ -480,11 +489,16 @@ class ZiplinePackageBasePriceForm(TailwindFormMixin, forms.ModelForm):
         currency = cleaned_data.get('currency')
         # pyrefly: ignore [missing-attribute]
         base_price = cleaned_data.get('base_price')
+        # pyrefly: ignore [missing-attribute]
+        discount_price = cleaned_data.get('discount_price')
 
         if currency and base_price is None:
             self.add_error('base_price', 'Base price is required when currency is selected.')
         elif base_price is not None and not currency:
             self.add_error('currency', 'Currency is required when base price is entered.')
+
+        if base_price and discount_price and discount_price >= base_price:
+            self.add_error('discount_price', 'Discount Price must be less than Base Price.')
 
         return cleaned_data
 

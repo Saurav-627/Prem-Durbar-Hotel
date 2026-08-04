@@ -162,34 +162,53 @@
                 <td>
                     Zipline Flight Package: <strong>{{ booking.zipline_package.name }}</strong><br>
                     <small style="color: #666;">Flight Harness: {{ booking.zipline_package.flight_type }} ({{ booking.zipline_package.duration }})</small>
+                    {% if booking.zipline_package.discount_price %}
+                        <div style="margin-top: 6px; font-size: 11px; color: #2D5A4A; font-weight: bold; display: inline-block; padding: 2px 8px; background-color: #EEF5F0; border: 1px solid #4F8A73/30; border-radius: 4px;">
+                            🏷️ Special Offer Discount
+                        </div>
+                    {% endif %}
                 </td>
                 <td>{{ booking.num_tickets|default:1 }} ticket(s) / flyer(s)</td>
-                <td>{{ booking.currency_code }} {{ booking.zipline_package.final_price|floatformat:2 }}</td>
-                <td style="text-align: right;">{{ booking.currency_code }} {{ booking.subtotal }}</td>
+                <td>
+                    {% if booking.zipline_package.discount_price %}
+                        <div style="font-weight: bold; color: #2D5A4A; margin-bottom: 2px;">{{ booking.currency_code }} {{ booking.zipline_package.final_price|floatformat:2 }}</div>
+                        <del style="color: #999; font-size: 11px; display: block;">Regular: {{ booking.currency_code }} {{ booking.zipline_package.base_price|floatformat:2 }}</del>
+                    {% else %}
+                        {{ booking.currency_code }} {{ booking.zipline_package.final_price|floatformat:2 }}
+                    {% endif %}
+                </td>
+                <td style="text-align: right;">{{ booking.currency_code }} {{ booking.subtotal|floatformat:2 }}</td>
                 {% else %}
                 <td>
                     Accommodation Lodging: <strong>{{ booking.room.title }}</strong><br>
                     <small style="color: #666;">Room Category: {{ booking.room.category.name }}</small>
-                    {% with seasonal=booking.active_seasonal_price %}
+                    {% with seasonal=booking.room.active_seasonal %}
                         {% if seasonal %}
                             <div style="margin-top: 6px; font-size: 11px; color: #2D5A4A; font-weight: bold; display: inline-block; padding: 2px 8px; background-color: #EEF5F0; border: 1px solid #4F8A73/30; border-radius: 4px;">
                                 🏷️ Seasonal Price: {{ seasonal.name }}
+                            </div>
+                        {% elif booking.room.discount_price %}
+                            <div style="margin-top: 6px; font-size: 11px; color: #2D5A4A; font-weight: bold; display: inline-block; padding: 2px 8px; background-color: #EEF5F0; border: 1px solid #4F8A73/30; border-radius: 4px;">
+                                🏷️ Special Offer Discount
                             </div>
                         {% endif %}
                     {% endwith %}
                 </td>
                 <td>{{ booking.num_rooms }} room(s) x {{ booking.nights }} night(s)</td>
                 <td>
-                    {% with seasonal=booking.active_seasonal_price %}
+                    {% with seasonal=booking.room.active_seasonal %}
                         {% if seasonal %}
-                            <div style="font-weight: bold; color: #2D5A4A; margin-bottom: 2px;">{{ booking.currency_code }} {{ booking.daily_rate|floatformat:2 }}</div>
+                            <div style="font-weight: bold; color: #2D5A4A; margin-bottom: 2px;">{{ booking.currency_code }} {{ booking.room.final_price|floatformat:2 }}</div>
+                            <del style="color: #999; font-size: 11px; display: block;">Base: {{ booking.currency_code }} {{ booking.room.base_price|floatformat:2 }}</del>
+                        {% elif booking.room.discount_price %}
+                            <div style="font-weight: bold; color: #2D5A4A; margin-bottom: 2px;">{{ booking.currency_code }} {{ booking.room.final_price|floatformat:2 }}</div>
                             <del style="color: #999; font-size: 11px; display: block;">Base: {{ booking.currency_code }} {{ booking.room.base_price|floatformat:2 }}</del>
                         {% else %}
                             {{ booking.currency_code }} {{ booking.room.base_price|floatformat:2 }}
                         {% endif %}
                     {% endwith %}
                 </td>
-                <td style="text-align: right;">{{ booking.currency_code }} {{ booking.subtotal }}</td>
+                <td style="text-align: right;">{{ booking.currency_code }} {{ booking.subtotal|floatformat:2 }}</td>
                 {% endif %}
             </tr>
         </tbody>
