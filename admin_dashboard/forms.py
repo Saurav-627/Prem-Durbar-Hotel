@@ -521,3 +521,15 @@ class ContactInquiryCategoryForm(TailwindFormMixin, forms.ModelForm):
         fields = '__all__'
 
 
+class BroadcastNewsletterForm(TailwindFormMixin, forms.Form):
+    subject = forms.CharField(
+        max_length=200, 
+        label="Email Subject Title",
+        widget=forms.TextInput(attrs={'placeholder': 'e.g., ✨ Exclusive Festival Offer — 20% Off Suites & Zipline!'})
+    )
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 8, 'placeholder': 'Write your campaign message, announcement, or promotional update here...'}),
+        label="Campaign Message / Announcement"
+    )
+
+

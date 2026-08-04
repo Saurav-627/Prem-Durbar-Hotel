@@ -145,4 +145,17 @@ def create_booking(request, room_id):
     if coupon:
         coupon.redeem()
 
+    # Trigger Admin Notification
+    try:
+        from django.urls import reverse
+        from admin_dashboard.models.notification import create_admin_notification
+        create_admin_notification(
+            notification_type='booking_created',
+            title=f"New Room Booking [{booking.booking_uid}]",
+            message=f"{booking.guest_name} reserved {room.title} ({booking.currency_code} {booking.total}) for {booking.nights} night(s).",
+            link_url=reverse('admin_dashboard:booking_detail', kwargs={'pk': booking.pk})
+        )
+    except Exception:
+        pass
+
     return redirect('booking:checkout_page', booking_uid=booking.booking_uid)

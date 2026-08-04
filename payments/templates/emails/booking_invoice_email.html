@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation & Invoice — Prem Durbar Resort</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f6f8; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+
+    <!-- Email Outer Container -->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f4f6f8; padding: 40px 0;">
+        <tr>
+            <td align="center">
+
+                <!-- Email Main Card -->
+                <table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 1px solid #e5e7eb;">
+                    
+                    <!-- Header Bar -->
+                    <tr>
+                        <td align="center" style="background: linear-gradient(135deg, #1A3A32 0%, #2D5A4A 100%); padding: 32px 30px; text-align: center;">
+                            {% if logo_url %}
+                            <img src="{{ logo_url }}" alt="Prem Durbar Logo" style="max-height: 85px; width: auto; max-width: 280px; display: block; margin: 0 auto 14px auto; object-fit: contain;">
+                            {% endif %}
+                            <h1 style="color: #ffffff; font-size: 22px; font-weight: 800; margin: 0; letter-spacing: 0.5px; text-transform: uppercase;">
+                                {{ hotel_settings.site_name|default:"Prem Durbar Resort" }}
+                            </h1>
+                            <p style="color: #A8D5BA; font-size: 11px; font-weight: 600; margin: 6px 0 0 0; text-transform: uppercase; letter-spacing: 1.5px;">
+                                Luxury Hotel &amp; Nagarkot Zipline Adventure
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Confirmation Greeting -->
+                    <tr>
+                        <td style="padding: 36px 36px 20px 36px;">
+                            <div style="background-color: #EEF5F0; border: 1px solid #4F8A73; border-radius: 12px; padding: 16px 20px; text-align: center; margin-bottom: 24px;">
+                                <h2 style="color: #1A3A32; font-size: 18px; font-weight: 800; margin: 0;">
+                                    ✓ Payment Confirmed &amp; Invoice
+                                </h2>
+                                <p style="color: #2D5A4A; font-size: 13px; margin: 6px 0 0 0;">
+                                    Reference ID: <strong style="font-family: monospace; font-size: 14px; color: #1A3A32;">{{ booking.booking_uid }}</strong>
+                                </p>
+                            </div>
+
+                            <p style="color: #374151; font-size: 15px; line-height: 1.6; margin: 0 0 16px 0;">
+                                Dear <strong>{{ booking.guest_name }}</strong>,
+                            </p>
+                            <p style="color: #4b5563; font-size: 14px; line-height: 1.6; margin: 0;">
+                                Thank you for your reservation with <strong>Prem Durbar Resort</strong>. Your payment has been processed successfully. Below is your official purchase invoice and booking summary details.
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Reservation Details Block -->
+                    <tr>
+                        <td style="padding: 0 36px 24px 36px;">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f9fafb; border-radius: 12px; padding: 20px; border: 1px solid #f3f4f6;">
+                                <tr>
+                                    <td width="50%" style="vertical-align: top; padding-bottom: 12px;">
+                                        <span style="font-size: 11px; text-transform: uppercase; color: #6b7280; font-weight: 700; display: block;">Guest Name</span>
+                                        <strong style="font-size: 14px; color: #111827;">{{ booking.guest_name }}</strong>
+                                    </td>
+                                    <td width="50%" style="vertical-align: top; padding-bottom: 12px;">
+                                        <span style="font-size: 11px; text-transform: uppercase; color: #6b7280; font-weight: 700; display: block;">Contact Email</span>
+                                        <strong style="font-size: 14px; color: #111827;">{{ booking.guest_email }}</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="50%" style="vertical-align: top;">
+                                        <span style="font-size: 11px; text-transform: uppercase; color: #6b7280; font-weight: 700; display: block;">
+                                            {% if booking.booking_type == 'zipline' or booking.zipline_package %}Flight Date{% else %}Check-in / Check-out{% endif %}
+                                        </span>
+                                        <strong style="font-size: 14px; color: #111827;">
+                                            {% if booking.booking_type == 'zipline' or booking.zipline_package %}
+                                                {{ booking.flight_date|date:"F d, Y" }}
+                                            {% else %}
+                                                {{ booking.check_in|date:"M d" }} – {{ booking.check_out|date:"M d, Y" }} ({{ booking.nights }} night{% if booking.nights > 1 %}s{% endif %})
+                                            {% endif %}
+                                        </strong>
+                                    </td>
+                                    <td width="50%" style="vertical-align: top;">
+                                        <span style="font-size: 11px; text-transform: uppercase; color: #6b7280; font-weight: 700; display: block;">Payment Status</span>
+                                        <span style="display: inline-block; background-color: #d1fae5; color: #065f46; font-size: 12px; font-weight: 800; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; margin-top: 2px;">
+                                            PAID FULL
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Itemized Invoice Table -->
+                    <tr>
+                        <td style="padding: 0 36px 24px 36px;">
+                            <h3 style="color: #111827; font-size: 15px; font-weight: 700; margin: 0 0 12px 0;">Itemized Breakdown</h3>
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%" style="border-collapse: collapse;">
+                                <thead>
+                                    <tr style="background-color: #f3f4f6;">
+                                        <th align="left" style="padding: 10px 12px; font-size: 12px; color: #4b5563; text-transform: uppercase;">Description</th>
+                                        <th align="right" style="padding: 10px 12px; font-size: 12px; color: #4b5563; text-transform: uppercase;">Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                                        <td style="padding: 12px; font-size: 14px; color: #111827;">
+                                            {% if booking.booking_type == 'zipline' or booking.zipline_package %}
+                                                <strong>Zipline Package:</strong> {{ booking.zipline_package.name }}<br>
+                                                <small style="color: #6b7280;">{{ booking.num_tickets|default:1 }} flyer ticket(s)</small>
+                                            {% else %}
+                                                <strong>Room Suite:</strong> {{ booking.room.title }}<br>
+                                                <small style="color: #6b7280;">{{ booking.num_rooms }} room(s) x {{ booking.nights }} night(s)</small>
+                                            {% endif %}
+                                        </td>
+                                        <td align="right" style="padding: 12px; font-size: 14px; color: #111827; font-weight: 600;">
+                                            {{ booking.currency_code }} {{ booking.subtotal }}
+                                        </td>
+                                    </tr>
+
+                                    {% if booking.discount > 0 %}
+                                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                                        <td style="padding: 10px 12px; font-size: 13px; color: #059669;">
+                                            Discount Coupon ({% if booking.coupon %}{{ booking.coupon.code }}{% else %}Promo{% endif %})
+                                        </td>
+                                        <td align="right" style="padding: 10px 12px; font-size: 13px; color: #059669; font-weight: 600;">
+                                            -{{ booking.currency_code }} {{ booking.discount }}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+
+                                    {% if booking.tax > 0 %}
+                                    <tr style="border-bottom: 1px solid #f3f4f6;">
+                                        <td style="padding: 10px 12px; font-size: 13px; color: #4b5563;">
+                                            Tax &amp; VAT
+                                        </td>
+                                        <td align="right" style="padding: 10px 12px; font-size: 13px; color: #4b5563; font-weight: 600;">
+                                            {{ booking.currency_code }} {{ booking.tax }}
+                                        </td>
+                                    </tr>
+                                    {% endif %}
+
+                                    <tr style="background-color: #f9fafb;">
+                                        <td style="padding: 14px 12px; font-size: 15px; color: #111827; font-weight: 800;">
+                                            Total Amount Paid
+                                        </td>
+                                        <td align="right" style="padding: 14px 12px; font-size: 16px; color: #1A3A32; font-weight: 800;">
+                                            {{ booking.currency_code }} {{ booking.total }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Call To Action Button -->
+                    <tr>
+                        <td align="center" style="padding: 10px 36px 36px 36px;">
+                            {% if invoice_url %}
+                            <a href="{{ invoice_url }}" target="_blank" style="display: inline-block; background-color: #2D5A4A; color: #ffffff; font-size: 14px; font-weight: 700; text-decoration: none; padding: 14px 32px; border-radius: 10px; box-shadow: 0 4px 12px rgba(45,90,74,0.25);">
+                                View &amp; Print Official Invoice Receipt
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td align="center" style="background-color: #f9fafb; padding: 24px 30px; border-top: 1px solid #e5e7eb; text-align: center;">
+                            <p style="color: #6b7280; font-size: 12px; margin: 0 0 6px 0;">
+                                Prem Durbar Hotel &amp; Resort, Nagarkot, Bhaktapur, Nepal
+                            </p>
+                            <p style="color: #9ca3af; font-size: 11px; margin: 0;">
+                                Need assistance? Reply to this email or contact support at info@premdurbar.com
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

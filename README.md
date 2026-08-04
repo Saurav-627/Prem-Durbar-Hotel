@@ -45,6 +45,24 @@ A premium, high-performance Django 6 web application, automated booking engine, 
 * **Clear Form Field Labels**: Form fields in Admin UI explicitly labeled as **"Base Price (Regular Rate)"** and **"Discounted Price (Sale Price) (Optional)"**.
 * **Standardized Seed Importer**: `uv run python manage.py seed_data --update` imports data across 21 YAML files with progress summary logs (`Processed X: A created, B updated, C skipped`).
 
+### 7. Admin Notifications & Automated Guest Invoice Email Engine
+* **Real-Time Staff Notification System (`admin_dashboard/models/notification.py`)**:
+  * Automatic alerts for **New Booking Placed** (`booking_created`), **Payment Received** (`payment_success`), and **Newsletter Subscription** (`inquiry_received`).
+  * Embedded System Notifications overview card directly on the main Admin Dashboard (`/admin-dashboard/`).
+* **Automated Guest Invoice Email Delivery (`payments/services/email_service.py`)**:
+  * Sends luxury HTML invoice emails with hotel logo to `booking.guest_email` upon successful payment completion via Stripe, eSewa, or Khalti.
+  * Configured out-of-the-box for **Mailpit** (`127.0.0.1:1025`, Web UI at `http://127.0.0.1:8025/`) and production SMTP.
+
+### 8. Newsletter Subscription & Admin Broadcast Engine
+* **Instant Homepage Subscription (`contact/views/public.py`)**:
+  * Alpine.js smooth in-place AJAX submission form with loading spinner and instant feedback alerts.
+  * Dispatches an automatic luxury HTML Welcome Email (`newsletter_welcome_email.html`) and notifies hotel staff.
+* **Admin Panel Subscriber Manager (`/admin-dashboard/contact/?tab=subscribers`)**:
+  * Paginated list (15 per page) displaying subscriber emails, active badges, and join timestamps.
+  * Instant **Unsubscribe / Re-activate** toggle actions for administrative control.
+* **Bulk Campaign Broadcast Tool (`/admin-dashboard/contact/newsletter/broadcast/`)**:
+  * Compose custom announcement or promotional emails and broadcast to all active subscribers with a single click.
+
 ---
 
 ## 🛠️ Tech Stack

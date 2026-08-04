@@ -2,6 +2,7 @@ from django.contrib import admin
 from .models.branch import Branch
 from .models.inquiry import ContactInquiry
 from .models.category import ContactInquiryCategory
+from .models.newsletter import NewsletterSubscriber
 
 @admin.register(ContactInquiryCategory)
 class ContactInquiryCategoryAdmin(admin.ModelAdmin):
@@ -9,6 +10,12 @@ class ContactInquiryCategoryAdmin(admin.ModelAdmin):
     list_editable = ('ordering', 'is_active')
     prepopulated_fields = {'slug': ('name',)}
     search_fields = ('name',)
+
+@admin.register(NewsletterSubscriber)
+class NewsletterSubscriberAdmin(admin.ModelAdmin):
+    list_display = ('email', 'is_active', 'created_at')
+    list_filter = ('is_active', 'created_at')
+    search_fields = ('email',)
 
 @admin.register(Branch)
 class BranchAdmin(admin.ModelAdmin):

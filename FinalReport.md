@@ -224,6 +224,20 @@ The following models store data submitted by website visitors (read-only for sta
 3. **Optional Room Highlights**:
    - `Room.highlights` field made optional (`blank=True, null=True`), ensuring clean room suite creation in admin without requiring highlight bullets.
 
+4. **Admin Notification System (`admin_dashboard/models/notification.py`)**:
+   - Stores real-time staff alerts (`booking_created`, `payment_success`, `inquiry_received`).
+   - Embedded System Notifications overview card directly on the main Admin Dashboard (`/admin-dashboard/`).
+
+5. **Automated Guest Invoice & Welcome Email Delivery (`payments/services/email_service.py`)**:
+   - Configured out-of-the-box for Mailpit (`127.0.0.1:1025`, Web UI `http://127.0.0.1:8025/`) and production SMTP.
+   - Dispatches branded HTML invoice email with itemized breakdown and receipt link upon successful purchase via Stripe, eSewa, or Khalti.
+   - Dispatches luxury Welcome Email upon newsletter subscription with prominent hotel logo (`max-height: 85px`).
+
+6. **Newsletter Subscription & Admin Campaign Broadcast Engine**:
+   - In-place AJAX subscription form on homepage with loading spinner and instant feedback alerts.
+   - Admin subscriber manager (`/admin-dashboard/contact/?tab=subscribers`) with paginated list (15 per page) and instant **Unsubscribe / Re-activate** toggle actions.
+   - Bulk campaign broadcast tool (`/admin-dashboard/contact/newsletter/broadcast/`) to send email updates to all active subscribers.
+
 ---
 
 ## 9. Developer Quick-Reference & Maintenance Guide

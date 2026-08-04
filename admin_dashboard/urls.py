@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import auth, home, settings, rooms, bookings, payments, dining, contact, cms, users, zipline, coupons
+from .views import auth, home, settings, rooms, bookings, payments, dining, contact, cms, users, zipline, coupons, notifications
 
 app_name = 'admin_dashboard'
 
@@ -10,6 +10,11 @@ urlpatterns = [
     
     # Dashboard Home
     path('', home.DashboardHomeView.as_view(), name='home'),
+
+    # Notifications
+    path('notifications/', notifications.NotificationListView.as_view(), name='notification_list'),
+    path('notifications/<int:pk>/read/', notifications.mark_notification_read, name='notification_mark_read'),
+    path('notifications/read-all/', notifications.mark_all_notifications_read, name='notification_mark_all_read'),
     
     # Bookings
     path('bookings/', bookings.BookingListView.as_view(), name='booking_list'),
@@ -62,7 +67,7 @@ urlpatterns = [
     path('zipline/package/<int:pk>/edit/', zipline.ZiplinePackageUpdateView.as_view(), name='zipline_package_edit'),
     path('zipline/package/<int:pk>/delete/', zipline.ZiplinePackageDeleteView.as_view(), name='zipline_package_delete'),
     
-    # Contact
+    # Contact & Newsletter
     path('contact/', contact.ContactDashboardView.as_view(), name='contact_dashboard'),
     path('contact/branch/add/', contact.BranchCreateView.as_view(), name='branch_create'),
     path('contact/branch/<int:pk>/edit/', contact.BranchUpdateView.as_view(), name='branch_edit'),
@@ -71,6 +76,8 @@ urlpatterns = [
     path('contact/category/<int:pk>/edit/', contact.ContactInquiryCategoryUpdateView.as_view(), name='category_edit'),
     path('contact/category/<int:pk>/delete/', contact.ContactInquiryCategoryDeleteView.as_view(), name='category_delete'),
     path('contact/inquiry/<int:pk>/', contact.ContactInquiryDetailView.as_view(), name='contact_inquiry_detail'),
+    path('contact/newsletter/broadcast/', contact.BroadcastNewsletterView.as_view(), name='newsletter_broadcast'),
+    path('contact/newsletter/<int:pk>/toggle-status/', contact.NewsletterSubscriberToggleStatusView.as_view(), name='newsletter_toggle_status'),
     
     # CMS Content
     path('cms/', cms.CmsDashboardView.as_view(), name='cms_dashboard'),

@@ -194,6 +194,21 @@ def payment_callback(request, payment_id):
                             payment.save(update_fields=['status', 'gateway_response'])
                             booking.status = 'confirmed'
                             booking.save(update_fields=['status'])
+
+                            # Send Invoice Email & Admin Notification
+                            try:
+                                from payments.services.email_service import send_booking_invoice_email
+                                from admin_dashboard.models.notification import create_admin_notification
+                                send_booking_invoice_email(booking, payment, request=request)
+                                create_admin_notification(
+                                    notification_type='payment_success',
+                                    title=f"Payment Received [{booking.booking_uid}]",
+                                    message=f"Received {booking.currency_code} {payment.amount} via STRIPE from {booking.guest_name}.",
+                                    link_url=reverse('admin_dashboard:booking_detail', kwargs={'pk': booking.pk})
+                                )
+                            except Exception as email_err:
+                                logger.error(f"Error dispatching invoice/notification on Stripe callback: {email_err}")
+
                             message = f"Payment of {booking.currency_code} {payment.amount} successful via STRIPE!"
                         else:
                             payment.status = 'failed'
@@ -254,6 +269,20 @@ def payment_callback(request, payment_id):
                 payment.save(update_fields=['status', 'gateway_response'])
                 booking.status = 'confirmed'
                 booking.save(update_fields=['status'])
+
+                # Send Invoice Email & Admin Notification
+                try:
+                    from payments.services.email_service import send_booking_invoice_email
+                    from admin_dashboard.models.notification import create_admin_notification
+                    send_booking_invoice_email(booking, payment, request=request)
+                    create_admin_notification(
+                        notification_type='payment_success',
+                        title=f"Payment Received [{booking.booking_uid}]",
+                        message=f"Received {booking.currency_code} {payment.amount} via {gateway.upper()} from {booking.guest_name}.",
+                        link_url=reverse('admin_dashboard:booking_detail', kwargs={'pk': booking.pk})
+                    )
+                except Exception as email_err:
+                    logger.error(f"Error dispatching invoice/notification on {gateway} callback: {email_err}")
 
             message = f"Payment of {booking.currency_code} {payment.amount} successful via {gateway.upper()}!"
             return render(request, 'payments/success.html', {'booking': booking, 'payment': payment, 'message': message})
@@ -385,6 +414,20 @@ def stripe_webhook(request):
                         booking.status = 'confirmed'
                         booking.save(update_fields=['status'])
                         logger.info(f"Booking {booking.booking_uid} successfully confirmed via Stripe Webhook.")
+
+                        # Send Invoice Email & Admin Notification
+                        try:
+                            from payments.services.email_service import send_booking_invoice_email
+                            from admin_dashboard.models.notification import create_admin_notification
+                            send_booking_invoice_email(booking, payment, request=request)
+                            create_admin_notification(
+                                notification_type='payment_success',
+                                title=f"Payment Received [{booking.booking_uid}]",
+                                message=f"Received {booking.currency_code} {payment.amount} via STRIPE Webhook from {booking.guest_name}.",
+                                link_url=reverse('admin_dashboard:booking_detail', kwargs={'pk': booking.pk})
+                            )
+                        except Exception as email_err:
+                            logger.error(f"Error dispatching invoice/notification in Stripe Webhook: {email_err}")
                     else:
                         payment.status = 'failed'
                         payment.gateway_response = 'Room inventory unavailable at webhook confirmation.'

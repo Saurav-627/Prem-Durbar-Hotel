@@ -91,6 +91,9 @@ docker-logs: ## View real-time logs from Docker containers
 docker-clean: ## Stop Docker containers and clean persistent database/cache volumes
 	docker compose down -v
 
+mailpit: ## Run Mailpit local SMTP server (1025) & Web UI (8025) via Docker
+	docker run -d --name mailpit --rm -p 8025:8025 -p 1025:1025 axllent/mailpit
+
 ##@ Testing & Maintenance
 test: ## Run the test suite
 	$(PYTHON) manage.py test
