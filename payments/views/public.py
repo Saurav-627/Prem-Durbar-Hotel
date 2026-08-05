@@ -13,6 +13,8 @@ import uuid
 import json
 import logging
 import stripe
+from core.services.email_service import send_booking_invoice_email
+from admin_dashboard.models.notification import create_admin_notification
 
 logger = logging.getLogger(__name__)
 
@@ -197,8 +199,6 @@ def payment_callback(request, payment_id):
 
                             # Send Invoice Email & Admin Notification
                             try:
-                                from payments.services.email_service import send_booking_invoice_email
-                                from admin_dashboard.models.notification import create_admin_notification
                                 send_booking_invoice_email(booking, payment, request=request)
                                 create_admin_notification(
                                     notification_type='payment_success',
@@ -272,8 +272,6 @@ def payment_callback(request, payment_id):
 
                 # Send Invoice Email & Admin Notification
                 try:
-                    from payments.services.email_service import send_booking_invoice_email
-                    from admin_dashboard.models.notification import create_admin_notification
                     send_booking_invoice_email(booking, payment, request=request)
                     create_admin_notification(
                         notification_type='payment_success',
@@ -417,8 +415,6 @@ def stripe_webhook(request):
 
                         # Send Invoice Email & Admin Notification
                         try:
-                            from payments.services.email_service import send_booking_invoice_email
-                            from admin_dashboard.models.notification import create_admin_notification
                             send_booking_invoice_email(booking, payment, request=request)
                             create_admin_notification(
                                 notification_type='payment_success',

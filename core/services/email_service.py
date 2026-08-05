@@ -154,6 +154,76 @@ def send_newsletter_welcome_email(subscriber_email, request=None):
         return False, error_msg
 
 
+def send_newsletter_verification_email(subscriber, verification_url, request=None):
+    """
+    Renders and dispatches a double opt-in email verification email to new subscribers.
+    """
+    if not subscriber or not subscriber.email:
+        return False, "No subscriber email provided."
+
+    try:
+        from settings_manager.models.hotel_settings import HotelSettings
+        hotel_settings = HotelSettings.objects.first()
+        logo_url = None
+        if hotel_settings and hotel_settings.logo:
+            logo_url = hotel_settings.logo.url
+            if not logo_url.startswith('http'):
+                if request:
+                    logo_url = request.build_absolute_uri(logo_url)
+                else:
+                    domain = getattr(settings, 'SITE_DOMAIN', '127.0.0.1:8000')
+                    protocol = 'http' if settings.DEBUG else 'https'
+                    logo_url = f"{protocol}://{domain}{logo_url}"
+
+        if not logo_url:
+            static_logo = '/static/images/hotel-logo.png'
+            if request:
+                logo_url = request.build_absolute_uri(static_logo)
+            else:
+                domain = getattr(settings, 'SITE_DOMAIN', '127.0.0.1:8000')
+                protocol = 'http' if settings.DEBUG else 'https'
+                logo_url = f"{protocol}://{domain}{static_logo}"
+
+        if request:
+            site_url = request.build_absolute_uri('/')
+        else:
+            domain = getattr(settings, 'SITE_DOMAIN', '127.0.0.1:8000')
+            protocol = 'http' if settings.DEBUG else 'https'
+            site_url = f"{protocol}://{domain}/"
+
+        context = {
+            'subscriber_email': subscriber.email,
+            'verification_url': verification_url,
+            'logo_url': logo_url,
+            'site_url': site_url,
+            'hotel_settings': hotel_settings,
+        }
+
+        html_content = render_to_string('emails/newsletter_verification_email.html', context)
+        plain_content = strip_tags(html_content)
+
+        site_name = hotel_settings.site_name if hotel_settings else "Prem Durbar Resort"
+        subject = f"✉️ Please Confirm Your Newsletter Subscription — {site_name}"
+        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'Prem Durbar Resort <noreply@premdurbar.com>')
+
+        msg = EmailMultiAlternatives(
+            subject=subject,
+            body=plain_content,
+            from_email=from_email,
+            to=[subscriber.email]
+        )
+        msg.attach_alternative(html_content, "text/html")
+        msg.send(fail_silently=False)
+
+        logger.info(f"Successfully sent newsletter verification email to {subscriber.email}")
+        return True, "Verification email sent."
+
+    except Exception as e:
+        error_msg = str(e)
+        logger.error(f"Failed to send newsletter verification email to {subscriber.email}: {error_msg}")
+        return False, error_msg
+
+
 def send_newsletter_broadcast_email(subject, message, recipient_list, request=None):
     """
     Renders and dispatches a bulk newsletter broadcast email to all active subscriber emails.

@@ -78,6 +78,8 @@ urlpatterns = [
     path('contact/inquiry/<int:pk>/', contact.ContactInquiryDetailView.as_view(), name='contact_inquiry_detail'),
     path('contact/newsletter/broadcast/', contact.BroadcastNewsletterView.as_view(), name='newsletter_broadcast'),
     path('contact/newsletter/<int:pk>/toggle-status/', contact.NewsletterSubscriberToggleStatusView.as_view(), name='newsletter_toggle_status'),
+    path('contact/newsletter/<int:pk>/delete/', contact.NewsletterSubscriberDeleteView.as_view(), name='newsletter_subscriber_delete'),
+
     
     # CMS Content
     path('cms/', cms.CmsDashboardView.as_view(), name='cms_dashboard'),

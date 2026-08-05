@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirm Your Subscription — {{ hotel_settings.site_name|default:"Prem Durbar Resort" }}</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f6f8; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+
+    <!-- Outer Container -->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #f4f6f8; padding: 40px 0;">
+        <tr>
+            <td align="center">
+
+                <!-- Main Email Card -->
+                <table border="0" cellpadding="0" cellspacing="0" width="600" style="background-color: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.06); border: 1px solid #e5e7eb;">
+                    
+                    <!-- Header Bar -->
+                    <tr>
+                        <td align="center" style="background: linear-gradient(135deg, #1A3A32 0%, #2D5A4A 100%); padding: 36px 30px; text-align: center;">
+                            {% if logo_url %}
+                            <img src="{{ logo_url }}" alt="Prem Durbar Logo" style="max-height: 85px; width: auto; max-width: 280px; display: block; margin: 0 auto 14px auto; object-fit: contain;">
+                            {% endif %}
+                            <h1 style="color: #ffffff; font-size: 22px; font-weight: 800; margin: 0; letter-spacing: 0.5px; text-transform: uppercase;">
+                                {{ hotel_settings.site_name|default:"Prem Durbar Resort" }}
+                            </h1>
+                            <p style="color: #A8D5BA; font-size: 11px; font-weight: 600; margin: 6px 0 0 0; text-transform: uppercase; letter-spacing: 1.5px;">
+                                Nagarkot Luxury Hotel &amp; Zipline Adventure
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Content Body -->
+                    <tr>
+                        <td style="padding: 36px 36px 28px 36px;">
+                            <div style="background-color: #EEF5F0; border: 1px solid #4F8A73; border-radius: 12px; padding: 16px 20px; text-align: center; margin-bottom: 24px;">
+                                <h2 style="color: #1A3A32; font-size: 18px; font-weight: 800; margin: 0;">
+                                    ✉️ Please Verify Your Email Address
+                                </h2>
+                                <p style="color: #2D5A4A; font-size: 13px; margin: 6px 0 0 0;">
+                                    Email: <strong style="color: #1A3A32;">{{ subscriber_email }}</strong>
+                                </p>
+                            </div>
+
+                            <p style="color: #374151; font-size: 14px; line-height: 1.6; margin: 0 0 16px 0;">
+                                Dear Valued Guest,
+                            </p>
+                            <p style="color: #4b5563; font-size: 14px; line-height: 1.6; margin: 0 0 24px 0;">
+                                Thank you for signing up to receive luxury updates, exclusive seasonal suite offers, fine dining menus, and zipline flight packages from {{ hotel_settings.site_name|default:"Prem Durbar Resort" }}.
+                            </p>
+
+                            <p style="color: #4b5563; font-size: 14px; line-height: 1.6; margin: 0 0 28px 0;">
+                                Please click the button below to verify ownership of your email address and activate your subscription:
+                            </p>
+
+                            <div style="text-align: center; margin: 32px 0 28px 0;">
+                                <a href="{{ verification_url }}" target="_blank" style="background-color: #1A3A32; color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 50px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; display: inline-block; box-shadow: 0 4px 14px rgba(26, 58, 50, 0.3);">
+                                    Confirm Subscription
+                                </a>
+                            </div>
+
+                            <div style="background-color: #f9fafb; border: 1px dashed #d1d5db; padding: 14px; border-radius: 8px; font-size: 12px; color: #6b7280; margin-top: 24px; word-break: break-all;">
+                                If the button above does not work, copy and paste this URL into your web browser:<br>
+                                <a href="{{ verification_url }}" style="color: #1A3A32; font-weight: 600; text-decoration: underline;">{{ verification_url }}</a>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f9fafb; padding: 24px 30px; border-top: 1px solid #f3f4f6; text-align: center;">
+                            <p style="color: #6b7280; font-size: 12px; margin: 0;">
+                                &copy; {% now "Y" %} {{ hotel_settings.site_name|default:"Prem Durbar Resort" }} · Nagarkot, Nepal
+                            </p>
+                            <p style="color: #9ca3af; font-size: 11px; margin: 6px 0 0 0;">
+                                You received this email because a subscription request was submitted on our website.
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

@@ -9,7 +9,7 @@ from contact.models.inquiry import ContactInquiry
 from contact.models.category import ContactInquiryCategory
 from contact.models.newsletter import NewsletterSubscriber
 from admin_dashboard.forms import BranchForm, ContactInquiryCategoryForm, BroadcastNewsletterForm
-from payments.services.email_service import send_newsletter_broadcast_email
+from core.services.email_service import send_newsletter_broadcast_email
 
 
 from django.core.paginator import Paginator
@@ -47,7 +47,7 @@ class BroadcastNewsletterView(StaffRequiredMixin, View):
     permission_required = 'contact.add_newslettersubscriber'
     def get(self, request):
         form = BroadcastNewsletterForm()
-        active_subscribers_count = NewsletterSubscriber.objects.filter(is_active=True).count()
+        active_subscribers_count = NewsletterSubscriber.objects.filter(is_active=True, is_verified=True).count()
         return render(request, 'admin_dashboard/contact/broadcast.html', {
             'form': form,
             'active_subscribers_count': active_subscribers_count,
@@ -55,10 +55,10 @@ class BroadcastNewsletterView(StaffRequiredMixin, View):
 
     def post(self, request):
         form = BroadcastNewsletterForm(request.POST)
-        active_subscribers = list(NewsletterSubscriber.objects.filter(is_active=True).values_list('email', flat=True))
+        active_subscribers = list(NewsletterSubscriber.objects.filter(is_active=True, is_verified=True).values_list('email', flat=True))
         
         if not active_subscribers:
-            messages.error(request, "No active newsletter subscribers found to send broadcast.")
+            messages.error(request, "No verified active newsletter subscribers found to send broadcast.")
             return redirect(reverse_lazy('admin_dashboard:contact_dashboard') + "?tab=subscribers")
 
         if form.is_valid():
@@ -73,7 +73,7 @@ class BroadcastNewsletterView(StaffRequiredMixin, View):
             )
             
             if success:
-                messages.success(request, f"🚀 Campaign broadcasted successfully to {sent_count} active subscriber(s)!")
+                messages.success(request, f"🚀 Campaign broadcasted successfully to {sent_count} verified subscriber(s)!")
             else:
                 messages.error(request, f"Failed to send campaign: {msg}")
             
@@ -85,16 +85,36 @@ class BroadcastNewsletterView(StaffRequiredMixin, View):
         })
 
 
+
 class NewsletterSubscriberToggleStatusView(StaffRequiredMixin, View):
     permission_required = 'contact.change_newslettersubscriber'
     def post(self, request, pk):
         subscriber = get_object_or_404(NewsletterSubscriber, pk=pk)
-        subscriber.is_active = not subscriber.is_active
-        subscriber.save(update_fields=['is_active'])
         
-        status_text = "re-activated" if subscriber.is_active else "unsubscribed"
-        messages.success(request, f"Subscriber {subscriber.email} has been {status_text}.")
+        if not subscriber.is_verified or not subscriber.is_active:
+            subscriber.is_verified = True
+            subscriber.is_active = True
+            subscriber.verification_token = None
+            subscriber.save(update_fields=['is_verified', 'is_active', 'verification_token'])
+            messages.success(request, f"Subscriber {subscriber.email} has been manually verified and activated.")
+        else:
+            subscriber.is_active = False
+            subscriber.save(update_fields=['is_active'])
+            messages.success(request, f"Subscriber {subscriber.email} has been deactivated.")
+            
         return redirect(reverse_lazy('admin_dashboard:contact_dashboard') + "?tab=subscribers")
+
+
+class NewsletterSubscriberDeleteView(StaffRequiredMixin, DeleteView):
+    permission_required = 'contact.delete_newslettersubscriber'
+    model = NewsletterSubscriber
+    template_name = 'admin_dashboard/confirm_delete.html'
+    
+    def get_success_url(self):
+        messages.success(self.request, "Newsletter subscriber deleted successfully.")
+        return reverse_lazy('admin_dashboard:contact_dashboard') + "?tab=subscribers"
+
+
 
 
 class BranchCreateView(StaffRequiredMixin, CreateView):

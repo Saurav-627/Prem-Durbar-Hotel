@@ -5,7 +5,7 @@ from .base_payment import BasePayment
 from .esewa_payment import EsewaPayment
 from .khalti_payment import KhaltiPayment
 from .stripe_payment import StripePayment
-from .email_service import send_booking_invoice_email
+from core.services.email_service import send_booking_invoice_email
 
 class PaymentProcessorConfig(TypedDict):
     code: Literal["esewa", "khalti", "stripe"]

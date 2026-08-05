@@ -230,7 +230,8 @@
             <thead>
                 <tr class="text-xs uppercase text-neutral-400 border-b border-neutral-200 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/30">
                     <th class="px-6 py-4 font-semibold">Subscriber Email</th>
-                    <th class="px-6 py-4 font-semibold">Status</th>
+                    <th class="px-6 py-4 font-semibold">Email Verification</th>
+                    <th class="px-6 py-4 font-semibold">Active Status</th>
                     <th class="px-6 py-4 font-semibold">Subscribed Date</th>
                     <th class="px-6 py-4 text-right font-semibold">Actions</th>
                 </tr>
@@ -242,33 +243,53 @@
                         {{ sub.email }}
                     </td>
                     <td class="px-6 py-4">
-                        {% if sub.is_active %}
-                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500">Active Subscriber</span>
+                        {% if sub.is_verified %}
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500"><i class="fa-solid fa-circle-check mr-1"></i> Verified</span>
                         {% else %}
-                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-neutral-500/10 text-neutral-500">Unsubscribed</span>
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-500"><i class="fa-solid fa-clock mr-1"></i> Pending Opt-in</span>
                         {% endif %}
                     </td>
+                    <td class="px-6 py-4">
+                        {% if sub.is_active %}
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-500">Active</span>
+                        {% else %}
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-neutral-500/10 text-neutral-500">Inactive</span>
+                        {% endif %}
+                    </td>
+
                     <td class="px-6 py-4 text-neutral-500 text-xs font-semibold">{{ sub.created_at|date:"M d, Y · H:i" }}</td>
                     <td class="px-6 py-4 text-right">
-                        <form action="{% url 'admin_dashboard:newsletter_toggle_status' sub.id %}" method="POST" class="inline-block m-0">
-                            {% csrf_token %}
-                            {% if sub.is_active %}
-                            <button type="submit" 
-                                    class="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white transition">
-                                <i class="fa-solid fa-user-minus mr-1"></i> Unsubscribe
-                            </button>
-                            {% else %}
-                            <button type="submit" 
-                                    class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 hover:bg-emerald-500 text-emerald-600 hover:text-white transition">
-                                <i class="fa-solid fa-user-plus mr-1"></i> Re-activate
-                            </button>
+                        <div class="flex items-center justify-end gap-2">
+                            {% if perms.contact.change_newslettersubscriber or user.is_superuser %}
+                            <form action="{% url 'admin_dashboard:newsletter_toggle_status' sub.id %}" method="POST" class="inline-block m-0">
+                                {% csrf_token %}
+                                {% if sub.is_verified and sub.is_active %}
+                                <button type="submit" 
+                                         class="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-500/10 hover:bg-rose-500 text-rose-600 hover:text-white transition">
+                                    <i class="fa-solid fa-user-minus mr-1"></i> Deactivate
+                                </button>
+                                {% else %}
+                                <button type="submit" 
+                                         class="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/10 hover:bg-emerald-500 text-emerald-600 hover:text-white transition">
+                                    <i class="fa-solid fa-user-check mr-1"></i> Verify & Activate
+                                </button>
+                                {% endif %}
+                            </form>
                             {% endif %}
-                        </form>
+
+                            {% if perms.contact.delete_newslettersubscriber or user.is_superuser %}
+                            <a href="{% url 'admin_dashboard:newsletter_subscriber_delete' sub.id %}" 
+                               class="p-1.5 rounded-lg text-neutral-400 hover:text-rose-500 hover:bg-rose-500/10 transition" title="Delete Subscriber">
+                                <i class="fa-solid fa-trash-can text-sm"></i>
+                            </a>
+                            {% endif %}
+                        </div>
                     </td>
+
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="4" class="px-6 py-12 text-center text-sm text-neutral-500">
+                    <td colspan="5" class="px-6 py-12 text-center text-sm text-neutral-500">
                         No newsletter subscribers registered yet.
                     </td>
                 </tr>
