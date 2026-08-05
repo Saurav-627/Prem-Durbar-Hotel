@@ -12,24 +12,33 @@
 {% block page_actions %}
 <div class="flex items-center gap-3">
     {% if active_tab == 'hero' %}
-    <a href="{% url 'admin_dashboard:hero_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
-        <i class="fa-solid fa-plus mr-1.5"></i> Add Hero Slide
-    </a>
+        {% if perms.homepage.add_heroslide or user.is_superuser %}
+        <a href="{% url 'admin_dashboard:hero_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
+            <i class="fa-solid fa-plus mr-1.5"></i> Add Hero Slide
+        </a>
+        {% endif %}
     {% elif active_tab == 'testimonials' %}
-    <a href="{% url 'admin_dashboard:testimonial_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
-        <i class="fa-solid fa-plus mr-1.5"></i> Add Testimonial
-    </a>
+        {% if perms.testimonials.add_testimonial or user.is_superuser %}
+        <a href="{% url 'admin_dashboard:testimonial_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
+            <i class="fa-solid fa-plus mr-1.5"></i> Add Testimonial
+        </a>
+        {% endif %}
     {% elif active_tab == 'sustainability_cms' %}
-    <a href="{% url 'admin_dashboard:sustainability_pillar_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
-        <i class="fa-solid fa-plus mr-1.5"></i> Add Sustainability Pillar
-    </a>
+        {% if perms.homepage.add_sustainabilitypillar or user.is_superuser %}
+        <a href="{% url 'admin_dashboard:sustainability_pillar_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
+            <i class="fa-solid fa-plus mr-1.5"></i> Add Sustainability Pillar
+        </a>
+        {% endif %}
     {% elif active_tab == 'seo' %}
-    <a href="{% url 'admin_dashboard:seo_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
-        <i class="fa-solid fa-plus mr-1.5"></i> Add SEO Rule
-    </a>
+        {% if perms.seo.add_seodata or user.is_superuser %}
+        <a href="{% url 'admin_dashboard:seo_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
+            <i class="fa-solid fa-plus mr-1.5"></i> Add SEO Rule
+        </a>
+        {% endif %}
     {% endif %}
 </div>
 {% endblock %}
+
 
 {% block content %}
 <!-- Tabs navigation -->
@@ -78,13 +87,18 @@
                     {% endif %}
                 </div>
                 <div class="flex items-center gap-3 text-sm">
+                    {% if perms.homepage.change_heroslide or user.is_superuser %}
                     <a href="{% url 'admin_dashboard:hero_edit' slide.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </a>
+                    {% endif %}
+                    {% if perms.homepage.delete_heroslide or user.is_superuser %}
                     <a href="{% url 'admin_dashboard:hero_delete' slide.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
                         <i class="fa-solid fa-trash-can"></i>
                     </a>
+                    {% endif %}
                 </div>
+
             </div>
         </div>
         {% empty %}
@@ -220,11 +234,13 @@
                     </div>
                 </div>
 
+                {% if perms.homepage.change_aboutcms or user.is_superuser %}
                 <div class="pt-6 border-t border-neutral-200 dark:border-neutral-800 flex justify-end">
                     <button type="submit" class="btn-gold-gradient px-8 py-3 text-brand-forestDark font-bold rounded-xl text-sm transition shadow-glow">
                         <i class="fa-solid fa-floppy-disk mr-2"></i> Save About Page Content
                     </button>
                 </div>
+                {% endif %}
             </form>
         </div>
 
@@ -237,10 +253,12 @@
                     </h4>
                     <p class="text-xs text-neutral-500 mt-1">Manage team members displayed on the About Us page.</p>
                 </div>
+                {% if perms.homepage.add_teammember or user.is_superuser %}
                 <a href="{% url 'admin_dashboard:team_member_create' %}" 
                    class="btn-gold-gradient px-4 py-2 text-brand-forestDark font-bold rounded-xl text-xs transition shadow-md">
                     <i class="fa-solid fa-plus mr-1"></i> Add Team Member
                 </a>
+                {% endif %}
             </div>
 
             <div class="overflow-x-auto">
@@ -273,15 +291,20 @@
                             </td>
                             <td class="px-4 py-3 text-right">
                                 <div class="flex items-center justify-end gap-3 text-sm">
+                                    {% if perms.homepage.change_teammember or user.is_superuser %}
                                     <a href="{% url 'admin_dashboard:team_member_edit' member.id %}" class="text-neutral-400 hover:text-brand-primaryLight" title="Edit">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
+                                    {% endif %}
+                                    {% if perms.homepage.delete_teammember or user.is_superuser %}
                                     <a href="{% url 'admin_dashboard:team_member_delete' member.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </a>
+                                    {% endif %}
                                 </div>
                             </td>
                         </tr>
+
                         {% empty %}
                         <tr>
                             <td colspan="6" class="px-4 py-8 text-center text-xs text-neutral-500">No team members added yet.</td>
@@ -338,11 +361,13 @@
                     </div>
                 </div>
 
+                {% if perms.homepage.change_sustainabilitycms or user.is_superuser %}
                 <div class="pt-4 border-t border-neutral-200 dark:border-neutral-800 flex justify-end">
                     <button type="submit" class="btn-gold-gradient px-8 py-3 text-brand-forestDark font-bold rounded-xl text-sm transition shadow-glow">
                         <i class="fa-solid fa-floppy-disk mr-2"></i> Save Sustainability Banner CMS
                     </button>
                 </div>
+                {% endif %}
             </form>
         </div>
 
@@ -350,9 +375,11 @@
         <div class="custom-card rounded-2xl overflow-hidden shadow-sm">
             <div class="p-6 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
                 <h4 class="font-bold text-base text-neutral-900 dark:text-neutral-100 font-serif">Sustainability Pillars List</h4>
+                {% if perms.homepage.add_sustainabilitypillar or user.is_superuser %}
                 <a href="{% url 'admin_dashboard:sustainability_pillar_create' %}" class="btn-gold-gradient px-4 py-2 text-white font-bold rounded-lg text-xs transition shadow-md">
                     <i class="fa-solid fa-plus mr-1"></i> Add Pillar
                 </a>
+                {% endif %}
             </div>
             <table class="w-full text-left border-collapse">
                 <thead>
@@ -373,15 +400,20 @@
                         <td class="px-6 py-4 text-neutral-600 dark:text-neutral-400 font-bold">{{ pillar.order }}</td>
                         <td class="px-6 py-4 text-right">
                             <div class="flex items-center justify-end gap-3 text-sm">
+                                {% if perms.homepage.change_sustainabilitypillar or user.is_superuser %}
                                 <a href="{% url 'admin_dashboard:sustainability_pillar_edit' pillar.id %}" class="text-neutral-400 hover:text-brand-primaryLight" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
+                                {% endif %}
+                                {% if perms.homepage.delete_sustainabilitypillar or user.is_superuser %}
                                 <a href="{% url 'admin_dashboard:sustainability_pillar_delete' pillar.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>
+
                     {% empty %}
                     <tr>
                         <td colspan="5" class="px-6 py-12 text-center text-sm text-neutral-500">No sustainability pillars created yet.</td>
@@ -468,12 +500,15 @@
                     </div>
                 </div>
 
+                {% if perms.homepage.change_aboutpreview or user.is_superuser %}
                 <div class="pt-6 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-end">
                     <button type="submit" 
                             class="btn-gold-gradient px-6 py-2.5 text-white font-bold rounded-xl shadow-lg transition">
                         Update CMS Section
                     </button>
                 </div>
+                {% endif %}
+
             </form>
         </div>
     </div>
@@ -514,14 +549,19 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-3 text-sm">
+                            {% if perms.testimonials.change_testimonial or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:testimonial_edit' test.id %}" class="text-neutral-400 hover:text-brand-primaryLight" title="Edit">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
+                            {% endif %}
+                            {% if perms.testimonials.delete_testimonial or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:testimonial_delete' test.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
                                 <i class="fa-solid fa-trash-can"></i>
                             </a>
+                            {% endif %}
                         </div>
                     </td>
+
                 </tr>
                 {% empty %}
                 <tr>
@@ -583,10 +623,12 @@
                         <input type="file" name="images" multiple required
                                class="block w-full text-sm text-neutral-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-brand-primary/10 file:text-brand-primary hover:file:bg-brand-primary/20 cursor-pointer bg-white dark:bg-neutral-800 rounded-lg border border-neutral-300 dark:border-neutral-700 px-4 py-2">
                     </div>
+                    {% if perms.gallery.add_galleryitem or user.is_superuser %}
                     <button type="submit" 
                             class="btn-gold-gradient w-full py-2.5 text-white font-bold rounded-xl shadow-lg transition">
                         Upload Images
                     </button>
+                    {% endif %}
                 </form>
             </div>
 
@@ -596,21 +638,27 @@
                     <h4 class="text-base font-bold text-neutral-900 dark:text-neutral-100 font-serif">
                         Gallery Categories
                     </h4>
+                    {% if perms.gallery.add_gallerycategory or user.is_superuser %}
                     <a href="{% url 'admin_dashboard:gallery_category_create' %}" class="text-xs font-bold text-brand-primary hover:text-brand-primaryLight">
                         <i class="fa-solid fa-plus mr-1"></i> Add Category
                     </a>
+                    {% endif %}
                 </div>
                 <div class="space-y-2">
                     {% for cat in gallery_categories %}
                     <div class="flex items-center justify-between p-2 rounded bg-neutral-50 dark:bg-neutral-900/40 text-xs">
                         <span class="font-semibold text-neutral-800 dark:text-neutral-200">{{ cat.name }}</span>
                         <div class="flex items-center gap-2">
+                            {% if perms.gallery.change_gallerycategory or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:gallery_category_edit' cat.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
+                            {% endif %}
+                            {% if perms.gallery.delete_gallerycategory or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:gallery_category_delete' cat.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
                                 <i class="fa-solid fa-trash-can"></i>
                             </a>
+                            {% endif %}
                         </div>
                     </div>
                     {% empty %}
@@ -633,12 +681,15 @@
                     {% else %}
                     <div class="h-full w-full bg-neutral-800 flex items-center justify-center text-[10px] text-neutral-400">Video Item</div>
                     {% endif %}
+                    {% if perms.gallery.delete_galleryitem or user.is_superuser %}
                     <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center transition duration-150">
                         <a href="{% url 'admin_dashboard:gallery_delete' item.id %}" class="text-rose-500 hover:text-rose-400 text-sm font-semibold">
                             <i class="fa-solid fa-trash-can mr-1"></i> Delete
                         </a>
                     </div>
+                    {% endif %}
                 </div>
+
                 {% empty %}
                 <p class="col-span-4 text-center text-sm text-neutral-500 py-6">No gallery items uploaded yet.</p>
                 {% endfor %}
@@ -690,14 +741,19 @@
                     <td class="px-6 py-4 text-neutral-500 max-w-xs truncate" title="{{ data.meta_description }}">{{ data.meta_description }}</td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-3 text-sm">
+                            {% if perms.seo.change_seodata or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:seo_edit' data.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
+                            {% endif %}
+                            {% if perms.seo.delete_seodata or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:seo_delete' data.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
                                 <i class="fa-solid fa-trash-can"></i>
                             </a>
+                            {% endif %}
                         </div>
                     </td>
+
                 </tr>
                 {% empty %}
                 <tr>

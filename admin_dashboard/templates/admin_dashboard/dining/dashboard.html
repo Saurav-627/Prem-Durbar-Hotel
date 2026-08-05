@@ -9,12 +9,15 @@
 {% endblock %}
 
 {% block page_actions %}
+{% if perms.dining.add_diningitem or user.is_superuser %}
 <div class="flex items-center gap-3">
     <a href="{% url 'admin_dashboard:dining_item_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
         <i class="fa-solid fa-plus mr-1.5"></i> Add Food Item
     </a>
 </div>
+{% endif %}
 {% endblock %}
+
 
 {% block content %}
 <div class="space-y-6">
@@ -72,14 +75,19 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-3 text-sm">
+                            {% if perms.dining.change_diningitem or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:dining_item_edit' item.id %}" class="text-neutral-400 hover:text-brand-primaryLight" title="Edit">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
+                            {% endif %}
+                            {% if perms.dining.delete_diningitem or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:dining_item_delete' item.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
                                 <i class="fa-solid fa-trash-can"></i>
                             </a>
+                            {% endif %}
                         </div>
                     </td>
+
                 </tr>
                 {% empty %}
                 <tr>

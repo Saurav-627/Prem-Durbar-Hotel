@@ -15,6 +15,7 @@ from payments.services.email_service import send_newsletter_broadcast_email
 from django.core.paginator import Paginator
 
 class ContactDashboardView(StaffRequiredMixin, View):
+    permission_required = 'contact.view_contactinquiry'
     def get(self, request):
         branches = Branch.objects.all()
         categories = ContactInquiryCategory.objects.all()
@@ -43,6 +44,7 @@ class ContactDashboardView(StaffRequiredMixin, View):
 
 
 class BroadcastNewsletterView(StaffRequiredMixin, View):
+    permission_required = 'contact.add_newslettersubscriber'
     def get(self, request):
         form = BroadcastNewsletterForm()
         active_subscribers_count = NewsletterSubscriber.objects.filter(is_active=True).count()
@@ -84,6 +86,7 @@ class BroadcastNewsletterView(StaffRequiredMixin, View):
 
 
 class NewsletterSubscriberToggleStatusView(StaffRequiredMixin, View):
+    permission_required = 'contact.change_newslettersubscriber'
     def post(self, request, pk):
         subscriber = get_object_or_404(NewsletterSubscriber, pk=pk)
         subscriber.is_active = not subscriber.is_active
@@ -95,6 +98,7 @@ class NewsletterSubscriberToggleStatusView(StaffRequiredMixin, View):
 
 
 class BranchCreateView(StaffRequiredMixin, CreateView):
+    permission_required = 'contact.add_branch'
     model = Branch
     form_class = BranchForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -104,6 +108,7 @@ class BranchCreateView(StaffRequiredMixin, CreateView):
         return reverse_lazy('admin_dashboard:contact_dashboard') + "?tab=branches"
 
 class BranchUpdateView(StaffRequiredMixin, UpdateView):
+    permission_required = 'contact.change_branch'
     model = Branch
     form_class = BranchForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -113,6 +118,7 @@ class BranchUpdateView(StaffRequiredMixin, UpdateView):
         return reverse_lazy('admin_dashboard:contact_dashboard') + "?tab=branches"
 
 class BranchDeleteView(StaffRequiredMixin, DeleteView):
+    permission_required = 'contact.delete_branch'
     model = Branch
     template_name = 'admin_dashboard/confirm_delete.html'
     
@@ -121,6 +127,7 @@ class BranchDeleteView(StaffRequiredMixin, DeleteView):
         return reverse_lazy('admin_dashboard:contact_dashboard') + "?tab=branches"
 
 class ContactInquiryCategoryCreateView(StaffRequiredMixin, CreateView):
+    permission_required = 'contact.add_contactinquirycategory'
     model = ContactInquiryCategory
     form_class = ContactInquiryCategoryForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -130,6 +137,7 @@ class ContactInquiryCategoryCreateView(StaffRequiredMixin, CreateView):
         return reverse_lazy('admin_dashboard:contact_dashboard') + "?tab=categories"
 
 class ContactInquiryCategoryUpdateView(StaffRequiredMixin, UpdateView):
+    permission_required = 'contact.change_contactinquirycategory'
     model = ContactInquiryCategory
     form_class = ContactInquiryCategoryForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -139,6 +147,7 @@ class ContactInquiryCategoryUpdateView(StaffRequiredMixin, UpdateView):
         return reverse_lazy('admin_dashboard:contact_dashboard') + "?tab=categories"
 
 class ContactInquiryCategoryDeleteView(StaffRequiredMixin, DeleteView):
+    permission_required = 'contact.delete_contactinquirycategory'
     model = ContactInquiryCategory
     template_name = 'admin_dashboard/confirm_delete.html'
     
@@ -147,6 +156,8 @@ class ContactInquiryCategoryDeleteView(StaffRequiredMixin, DeleteView):
         return reverse_lazy('admin_dashboard:contact_dashboard') + "?tab=categories"
 
 class ContactInquiryDetailView(StaffRequiredMixin, DetailView):
+    permission_required = 'contact.view_contactinquiry'
     model = ContactInquiry
     template_name = 'admin_dashboard/contact/inquiry_detail.html'
     context_object_name = 'inquiry'
+

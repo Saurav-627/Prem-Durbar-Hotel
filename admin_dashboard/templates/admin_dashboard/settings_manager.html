@@ -12,20 +12,27 @@
 {% block page_actions %}
 <div class="flex items-center gap-3">
     {% if active_tab == 'currencies' %}
-    <a href="{% url 'admin_dashboard:currency_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
-        <i class="fa-solid fa-plus mr-1.5"></i> Add Currency
-    </a>
+        {% if perms.settings_manager.add_currency or user.is_superuser %}
+        <a href="{% url 'admin_dashboard:currency_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
+            <i class="fa-solid fa-plus mr-1.5"></i> Add Currency
+        </a>
+        {% endif %}
     {% elif active_tab == 'navigation' %}
-    <a href="{% url 'admin_dashboard:menu_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
-        <i class="fa-solid fa-plus mr-1.5"></i> Add Menu Item
-    </a>
+        {% if perms.settings_manager.add_navigationmenu or user.is_superuser %}
+        <a href="{% url 'admin_dashboard:menu_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
+            <i class="fa-solid fa-plus mr-1.5"></i> Add Menu Item
+        </a>
+        {% endif %}
     {% elif active_tab == 'processors' %}
-    <a href="{% url 'admin_dashboard:processor_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
-        <i class="fa-solid fa-plus mr-1.5"></i> Add Payment Processor
-    </a>
+        {% if perms.payments.add_paymentprocessor or user.is_superuser %}
+        <a href="{% url 'admin_dashboard:processor_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
+            <i class="fa-solid fa-plus mr-1.5"></i> Add Payment Processor
+        </a>
+        {% endif %}
     {% endif %}
 </div>
 {% endblock %}
+
 
 {% block content %}
 <!-- Module Tabs navigation -->
@@ -333,12 +340,15 @@
                     </div>
                 </div>
 
+                {% if perms.settings_manager.change_hotelsettings or user.is_superuser %}
                 <div class="pt-6 border-t border-neutral-200 dark:border-neutral-800 flex items-center justify-end">
                     <button type="submit" 
                             class="btn-gold-gradient px-6 py-2.5 text-white font-bold rounded-xl shadow-lg transition">
                         Update Global settings
                     </button>
                 </div>
+                {% endif %}
+
             </form>
         </div>
     </div>
@@ -373,14 +383,19 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-3 text-sm">
+                            {% if perms.settings_manager.change_currency or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:currency_edit' curr.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
+                            {% endif %}
+                            {% if perms.settings_manager.delete_currency or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:currency_delete' curr.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
                                 <i class="fa-solid fa-trash-can"></i>
                             </a>
+                            {% endif %}
                         </div>
                     </td>
+
                 </tr>
                 {% empty %}
                 <tr>
@@ -425,14 +440,19 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-3 text-sm">
+                            {% if perms.settings_manager.change_navigationmenu or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:menu_edit' item.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
+                            {% endif %}
+                            {% if perms.settings_manager.delete_navigationmenu or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:menu_delete' item.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
                                 <i class="fa-solid fa-trash-can"></i>
                             </a>
+                            {% endif %}
                         </div>
                     </td>
+
                 </tr>
                 {% empty %}
                 <tr>
@@ -487,14 +507,19 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-3 text-sm">
+                            {% if perms.payments.change_paymentprocessor or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:processor_edit' proc.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
+                            {% endif %}
+                            {% if perms.payments.delete_paymentprocessor or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:processor_delete' proc.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
                                 <i class="fa-solid fa-trash-can"></i>
                             </a>
+                            {% endif %}
                         </div>
                     </td>
+
                 </tr>
                 {% empty %}
                 <tr>

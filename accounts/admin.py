@@ -4,4 +4,10 @@ from .models.user import User
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
-    pass
+    fieldsets = BaseUserAdmin.fieldsets + (
+        ('Custom Profile Info', {'fields': ('phone', 'is_hotel_admin', 'is_guest', 'avatar')}),
+    )
+    add_fieldsets = BaseUserAdmin.add_fieldsets + (
+        ('Custom Profile Info', {'fields': ('phone', 'is_hotel_admin', 'is_guest', 'avatar')}),
+    )
+

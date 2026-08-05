@@ -10,6 +10,7 @@ from admin_dashboard.forms import DiningItemForm, DiningItemBasePriceFormSet
 from django.core.paginator import Paginator
 
 class DiningDashboardView(StaffRequiredMixin, View):
+    permission_required = 'dining.view_diningitem'
     def get(self, request):
         categories = DiningCategory.objects.all()
         menu_items_qs = DiningItem.objects.all().select_related('category').prefetch_related('base_prices__currency')
@@ -27,6 +28,8 @@ class DiningDashboardView(StaffRequiredMixin, View):
 
 
 class DiningItemCreateView(StaffRequiredMixin, View):
+    permission_required = 'dining.add_diningitem'
+
     def get(self, request):
         form = DiningItemForm()
         currency_price_formset = DiningItemBasePriceFormSet()
@@ -67,6 +70,7 @@ class DiningItemCreateView(StaffRequiredMixin, View):
 
 
 class DiningItemUpdateView(StaffRequiredMixin, View):
+    permission_required = 'dining.change_diningitem'
     def get(self, request, pk):
         item = get_object_or_404(DiningItem, pk=pk)
         form = DiningItemForm(instance=item)
@@ -109,7 +113,9 @@ class DiningItemUpdateView(StaffRequiredMixin, View):
 class DiningItemDeleteView(StaffRequiredMixin, DeleteView):
     model = DiningItem
     template_name = 'admin_dashboard/confirm_delete.html'
+    permission_required = 'dining.delete_diningitem'
     
     def get_success_url(self):
         messages.success(self.request, "Food menu item deleted successfully.")
         return reverse_lazy('admin_dashboard:dining_dashboard')
+

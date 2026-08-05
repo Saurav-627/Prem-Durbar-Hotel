@@ -115,16 +115,17 @@
             {% csrf_token %}
             
             <div>
-                <label for="id_username" class="block text-xs font-bold text-[#A8D5BA] uppercase tracking-wider mb-2">Username</label>
+                <label for="id_username" class="block text-xs font-bold text-[#A8D5BA] uppercase tracking-wider mb-2">Username or Email</label>
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-[#7A9E7E]">
                         <i class="fa-regular fa-user text-sm"></i>
                     </span>
                     <input type="text" name="username" id="id_username" required autofocus
                            class="w-full pl-10 pr-4 py-3 bg-[#132E23] border border-[#2D5A4A] rounded-xl text-white placeholder-[#5C7C61] focus:outline-none focus:border-[#A8D5BA] focus:ring-1 focus:ring-[#A8D5BA] transition duration-200 text-sm font-medium"
-                           placeholder="Enter admin username">
+                           placeholder="Enter admin username or email address">
                 </div>
             </div>
+
 
             <div>
                 <label for="id_password" class="block text-xs font-bold text-[#A8D5BA] uppercase tracking-wider mb-2">Password</label>

@@ -24,6 +24,7 @@ from admin_dashboard.forms import (
 from django.core.paginator import Paginator
 
 class CmsDashboardView(StaffRequiredMixin, View):
+    permission_required = 'homepage.view_heroslide'
     def get(self, request):
         active_tab = request.GET.get('tab', 'hero')
         page_number = request.GET.get('page')
@@ -90,6 +91,7 @@ class CmsDashboardView(StaffRequiredMixin, View):
 
 # Hero Slide Views
 class HeroSlideCreateView(StaffRequiredMixin, CreateView):
+    permission_required = 'homepage.add_heroslide'
     model = HeroSlide
     form_class = HeroSlideForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -99,6 +101,7 @@ class HeroSlideCreateView(StaffRequiredMixin, CreateView):
         return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=hero"
 
 class HeroSlideUpdateView(StaffRequiredMixin, UpdateView):
+    permission_required = 'homepage.change_heroslide'
     model = HeroSlide
     form_class = HeroSlideForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -108,6 +111,7 @@ class HeroSlideUpdateView(StaffRequiredMixin, UpdateView):
         return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=hero"
 
 class HeroSlideDeleteView(StaffRequiredMixin, DeleteView):
+    permission_required = 'homepage.delete_heroslide'
     model = HeroSlide
     template_name = 'admin_dashboard/confirm_delete.html'
     
@@ -117,6 +121,7 @@ class HeroSlideDeleteView(StaffRequiredMixin, DeleteView):
 
 # About Preview singleton
 class AboutPreviewUpdateView(StaffRequiredMixin, View):
+    permission_required = 'homepage.change_aboutpreview'
     def post(self, request):
         about_obj = AboutPreview.objects.first()
         if not about_obj:
@@ -131,6 +136,7 @@ class AboutPreviewUpdateView(StaffRequiredMixin, View):
 
 # About Page CMS View
 class AboutCMSUpdateView(StaffRequiredMixin, View):
+    permission_required = 'homepage.change_aboutcms'
     def post(self, request):
         obj, _ = AboutCMS.objects.get_or_create(id=1)
         form = AboutCMSForm(request.POST, request.FILES, instance=obj)
@@ -144,6 +150,7 @@ class AboutCMSUpdateView(StaffRequiredMixin, View):
 
 # Zipline Page CMS View
 class ZiplineCMSUpdateView(StaffRequiredMixin, View):
+    permission_required = 'homepage.change_ziplinecms'
     def post(self, request):
         obj, _ = ZiplineCMS.objects.get_or_create(id=1)
         form = ZiplineCMSForm(request.POST, request.FILES, instance=obj)
@@ -157,6 +164,7 @@ class ZiplineCMSUpdateView(StaffRequiredMixin, View):
 
 # Sustainability Page CMS View
 class SustainabilityCMSUpdateView(StaffRequiredMixin, View):
+    permission_required = 'homepage.change_sustainabilitycms'
     def post(self, request):
         obj, _ = SustainabilityCMS.objects.get_or_create(id=1)
         form = SustainabilityCMSForm(request.POST, request.FILES, instance=obj)
@@ -169,6 +177,7 @@ class SustainabilityCMSUpdateView(StaffRequiredMixin, View):
         return redirect(reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=sustainability_cms")
 
 class SustainabilityPillarCreateView(StaffRequiredMixin, CreateView):
+    permission_required = 'homepage.add_sustainabilitypillar'
     model = SustainabilityPillar
     form_class = SustainabilityPillarForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -178,6 +187,7 @@ class SustainabilityPillarCreateView(StaffRequiredMixin, CreateView):
         return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=sustainability_cms"
 
 class SustainabilityPillarUpdateView(StaffRequiredMixin, UpdateView):
+    permission_required = 'homepage.change_sustainabilitypillar'
     model = SustainabilityPillar
     form_class = SustainabilityPillarForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -187,6 +197,7 @@ class SustainabilityPillarUpdateView(StaffRequiredMixin, UpdateView):
         return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=sustainability_cms"
 
 class SustainabilityPillarDeleteView(StaffRequiredMixin, DeleteView):
+    permission_required = 'homepage.delete_sustainabilitypillar'
     model = SustainabilityPillar
     template_name = 'admin_dashboard/confirm_delete.html'
     
@@ -196,6 +207,7 @@ class SustainabilityPillarDeleteView(StaffRequiredMixin, DeleteView):
 
 # Testimonial Views
 class TestimonialCreateView(StaffRequiredMixin, CreateView):
+    permission_required = 'testimonials.add_testimonial'
     model = Testimonial
     form_class = TestimonialForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -205,6 +217,7 @@ class TestimonialCreateView(StaffRequiredMixin, CreateView):
         return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=testimonials"
 
 class TestimonialUpdateView(StaffRequiredMixin, UpdateView):
+    permission_required = 'testimonials.change_testimonial'
     model = Testimonial
     form_class = TestimonialForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -214,6 +227,7 @@ class TestimonialUpdateView(StaffRequiredMixin, UpdateView):
         return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=testimonials"
 
 class TestimonialDeleteView(StaffRequiredMixin, DeleteView):
+    permission_required = 'testimonials.delete_testimonial'
     model = Testimonial
     template_name = 'admin_dashboard/confirm_delete.html'
     
@@ -223,6 +237,7 @@ class TestimonialDeleteView(StaffRequiredMixin, DeleteView):
 
 # Gallery Views
 class GalleryCategoryCreateView(StaffRequiredMixin, CreateView):
+    permission_required = 'gallery.add_gallerycategory'
     model = GalleryCategory
     form_class = GalleryCategoryForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -232,6 +247,7 @@ class GalleryCategoryCreateView(StaffRequiredMixin, CreateView):
         return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=gallery"
 
 class GalleryCategoryUpdateView(StaffRequiredMixin, UpdateView):
+    permission_required = 'gallery.change_gallerycategory'
     model = GalleryCategory
     form_class = GalleryCategoryForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -241,6 +257,7 @@ class GalleryCategoryUpdateView(StaffRequiredMixin, UpdateView):
         return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=gallery"
 
 class GalleryCategoryDeleteView(StaffRequiredMixin, DeleteView):
+    permission_required = 'gallery.delete_gallerycategory'
     model = GalleryCategory
     template_name = 'admin_dashboard/confirm_delete.html'
     
@@ -249,6 +266,7 @@ class GalleryCategoryDeleteView(StaffRequiredMixin, DeleteView):
         return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=gallery"
 
 class GalleryItemCreateView(StaffRequiredMixin, CreateView):
+    permission_required = 'gallery.add_galleryitem'
     model = GalleryItem
     form_class = GalleryItemForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -258,6 +276,7 @@ class GalleryItemCreateView(StaffRequiredMixin, CreateView):
         return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=gallery"
 
 class GalleryItemBulkUploadView(StaffRequiredMixin, View):
+    permission_required = 'gallery.add_galleryitem'
     def post(self, request):
         images = request.FILES.getlist('images')
         category_id = request.POST.get('category')
@@ -272,6 +291,7 @@ class GalleryItemBulkUploadView(StaffRequiredMixin, View):
         return redirect(reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=gallery")
 
 class GalleryItemDeleteView(StaffRequiredMixin, DeleteView):
+    permission_required = 'gallery.delete_galleryitem'
     model = GalleryItem
     template_name = 'admin_dashboard/confirm_delete.html'
     
@@ -281,6 +301,7 @@ class GalleryItemDeleteView(StaffRequiredMixin, DeleteView):
 
 # SEO Views
 class SeoCreateView(StaffRequiredMixin, CreateView):
+    permission_required = 'seo.add_seodata'
     model = SEOData
     form_class = SEODataForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -290,6 +311,7 @@ class SeoCreateView(StaffRequiredMixin, CreateView):
         return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=seo"
 
 class SeoUpdateView(StaffRequiredMixin, UpdateView):
+    permission_required = 'seo.change_seodata'
     model = SEOData
     form_class = SEODataForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -299,6 +321,7 @@ class SeoUpdateView(StaffRequiredMixin, UpdateView):
         return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=seo"
 
 class SeoDeleteView(StaffRequiredMixin, DeleteView):
+    permission_required = 'seo.delete_seodata'
     model = SEOData
     template_name = 'admin_dashboard/confirm_delete.html'
     
@@ -309,6 +332,7 @@ class SeoDeleteView(StaffRequiredMixin, DeleteView):
 
 # Team Member Views
 class TeamMemberCreateView(StaffRequiredMixin, CreateView):
+    permission_required = 'homepage.add_teammember'
     model = TeamMember
     form_class = TeamMemberForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -318,6 +342,7 @@ class TeamMemberCreateView(StaffRequiredMixin, CreateView):
         return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=about_cms"
 
 class TeamMemberUpdateView(StaffRequiredMixin, UpdateView):
+    permission_required = 'homepage.change_teammember'
     model = TeamMember
     form_class = TeamMemberForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -327,11 +352,13 @@ class TeamMemberUpdateView(StaffRequiredMixin, UpdateView):
         return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=about_cms"
 
 class TeamMemberDeleteView(StaffRequiredMixin, DeleteView):
+    permission_required = 'homepage.delete_teammember'
     model = TeamMember
     template_name = 'admin_dashboard/confirm_delete.html'
     
     def get_success_url(self):
         messages.success(self.request, "Team member deleted successfully.")
         return reverse_lazy('admin_dashboard:cms_dashboard') + "?tab=about_cms"
+
 
 

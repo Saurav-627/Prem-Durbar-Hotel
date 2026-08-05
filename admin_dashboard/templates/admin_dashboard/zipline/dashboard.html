@@ -11,9 +11,11 @@
             <p class="text-xs text-neutral-500 mt-1">Manage zipline flight packages, multi-currency pricing, and page CMS settings.</p>
         </div>
         <div class="flex items-center gap-3">
+            {% if perms.homepage.add_ziplinepackage or user.is_superuser %}
             <a href="{% url 'admin_dashboard:zipline_package_create' %}" class="btn-gold-gradient px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-brand-forestDark shadow-md">
                 <i class="fa-solid fa-plus mr-1.5"></i> Add Zipline Package
             </a>
+            {% endif %}
         </div>
     </div>
 
@@ -39,9 +41,11 @@
                 </h4>
                 <p class="text-xs text-neutral-500 mt-1">Flight packages available for booking on the website with multi-currency pricing.</p>
             </div>
+            {% if perms.homepage.add_ziplinepackage or user.is_superuser %}
             <a href="{% url 'admin_dashboard:zipline_package_create' %}" class="btn-gold-gradient px-4 py-2 text-brand-forestDark font-bold rounded-xl text-xs shadow-md">
                 <i class="fa-solid fa-plus mr-1"></i> Add Package
             </a>
+            {% endif %}
         </div>
 
         <div class="overflow-x-auto">
@@ -86,15 +90,20 @@
                         </td>
                         <td class="px-4 py-3 text-right">
                             <div class="flex items-center justify-end gap-3 text-sm">
+                                {% if perms.homepage.change_ziplinepackage or user.is_superuser %}
                                 <a href="{% url 'admin_dashboard:zipline_package_edit' pkg.id %}" class="text-neutral-400 hover:text-brand-primaryLight" title="Edit">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
+                                {% endif %}
+                                {% if perms.homepage.delete_ziplinepackage or user.is_superuser %}
                                 <a href="{% url 'admin_dashboard:zipline_package_delete' pkg.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>
+
                     {% empty %}
                     <tr>
                         <td colspan="7" class="px-4 py-8 text-center text-xs text-neutral-500">No zipline packages added yet. Click "Add Package" above to create your first package.</td>

@@ -376,10 +376,55 @@ class SEODataForm(TailwindFormMixin, forms.ModelForm):
         model = SEOData
         fields = '__all__'
 
+from django.contrib.auth.models import Permission, Group
+
 class UserForm(TailwindFormMixin, forms.ModelForm):
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Enter password...'}),
+        required=False,
+        help_text="Leave blank to keep existing password."
+    )
+
     class Meta:
         model = User
-        fields = ['username', 'email', 'phone', 'is_active', 'is_staff', 'is_superuser', 'is_hotel_admin', 'is_guest', 'avatar', 'groups', 'user_permissions']
+        fields = [
+            'username', 'first_name', 'last_name', 'email', 'phone',
+            'is_active', 'is_staff', 'is_superuser',
+            'is_hotel_admin', 'is_guest', 'avatar', 'groups', 'user_permissions'
+        ]
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.instance or not self.instance.pk:
+            self.fields['password'].required = True
+            self.fields['password'].help_text = "Required when creating a new user."
+
+        # Prepare grouped permissions for clean UI selection
+        all_perms = Permission.objects.select_related('content_type').order_by('content_type__app_label', 'content_type__model', 'name')
+        grouped = {}
+        for p in all_perms:
+            app_label = p.content_type.app_label
+            # Skip noise internal contenttypes/sessions permissions unless needed
+            if app_label in ['contenttypes', 'sessions']:
+                continue
+            module_name = f"{app_label.replace('_', ' ').title()} — {p.content_type.model.replace('_', ' ').title()}"
+            if module_name not in grouped:
+                grouped[module_name] = []
+            grouped[module_name].append(p)
+        self.grouped_permissions = grouped
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        password = self.cleaned_data.get('password')
+        if password:
+            user.set_password(password)
+        if commit:
+            user.save()
+            self.save_m2m()
+        return user
+
+
 
 
 class PaymentProcessorForm(TailwindFormMixin, forms.ModelForm):

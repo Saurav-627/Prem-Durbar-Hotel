@@ -423,12 +423,15 @@
                 </a>
 
                 <!-- Bookings -->
+                {% if perms.booking.view_booking or user.is_superuser %}
                 <a href="{% url 'admin_dashboard:booking_list' %}" class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-luxuryGold-500/10 hover:text-luxuryGold-600 transition group {% if 'booking' in request.path %}bg-luxuryGold-500/10 text-luxuryGold-600 font-semibold{% else %}text-neutral-600{% endif %}">
                     <div class="w-5 text-center"><i class="fa-solid fa-calendar-check text-lg"></i></div>
                     <span x-show="sidebarOpen">Bookings</span>
                 </a>
+                {% endif %}
                 
                 <!-- Rooms & Availability -->
+                {% if perms.rooms.view_room or user.is_superuser %}
                 <div x-data="{ open: {% if 'rooms' in request.path %}true{% else %}false{% endif %} }">
                     <button @click="open = !open" class="w-full flex items-center justify-between px-4 py-3 rounded-lg hover:bg-luxuryGold-500/10 hover:text-luxuryGold-600 transition {% if 'rooms' in request.path %}bg-luxuryGold-500/10 text-luxuryGold-600 font-semibold{% else %}text-neutral-600{% endif %}">
                         <div class="flex items-center gap-4">
@@ -450,54 +453,72 @@
                         </a>
                     </div>
                 </div>
+                {% endif %}
                 
                 <!-- Payments -->
+                {% if perms.payments.view_payment or perms.payments.view_paymentprocessor or user.is_superuser %}
                 <a href="{% url 'admin_dashboard:payment_list' %}" class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-luxuryGold-500/10 hover:text-luxuryGold-600 transition group {% if 'payments' in request.path %}bg-luxuryGold-500/10 text-luxuryGold-600 font-semibold{% else %}text-neutral-600{% endif %}">
                     <div class="w-5 text-center"><i class="fa-solid fa-credit-card text-lg"></i></div>
                     <span x-show="sidebarOpen">Payments</span>
                 </a>
+                {% endif %}
 
                 <!-- Dining -->
+                {% if perms.dining.view_diningitem or user.is_superuser %}
                 <a href="{% url 'admin_dashboard:dining_dashboard' %}" class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-luxuryGold-500/10 hover:text-luxuryGold-600 transition group {% if 'dining' in request.path %}bg-luxuryGold-500/10 text-luxuryGold-600 font-semibold{% else %}text-neutral-600{% endif %}">
                     <i class="fa-solid fa-utensils text-lg w-5 text-center"></i>
                     <span x-show="sidebarOpen">Dining Items</span>
                 </a>
+                {% endif %}
 
                 <!-- Zipline Packages & CMS -->
+                {% if perms.homepage.view_ziplinepackage or perms.homepage.view_ziplinecms or user.is_superuser %}
                 <a href="{% url 'admin_dashboard:zipline_dashboard' %}" class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-luxuryGold-500/10 hover:text-luxuryGold-600 transition group {% if 'zipline' in request.path %}bg-luxuryGold-500/10 text-luxuryGold-600 font-semibold{% else %}text-neutral-600{% endif %}">
                     <i class="fa-solid fa-bolt text-lg w-5 text-center"></i>
                     <span x-show="sidebarOpen">Zipline Packages</span>
                 </a>
+                {% endif %}
 
                 <!-- Promo & Coupon Manager -->
+                {% if perms.booking.view_coupon or user.is_superuser %}
                 <a href="{% url 'admin_dashboard:coupon_dashboard' %}" class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-luxuryGold-500/10 hover:text-luxuryGold-600 transition group {% if 'coupons' in request.path %}bg-luxuryGold-500/10 text-luxuryGold-600 font-semibold{% else %}text-neutral-600{% endif %}">
                     <i class="fa-solid fa-ticket text-lg w-5 text-center"></i>
                     <span x-show="sidebarOpen">Coupons & Promos</span>
                 </a>
+                {% endif %}
 
                 <!-- Homepage CMS -->
+                {% if perms.homepage.view_heroslide or perms.homepage.view_aboutcms or perms.homepage.view_teammember or user.is_superuser %}
                 <a href="{% url 'admin_dashboard:cms_dashboard' %}" class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-luxuryGold-500/10 hover:text-luxuryGold-600 transition group {% if 'cms' in request.path %}bg-luxuryGold-500/10 text-luxuryGold-600 font-semibold{% else %}text-neutral-600{% endif %}">
                     <div class="w-5 text-center"><i class="fa-solid fa-file-pen text-lg"></i></div>
                     <span x-show="sidebarOpen">Homepage CMS</span>
                 </a>
+                {% endif %}
 
                 <!-- Contact & Branches -->
+                {% if perms.contact.view_contactinquiry or perms.contact.view_branch or user.is_superuser %}
                 <a href="{% url 'admin_dashboard:contact_dashboard' %}" class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-luxuryGold-500/10 hover:text-luxuryGold-600 transition group {% if 'contact' in request.path %}bg-luxuryGold-500/10 text-luxuryGold-600 font-semibold{% else %}text-neutral-600{% endif %}">
                     <div class="w-5 text-center"><i class="fa-solid fa-map-location-dot text-lg"></i></div>
                     <span x-show="sidebarOpen">Branches & Messages</span>
                 </a>
+                {% endif %}
 
                 <!-- Users management -->
+                {% if perms.accounts.view_user or user.is_superuser %}
                 <a href="{% url 'admin_dashboard:user_list' %}" class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-luxuryGold-500/10 hover:text-luxuryGold-600 transition group {% if 'users' in request.path %}bg-luxuryGold-500/10 text-luxuryGold-600 font-semibold{% else %}text-neutral-600{% endif %}">
                     <div class="w-5 text-center"><i class="fa-solid fa-users text-lg"></i></div>
                     <span x-show="sidebarOpen">User Accounts</span>
                 </a>
+                {% endif %}
 
                 <!-- General settings -->
+                {% if perms.settings_manager.view_hotelsettings or perms.settings_manager.view_navigationmenu or user.is_superuser %}
                 <a href="{% url 'admin_dashboard:settings_dashboard' %}" class="flex items-center gap-4 px-4 py-3 rounded-lg hover:bg-luxuryGold-500/10 hover:text-luxuryGold-600 transition group {% if 'settings' in request.path and 'rooms' not in request.path %}bg-luxuryGold-500/10 text-luxuryGold-600 font-semibold{% else %}text-neutral-600{% endif %}">
                     <div class="w-5 text-center"><i class="fa-solid fa-gears text-lg"></i></div>
                     <span x-show="sidebarOpen">General Settings</span>
                 </a>
+                {% endif %}
+
 
             </nav>
             

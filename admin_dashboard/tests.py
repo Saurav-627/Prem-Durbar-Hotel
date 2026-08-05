@@ -66,9 +66,11 @@ class PaymentProcessorTests(TestCase):
             username='staffuser', 
             password='staffpassword',
             email='staff@example.com',
-            is_staff=True
+            is_staff=True,
+            is_superuser=True
         )
         self.client.login(username='staffuser', password='staffpassword')
+
         
         # Ensure we have active currencies
         self.usd = Currency.objects.create(name="US Dollar", iso_code="USD", symbol="$", is_published=True, sequence=1)

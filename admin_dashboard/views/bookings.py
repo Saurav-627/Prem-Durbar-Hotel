@@ -13,6 +13,7 @@ class BookingListView(StaffRequiredMixin, ListView):
     template_name = 'admin_dashboard/bookings/list.html'
     context_object_name = 'bookings'
     paginate_by = 15
+    permission_required = 'booking.view_booking'
 
     def get_queryset(self):
         queryset = Booking.objects.all().select_related('room', 'room__category').prefetch_related('room__base_prices__currency')
@@ -52,6 +53,8 @@ class BookingDetailView(StaffRequiredMixin, DetailView):
     model = Booking
     template_name = 'admin_dashboard/bookings/detail.html'
     context_object_name = 'booking'
+    permission_required = 'booking.view_booking'
+
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

@@ -1,0 +1,354 @@
+{% extends 'admin_dashboard/base.html' %}
+
+{% block page_title %}{% if form.instance.pk %}Edit User: {{ form.instance.username }}{% else %}Add New User{% endif %}{% endblock %}
+{% block page_subtitle %}Manage user profile details, system roles, and granular permissions.{% endblock %}
+
+{% block breadcrumbs %}
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<a href="{% url 'admin_dashboard:user_list' %}" class="hover:text-brand-primary transition">Users</a>
+<i class="fa-solid fa-chevron-right text-xs"></i>
+<span class="text-neutral-500">{% if form.instance.pk %}Edit{% else %}Create{% endif %} User</span>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-[95%] mx-auto mt-6">
+    <form method="post" enctype="multipart/form-data" class="space-y-8">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+        <div class="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-500 text-sm">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <!-- Section 1: User Profile & Identity Information -->
+        <div class="custom-card rounded-2xl p-8 bg-white dark:bg-neutral-900 shadow-xl space-y-6">
+            <div class="border-b border-neutral-200 dark:border-neutral-800 pb-4">
+                <h3 class="text-lg font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
+                    <i class="fa-solid fa-user-circle text-brand-primary"></i> Basic Profile & Account Credentials
+                </h3>
+                <p class="text-xs text-neutral-500">Personal identification and login authentication info.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Username -->
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2">
+                        Username <span class="text-rose-500">*</span>
+                    </label>
+                    {{ form.username }}
+                    {% if form.username.errors %}<p class="text-rose-500 text-xs mt-1">{{ form.username.errors.0 }}</p>{% endif %}
+                </div>
+
+                <!-- First Name -->
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2">
+                        First Name
+                    </label>
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}<p class="text-rose-500 text-xs mt-1">{{ form.first_name.errors.0 }}</p>{% endif %}
+                </div>
+
+                <!-- Last Name -->
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2">
+                        Last Name
+                    </label>
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}<p class="text-rose-500 text-xs mt-1">{{ form.last_name.errors.0 }}</p>{% endif %}
+                </div>
+
+                <!-- Email -->
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2">
+                        Email Address
+                    </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}<p class="text-rose-500 text-xs mt-1">{{ form.email.errors.0 }}</p>{% endif %}
+                </div>
+
+                <!-- Phone -->
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2">
+                        Phone Number
+                    </label>
+                    {{ form.phone }}
+                    {% if form.phone.errors %}<p class="text-rose-500 text-xs mt-1">{{ form.phone.errors.0 }}</p>{% endif %}
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2">
+                        Password {% if not form.instance.pk %}<span class="text-rose-500">*</span>{% endif %}
+                    </label>
+                    {{ form.password }}
+                    <p class="text-xs text-neutral-500 mt-1">{{ form.password.help_text }}</p>
+                    {% if form.password.errors %}<p class="text-rose-500 text-xs mt-1">{{ form.password.errors.0 }}</p>{% endif %}
+                </div>
+
+                <!-- Avatar Upload -->
+                <div class="md:col-span-2 lg:col-span-3">
+                    <label class="block text-xs font-semibold text-neutral-700 dark:text-neutral-300 uppercase tracking-wider mb-2">
+                        Profile Avatar Picture
+                    </label>
+                    {{ form.avatar }}
+                    {% if form.avatar.errors %}<p class="text-rose-500 text-xs mt-1">{{ form.avatar.errors.0 }}</p>{% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Account Roles & Access Flags -->
+        <div class="custom-card rounded-2xl p-8 bg-white dark:bg-neutral-900 shadow-xl space-y-6">
+            <div class="border-b border-neutral-200 dark:border-neutral-800 pb-4">
+                <h3 class="text-lg font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-brand-primary"></i> Account Roles & Access Flags
+                </h3>
+                <p class="text-xs text-neutral-500">Define high-level administrative status and privileges.</p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                <!-- Active status -->
+                <div class="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 flex items-center justify-between bg-neutral-50/50 dark:bg-neutral-800/30">
+                    <div>
+                        <span class="block text-xs font-bold text-neutral-800 dark:text-neutral-200 uppercase">Active Status</span>
+                        <span class="text-[11px] text-neutral-500">Can log into platform</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        {{ form.is_active }}
+                        <div class="w-11 h-6 bg-neutral-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+                    </label>
+                </div>
+
+                <!-- Staff status -->
+                <div class="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 flex items-center justify-between bg-neutral-50/50 dark:bg-neutral-800/30">
+                    <div>
+                        <span class="block text-xs font-bold text-neutral-800 dark:text-neutral-200 uppercase">Staff Member</span>
+                        <span class="text-[11px] text-neutral-500">Admin dashboard access</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        {{ form.is_staff }}
+                        <div class="w-11 h-6 bg-neutral-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-primary"></div>
+                    </label>
+                </div>
+
+                <!-- Superuser -->
+                <div class="p-4 rounded-xl border border-amber-500/20 flex items-center justify-between bg-amber-500/5 dark:bg-amber-500/10">
+                    <div>
+                        <span class="block text-xs font-bold text-amber-700 dark:text-amber-400 uppercase">Super Admin</span>
+                        <span class="text-[11px] text-neutral-500">Bypasses all checks</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        {{ form.is_superuser }}
+                        <div class="w-11 h-6 bg-neutral-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                    </label>
+                </div>
+
+                <!-- Hotel Admin -->
+                <div class="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 flex items-center justify-between bg-neutral-50/50 dark:bg-neutral-800/30">
+                    <div>
+                        <span class="block text-xs font-bold text-neutral-800 dark:text-neutral-200 uppercase">Hotel Manager</span>
+                        <span class="text-[11px] text-neutral-500">Property management</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        {{ form.is_hotel_admin }}
+                        <div class="w-11 h-6 bg-neutral-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-primary"></div>
+                    </label>
+                </div>
+
+                <!-- Guest -->
+                <div class="p-4 rounded-xl border border-neutral-200 dark:border-neutral-800 flex items-center justify-between bg-neutral-50/50 dark:bg-neutral-800/30">
+                    <div>
+                        <span class="block text-xs font-bold text-neutral-800 dark:text-neutral-200 uppercase">Hotel Guest</span>
+                        <span class="text-[11px] text-neutral-500">Standard customer</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        {{ form.is_guest }}
+                        <div class="w-11 h-6 bg-neutral-200 rounded-full peer peer-focus:outline-none peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-primary"></div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: User Groups -->
+        <div class="custom-card rounded-2xl p-8 bg-white dark:bg-neutral-900 shadow-xl space-y-6">
+            <div class="border-b border-neutral-200 dark:border-neutral-800 pb-4">
+                <h3 class="text-lg font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
+                    <i class="fa-solid fa-users text-brand-primary"></i> User Permission Groups
+                </h3>
+                <p class="text-xs text-neutral-500">Assign pre-packaged role groups to grant bundled permissions.</p>
+            </div>
+
+            <div>
+                {{ form.groups }}
+                {% if form.groups.errors %}<p class="text-rose-500 text-xs mt-1">{{ form.groups.errors.0 }}</p>{% endif %}
+            </div>
+        </div>
+
+        <!-- Section 4: Granular Model Permissions Picker -->
+        <div class="custom-card rounded-2xl p-8 bg-white dark:bg-neutral-900 shadow-xl space-y-6">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200 dark:border-neutral-800 pb-4">
+                <div>
+                    <h3 class="text-lg font-bold text-neutral-900 dark:text-neutral-100 flex items-center gap-2">
+                        <i class="fa-solid fa-key text-brand-primary"></i> Granular Module Permissions
+                    </h3>
+                    <p class="text-xs text-neutral-500">Assign specific model permissions directly to this user.</p>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div class="relative w-full sm:w-72">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-neutral-400 text-xs"></i>
+                        <input type="text" id="permission-search" placeholder="Search permissions..." 
+                               class="w-full pl-9 pr-4 py-2 text-xs rounded-xl border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-brand-primary outline-none">
+                    </div>
+                    <button type="button" id="btn-select-all-global" class="px-3 py-1.5 text-xs font-semibold text-brand-primary bg-brand-primary/10 hover:bg-brand-primary/20 rounded-lg transition whitespace-nowrap">
+                        Select All
+                    </button>
+                    <button type="button" id="btn-deselect-all-global" class="px-3 py-1.5 text-xs font-semibold text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 rounded-lg transition whitespace-nowrap">
+                        Clear All
+                    </button>
+                </div>
+            </div>
+
+            <!-- Custom Interactive Permission Module Accordions -->
+            <div id="permission-modules-container" class="space-y-4">
+                {% for module_name, perms in form.grouped_permissions.items %}
+                <div class="perm-module-card rounded-xl border border-neutral-200 dark:border-neutral-800 bg-neutral-50/40 dark:bg-neutral-800/20 overflow-hidden transition">
+                    <!-- Module Header -->
+                    <div class="flex items-center justify-between px-5 py-3.5 bg-neutral-100/60 dark:bg-neutral-800/60 cursor-pointer select-none"
+                         onclick="toggleModuleAccordion('module-{{ forloop.counter }}')">
+                        <div class="flex items-center gap-3">
+                            <i id="icon-module-{{ forloop.counter }}" class="fa-solid fa-chevron-down text-xs text-neutral-400 transition-transform"></i>
+                            <span class="font-bold text-sm text-neutral-800 dark:text-neutral-200">{{ module_name }}</span>
+                            <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-neutral-200 dark:bg-neutral-700 text-neutral-600 dark:text-neutral-300">
+                                {{ perms|length }} permissions
+                            </span>
+                        </div>
+
+                        <div class="flex items-center gap-2" onclick="event.stopPropagation()">
+                            <button type="button" onclick="toggleCategoryPerms('module-{{ forloop.counter }}', true)" 
+                                    class="text-[11px] font-semibold text-brand-primary hover:underline px-2 py-0.5">
+                                Select Category
+                            </button>
+                            <span class="text-neutral-300 dark:text-neutral-700">|</span>
+                            <button type="button" onclick="toggleCategoryPerms('module-{{ forloop.counter }}', false)" 
+                                    class="text-[11px] text-neutral-500 hover:underline px-2 py-0.5">
+                                Clear
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Module Body Grid -->
+                    <div id="module-{{ forloop.counter }}" class="p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        {% for perm in perms %}
+                        <label class="perm-item flex items-center justify-between p-3 rounded-lg border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 hover:border-brand-primary/50 transition cursor-pointer"
+                               data-search="{{ module_name|lower }} {{ perm.name|lower }} {{ perm.codename|lower }}">
+                            <div class="flex items-center gap-2.5 overflow-hidden">
+                                <input type="checkbox" name="user_permissions" value="{{ perm.id }}" 
+                                       class="perm-checkbox w-4 h-4 rounded border-neutral-300 text-brand-primary focus:ring-brand-primary cursor-pointer"
+                                       {% if form.instance.pk and perm in form.instance.user_permissions.all %}checked{% endif %}>
+                                <span class="text-xs font-medium text-neutral-700 dark:text-neutral-300 truncate" title="{{ perm.name }}">
+                                    {{ perm.name }}
+                                </span>
+                            </div>
+
+                            {% if 'add' in perm.codename %}
+                            <span class="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">Add</span>
+                            {% elif 'change' in perm.codename %}
+                            <span class="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded bg-amber-500/10 text-amber-600 dark:text-amber-400">Edit</span>
+                            {% elif 'delete' in perm.codename %}
+                            <span class="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded bg-rose-500/10 text-rose-600 dark:text-rose-400">Delete</span>
+                            {% elif 'view' in perm.codename %}
+                            <span class="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded bg-sky-500/10 text-sky-600 dark:text-sky-400">View</span>
+                            {% else %}
+                            <span class="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded bg-neutral-200 dark:bg-neutral-700 text-neutral-600">Other</span>
+                            {% endif %}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Sticky Action Controls Footer -->
+        <div class="flex items-center justify-end gap-4 p-6 bg-white dark:bg-neutral-900 rounded-2xl shadow-xl border border-neutral-200 dark:border-neutral-800">
+            <a href="{% url 'admin_dashboard:user_list' %}" 
+               class="px-6 py-2.5 border border-neutral-300 dark:border-neutral-700 hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-600 dark:text-neutral-400 font-semibold rounded-xl transition">
+                Cancel
+            </a>
+            <button type="submit" 
+                    class="btn-gold-gradient px-8 py-2.5 text-white font-bold rounded-xl shadow-lg transition flex items-center gap-2">
+                <i class="fa-solid fa-floppy-disk"></i> Save User Profile & Permissions
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+function toggleModuleAccordion(id) {
+    const el = document.getElementById(id);
+    const icon = document.getElementById('icon-' + id);
+    if (el) {
+        el.classList.toggle('hidden');
+        if (icon) {
+            icon.classList.toggle('rotate-180');
+        }
+    }
+}
+
+function toggleCategoryPerms(moduleId, state) {
+    const container = document.getElementById(moduleId);
+    if (container) {
+        const checkboxes = container.querySelectorAll('.perm-checkbox');
+        checkboxes.forEach(cb => cb.checked = state);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('permission-search');
+    const permItems = document.querySelectorAll('.perm-item');
+    const moduleCards = document.querySelectorAll('.perm-module-card');
+
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const query = e.target.value.toLowerCase().trim();
+            
+            moduleCards.forEach(card => {
+                let hasMatch = false;
+                const items = card.querySelectorAll('.perm-item');
+                items.forEach(item => {
+                    const searchData = item.getAttribute('data-search') || '';
+                    if (!query || searchData.includes(query)) {
+                        item.classList.remove('hidden');
+                        hasMatch = true;
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                });
+
+                if (hasMatch) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+        });
+    }
+
+    const btnSelectAll = document.getElementById('btn-select-all-global');
+    const btnDeselectAll = document.getElementById('btn-deselect-all-global');
+
+    if (btnSelectAll) {
+        btnSelectAll.addEventListener('click', function() {
+            document.querySelectorAll('.perm-checkbox').forEach(cb => cb.checked = true);
+        });
+    }
+
+    if (btnDeselectAll) {
+        btnDeselectAll.addEventListener('click', function() {
+            document.querySelectorAll('.perm-checkbox').forEach(cb => cb.checked = false);
+        });
+    }
+});
+</script>
+{% endblock %}

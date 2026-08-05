@@ -11,9 +11,8 @@ class DashboardLoginView(LoginView):
         return reverse('admin_dashboard:home')
 
     def form_invalid(self, form):
-        messages.error(self.request, "Invalid username or password. Please try again.")
+        messages.error(self.request, "Invalid username/email or password. Please try again.")
         return super().form_invalid(form)
 
 class DashboardLogoutView(LogoutView):
     next_page = cast(str, reverse_lazy('admin_dashboard:login'))
-

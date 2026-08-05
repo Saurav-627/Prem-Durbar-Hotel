@@ -11,9 +11,11 @@
             <p class="text-xs text-neutral-500 mt-1">Create and manage discount codes for room reservations and zipline flight bookings.</p>
         </div>
         <div class="flex items-center gap-3">
+            {% if perms.booking.add_coupon or user.is_superuser %}
             <a href="{% url 'admin_dashboard:coupon_create' %}" class="btn-gold-gradient px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider text-brand-forestDark shadow-md">
                 <i class="fa-solid fa-plus mr-1.5"></i> Add New Coupon
             </a>
+            {% endif %}
         </div>
     </div>
 
@@ -26,9 +28,11 @@
                 </h4>
                 <p class="text-xs text-neutral-500 mt-1">Codes can be applied at guest checkout for percentage or fixed amount discounts.</p>
             </div>
+            {% if perms.booking.add_coupon or user.is_superuser %}
             <a href="{% url 'admin_dashboard:coupon_create' %}" class="btn-gold-gradient px-4 py-2 text-brand-forestDark font-bold rounded-xl text-xs shadow-md">
                 <i class="fa-solid fa-plus mr-1"></i> Add Coupon
             </a>
+            {% endif %}
         </div>
 
         <div class="overflow-x-auto">
@@ -120,12 +124,16 @@
                         </td>
                         <td class="px-4 py-3 text-right">
                             <div class="flex items-center justify-end gap-3 text-sm">
+                                {% if perms.booking.change_coupon or user.is_superuser %}
                                 <a href="{% url 'admin_dashboard:coupon_edit' coupon.id %}" class="text-neutral-400 hover:text-brand-primaryLight" title="Edit Coupon">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
+                                {% endif %}
+                                {% if perms.booking.delete_coupon or user.is_superuser %}
                                 <a href="{% url 'admin_dashboard:coupon_delete' coupon.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete Coupon">
                                     <i class="fa-solid fa-trash-can"></i>
                                 </a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>

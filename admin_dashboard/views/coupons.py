@@ -21,6 +21,7 @@ MinSpendFormSet = inlineformset_factory(
 
 class CouponDashboardView(StaffRequiredMixin, View):
     """List and manage all discount promo codes and coupons."""
+    permission_required = 'booking.view_coupon'
     def get(self, request):
         from django.utils import timezone
         coupons = Coupon.objects.prefetch_related('min_spends__currency').order_by('-id')
@@ -34,6 +35,7 @@ class CouponDashboardView(StaffRequiredMixin, View):
 
 class CouponCreateView(StaffRequiredMixin, View):
     """Create a new promotional discount coupon code."""
+    permission_required = 'booking.add_coupon'
     def get(self, request):
         form = CouponForm()
         min_spend_formset = MinSpendFormSet(prefix='min_spends')
@@ -71,6 +73,7 @@ class CouponCreateView(StaffRequiredMixin, View):
 
 class CouponUpdateView(StaffRequiredMixin, View):
     """Edit an existing promo coupon code."""
+    permission_required = 'booking.change_coupon'
     def get(self, request, pk):
         coupon = get_object_or_404(Coupon, pk=pk)
         form = CouponForm(instance=coupon)
@@ -114,6 +117,8 @@ class CouponDeleteView(StaffRequiredMixin, DeleteView):
     """Delete a promo code."""
     model = Coupon
     template_name = 'admin_dashboard/confirm_delete.html'
+    permission_required = 'booking.delete_coupon'
+
 
     def get_success_url(self):
         messages.success(self.request, "Coupon deleted successfully.")

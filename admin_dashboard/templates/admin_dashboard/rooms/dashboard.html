@@ -11,20 +11,27 @@
 {% block page_actions %}
 <div class="flex items-center gap-3">
     {% if active_tab == 'categories' %}
-    <a href="{% url 'admin_dashboard:room_category_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
-        <i class="fa-solid fa-plus mr-1.5"></i> Add Category
-    </a>
+        {% if perms.rooms.add_roomcategory or user.is_superuser %}
+        <a href="{% url 'admin_dashboard:room_category_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
+            <i class="fa-solid fa-plus mr-1.5"></i> Add Category
+        </a>
+        {% endif %}
     {% elif active_tab == 'facilities' %}
-    <a href="{% url 'admin_dashboard:room_facility_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
-        <i class="fa-solid fa-plus mr-1.5"></i> Add Facility
-    </a>
+        {% if perms.rooms.add_roomfacility or user.is_superuser %}
+        <a href="{% url 'admin_dashboard:room_facility_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
+            <i class="fa-solid fa-plus mr-1.5"></i> Add Facility
+        </a>
+        {% endif %}
     {% else %}
-    <a href="{% url 'admin_dashboard:room_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
-        <i class="fa-solid fa-plus mr-1.5"></i> Add Room Type
-    </a>
+        {% if perms.rooms.add_room or user.is_superuser %}
+        <a href="{% url 'admin_dashboard:room_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
+            <i class="fa-solid fa-plus mr-1.5"></i> Add Room Type
+        </a>
+        {% endif %}
     {% endif %}
 </div>
 {% endblock %}
+
 
 {% block content %}
 <!-- Module Tabs navigation -->
@@ -143,14 +150,19 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-3 text-sm">
+                            {% if perms.rooms.change_room or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:room_edit' room.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
+                            {% endif %}
+                            {% if perms.rooms.delete_room or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:room_delete' room.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
                                 <i class="fa-solid fa-trash-can"></i>
                             </a>
+                            {% endif %}
                         </div>
                     </td>
+
                 </tr>
                 {% empty %}
                 <tr>

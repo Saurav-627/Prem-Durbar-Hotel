@@ -14,6 +14,7 @@ class UserListView(StaffRequiredMixin, ListView):
     template_name = 'admin_dashboard/users/list.html'
     context_object_name = 'users'
     paginate_by = 15
+    permission_required = 'accounts.view_user'
 
     def get_queryset(self):
         queryset = User.objects.all().order_by('-date_joined')
@@ -49,8 +50,9 @@ class UserListView(StaffRequiredMixin, ListView):
 class UserCreateView(StaffRequiredMixin, CreateView):
     model = User
     form_class = UserForm
-    template_name = 'admin_dashboard/generic_form.html'
+    template_name = 'admin_dashboard/users/form.html'
     success_url = reverse_lazy('admin_dashboard:user_list')
+    permission_required = 'accounts.add_user'
     
     def get_success_url(self):
         messages.success(self.request, "User created successfully.")
@@ -59,8 +61,9 @@ class UserCreateView(StaffRequiredMixin, CreateView):
 class UserUpdateView(StaffRequiredMixin, UpdateView):
     model = User
     form_class = UserForm
-    template_name = 'admin_dashboard/generic_form.html'
+    template_name = 'admin_dashboard/users/form.html'
     success_url = reverse_lazy('admin_dashboard:user_list')
+    permission_required = 'accounts.change_user'
     
     def get_success_url(self):
         messages.success(self.request, "User details updated successfully.")
@@ -70,7 +73,9 @@ class UserDeleteView(StaffRequiredMixin, DeleteView):
     model = User
     template_name = 'admin_dashboard/confirm_delete.html'
     success_url = reverse_lazy('admin_dashboard:user_list')
+    permission_required = 'accounts.delete_user'
     
     def get_success_url(self):
         messages.success(self.request, "User deleted successfully.")
         return reverse('admin_dashboard:user_list')
+

@@ -6,6 +6,7 @@ from admin_dashboard.mixins import StaffRequiredMixin
 from payments.models.payment import Payment
 
 class PaymentListView(StaffRequiredMixin, ListView):
+    permission_required = 'payments.view_payment'
     model = Payment
     template_name = 'admin_dashboard/payments/list.html'
     context_object_name = 'payments'
@@ -66,7 +67,9 @@ class PaymentListView(StaffRequiredMixin, ListView):
         return context
 
 class PaymentDetailView(StaffRequiredMixin, DetailView):
+    permission_required = 'payments.view_payment'
     model = Payment
+
     template_name = 'admin_dashboard/payments/detail.html'
     context_object_name = 'payment'
 

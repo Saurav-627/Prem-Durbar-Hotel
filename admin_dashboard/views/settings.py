@@ -10,7 +10,11 @@ from settings_manager.models.navigation import NavigationMenu
 from payments.models.payment_processor import PaymentProcessor
 from admin_dashboard.forms import HotelSettingsForm, CurrencyForm, NavigationMenuForm, PaymentProcessorForm
 
+from django.core.exceptions import PermissionDenied
+
 class SettingsDashboardView(StaffRequiredMixin, View):
+    permission_required = 'settings_manager.view_hotelsettings'
+
     def get(self, request):
         # pyrefly: ignore [missing-attribute]
         settings_obj = HotelSettings.objects.first()
@@ -36,6 +40,9 @@ class SettingsDashboardView(StaffRequiredMixin, View):
         })
         
     def post(self, request):
+        if not (request.user.is_superuser or request.user.has_perm('settings_manager.change_hotelsettings')):
+            raise PermissionDenied("You do not have permission to update hotel settings.")
+
         # pyrefly: ignore [missing-attribute]
         settings_obj = HotelSettings.objects.first()
         if not settings_obj:
@@ -63,6 +70,7 @@ class SettingsDashboardView(StaffRequiredMixin, View):
 
 # Currencies Views
 class CurrencyCreateView(StaffRequiredMixin, CreateView):
+    permission_required = 'settings_manager.add_currency'
     model = Currency
     form_class = CurrencyForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -72,6 +80,7 @@ class CurrencyCreateView(StaffRequiredMixin, CreateView):
         return reverse('admin_dashboard:settings_dashboard') + "?tab=currencies"
 
 class CurrencyUpdateView(StaffRequiredMixin, UpdateView):
+    permission_required = 'settings_manager.change_currency'
     model = Currency
     form_class = CurrencyForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -81,6 +90,7 @@ class CurrencyUpdateView(StaffRequiredMixin, UpdateView):
         return reverse('admin_dashboard:settings_dashboard') + "?tab=currencies"
 
 class CurrencyDeleteView(StaffRequiredMixin, DeleteView):
+    permission_required = 'settings_manager.delete_currency'
     model = Currency
     template_name = 'admin_dashboard/confirm_delete.html'
     
@@ -90,6 +100,7 @@ class CurrencyDeleteView(StaffRequiredMixin, DeleteView):
 
 # Navigation Menu Views
 class NavigationMenuCreateView(StaffRequiredMixin, CreateView):
+    permission_required = 'settings_manager.add_navigationmenu'
     model = NavigationMenu
     form_class = NavigationMenuForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -99,6 +110,7 @@ class NavigationMenuCreateView(StaffRequiredMixin, CreateView):
         return reverse('admin_dashboard:settings_dashboard') + "?tab=navigation"
 
 class NavigationMenuUpdateView(StaffRequiredMixin, UpdateView):
+    permission_required = 'settings_manager.change_navigationmenu'
     model = NavigationMenu
     form_class = NavigationMenuForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -108,6 +120,7 @@ class NavigationMenuUpdateView(StaffRequiredMixin, UpdateView):
         return reverse('admin_dashboard:settings_dashboard') + "?tab=navigation"
 
 class NavigationMenuDeleteView(StaffRequiredMixin, DeleteView):
+    permission_required = 'settings_manager.delete_navigationmenu'
     model = NavigationMenu
     template_name = 'admin_dashboard/confirm_delete.html'
     
@@ -118,6 +131,7 @@ class NavigationMenuDeleteView(StaffRequiredMixin, DeleteView):
 
 # Payment Processor Views
 class PaymentProcessorCreateView(StaffRequiredMixin, CreateView):
+    permission_required = 'payments.add_paymentprocessor'
     model = PaymentProcessor
     form_class = PaymentProcessorForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -127,6 +141,7 @@ class PaymentProcessorCreateView(StaffRequiredMixin, CreateView):
         return reverse('admin_dashboard:settings_dashboard') + "?tab=processors"
 
 class PaymentProcessorUpdateView(StaffRequiredMixin, UpdateView):
+    permission_required = 'payments.change_paymentprocessor'
     model = PaymentProcessor
     form_class = PaymentProcessorForm
     template_name = 'admin_dashboard/generic_form.html'
@@ -136,9 +151,11 @@ class PaymentProcessorUpdateView(StaffRequiredMixin, UpdateView):
         return reverse('admin_dashboard:settings_dashboard') + "?tab=processors"
 
 class PaymentProcessorDeleteView(StaffRequiredMixin, DeleteView):
+    permission_required = 'payments.delete_paymentprocessor'
     model = PaymentProcessor
     template_name = 'admin_dashboard/confirm_delete.html'
     
     def get_success_url(self):
         messages.success(self.request, "Payment processor deleted successfully.")
         return reverse('admin_dashboard:settings_dashboard') + "?tab=processors"
+

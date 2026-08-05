@@ -43,6 +43,7 @@ RoomBasePriceFormSet = inlineformset_factory(
 from django.core.paginator import Paginator
 
 class RoomDashboardView(StaffRequiredMixin, View):
+    permission_required = 'rooms.view_room'
     def get(self, request):
         rooms_qs = Room.objects.all().select_related('category').prefetch_related('base_prices__currency')
         categories = RoomCategory.objects.all()
@@ -68,6 +69,8 @@ def get_category_inventory_map():
     return json.dumps({str(c.id): c.total_rooms for c in RoomCategory.objects.all()})
 
 class RoomCreateView(StaffRequiredMixin, View):
+    permission_required = 'rooms.add_room'
+
     def get(self, request):
         form = RoomForm()
         image_formset = RoomImageFormSet()
@@ -120,6 +123,7 @@ class RoomCreateView(StaffRequiredMixin, View):
         })
 
 class RoomUpdateView(StaffRequiredMixin, View):
+    permission_required = 'rooms.change_room'
     def get(self, request, pk):
         room = get_object_or_404(Room, pk=pk)
         form = RoomForm(instance=room)
@@ -170,6 +174,7 @@ class RoomDeleteView(StaffRequiredMixin, DeleteView):
     model = Room
     template_name = 'admin_dashboard/confirm_delete.html'
     success_url = reverse_lazy('admin_dashboard:room_dashboard')
+    permission_required = 'rooms.delete_room'
     
     def get_success_url(self):
         messages.success(self.request, "Room deleted successfully.")
@@ -180,6 +185,7 @@ class RoomCategoryCreateView(StaffRequiredMixin, CreateView):
     model = RoomCategory
     form_class = RoomCategoryForm
     template_name = 'admin_dashboard/generic_form.html'
+    permission_required = 'rooms.add_roomcategory'
     
     def get_success_url(self):
         messages.success(self.request, "Room category created successfully.")
@@ -189,6 +195,7 @@ class RoomCategoryUpdateView(StaffRequiredMixin, UpdateView):
     model = RoomCategory
     form_class = RoomCategoryForm
     template_name = 'admin_dashboard/generic_form.html'
+    permission_required = 'rooms.change_roomcategory'
     
     def get_success_url(self):
         messages.success(self.request, "Room category updated successfully.")
@@ -197,6 +204,7 @@ class RoomCategoryUpdateView(StaffRequiredMixin, UpdateView):
 class RoomCategoryDeleteView(StaffRequiredMixin, DeleteView):
     model = RoomCategory
     template_name = 'admin_dashboard/confirm_delete.html'
+    permission_required = 'rooms.delete_roomcategory'
     
     def get_success_url(self):
         messages.success(self.request, "Room category deleted successfully.")
@@ -207,6 +215,7 @@ class RoomFacilityCreateView(StaffRequiredMixin, CreateView):
     model = RoomFacility
     form_class = RoomFacilityForm
     template_name = 'admin_dashboard/generic_form.html'
+    permission_required = 'rooms.add_roomfacility'
     
     def get_success_url(self):
         messages.success(self.request, "Facility created successfully.")
@@ -216,6 +225,7 @@ class RoomFacilityUpdateView(StaffRequiredMixin, UpdateView):
     model = RoomFacility
     form_class = RoomFacilityForm
     template_name = 'admin_dashboard/generic_form.html'
+    permission_required = 'rooms.change_roomfacility'
     
     def get_success_url(self):
         messages.success(self.request, "Facility updated successfully.")
@@ -224,6 +234,7 @@ class RoomFacilityUpdateView(StaffRequiredMixin, UpdateView):
 class RoomFacilityDeleteView(StaffRequiredMixin, DeleteView):
     model = RoomFacility
     template_name = 'admin_dashboard/confirm_delete.html'
+    permission_required = 'rooms.delete_roomfacility'
     
     def get_success_url(self):
         messages.success(self.request, "Facility deleted successfully.")
@@ -234,6 +245,7 @@ class RoomSeasonalPriceCreateView(StaffRequiredMixin, CreateView):
     model = RoomSeasonalPrice
     form_class = RoomPriceForm
     template_name = 'admin_dashboard/generic_form.html'
+    permission_required = 'rooms.add_roomseasonalprice'
     
     def get_success_url(self):
         messages.success(self.request, "Seasonal price created successfully.")
@@ -243,6 +255,7 @@ class RoomSeasonalPriceUpdateView(StaffRequiredMixin, UpdateView):
     model = RoomSeasonalPrice
     form_class = RoomPriceForm
     template_name = 'admin_dashboard/generic_form.html'
+    permission_required = 'rooms.change_roomseasonalprice'
     
     def get_success_url(self):
         messages.success(self.request, "Seasonal price updated successfully.")
@@ -251,6 +264,8 @@ class RoomSeasonalPriceUpdateView(StaffRequiredMixin, UpdateView):
 class RoomSeasonalPriceDeleteView(StaffRequiredMixin, DeleteView):
     model = RoomSeasonalPrice
     template_name = 'admin_dashboard/confirm_delete.html'
+    permission_required = 'rooms.delete_roomseasonalprice'
+
     
     def get_success_url(self):
         messages.success(self.request, "Seasonal price deleted successfully.")

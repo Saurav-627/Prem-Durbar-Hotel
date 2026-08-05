@@ -9,10 +9,13 @@
 {% endblock %}
 
 {% block page_actions %}
+{% if perms.accounts.add_user or user.is_superuser %}
 <a href="{% url 'admin_dashboard:user_create' %}" class="btn-gold-gradient px-4 py-2.5 text-white font-bold rounded-lg text-sm transition shadow-md">
     <i class="fa-solid fa-user-plus mr-1.5"></i> Create New Staff User
 </a>
+{% endif %}
 {% endblock %}
+
 
 {% block content %}
 <!-- Search & Filter Card -->
@@ -103,14 +106,19 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end gap-3 text-sm">
+                            {% if perms.accounts.change_user or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:user_edit' u.id %}" class="text-neutral-400 hover:text-luxuryGold-500" title="Edit">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
+                            {% endif %}
+                            {% if perms.accounts.delete_user or user.is_superuser %}
                             <a href="{% url 'admin_dashboard:user_delete' u.id %}" class="text-neutral-400 hover:text-rose-500" title="Delete">
                                 <i class="fa-solid fa-trash-can"></i>
                             </a>
+                            {% endif %}
                         </div>
                     </td>
+
                 </tr>
                 {% empty %}
                 <tr>
