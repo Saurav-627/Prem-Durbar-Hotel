@@ -1,9 +1,24 @@
+from django.db.models import Prefetch
 from django.views.generic import TemplateView
-from homepage.models.hero_slide import HeroSlide
-from homepage.models.about_preview import AboutPreview
-from rooms.models.room import Room
-from rooms.models.room_facility import RoomFacility
+
 from dining.models.item import DiningItem
+from homepage.models import (
+    AboutCMS,
+    SustainabilityCMS,
+    SustainabilityPillar,
+    TeamMember,
+    ZiplineCMS,
+)
+from homepage.models.about_preview import AboutPreview
+from homepage.models.hero_slide import HeroSlide
+from homepage.models.zipline_package import (
+    ZiplinePackage,
+    ZiplinePackageBasePrice,
+)
+from rooms.models.room import Room
+from rooms.models.room_base_price import RoomBasePrice
+from rooms.models.room_facility import RoomFacility
+from settings_manager.models.currency import Currency
 from testimonials.models.testimonial import Testimonial
 
 
@@ -17,7 +32,6 @@ class HomeView(TemplateView):
         self.request.session.pop('search_check_in', None)
         self.request.session.pop('search_check_out', None)
         
-        from settings_manager.models.currency import Currency
         try:
             published_currencies = list(Currency.objects.filter(is_published=True))
             default_currency = 'USD'
@@ -25,14 +39,11 @@ class HomeView(TemplateView):
             valid_codes = [c.iso_code for c in published_currencies]
             if selected_currency not in valid_codes:
                 selected_currency = default_currency
-        except Exception:
+        except (ValueError, TypeError, KeyError, AttributeError):
             selected_currency = 'USD'
 
         context['hero_slides'] = HeroSlide.objects.filter(is_active=True).order_by('order')
         context['about_preview'] = AboutPreview.objects.first()
-        
-        from django.db.models import Prefetch
-        from rooms.models.room_base_price import RoomBasePrice
         
         rooms = list(Room.objects.filter(
             is_featured=True,
@@ -58,10 +69,9 @@ class HomeView(TemplateView):
         context['testimonials'] = Testimonial.objects.filter(is_featured=True, is_published=True)[:5]
         
         # Zipline packages with multi-currency pricing
-        from homepage.models.zipline_package import ZiplinePackage, ZiplinePackageBasePrice
-        from homepage.models.zipline_cms import ZiplineCMS
         zipline_packages = list(ZiplinePackage.objects.filter(
-            is_published=True
+            is_published=True,
+            base_prices__currency__iso_code=selected_currency
         ).prefetch_related(
             Prefetch(
                 'base_prices',
@@ -82,7 +92,6 @@ class HomeView(TemplateView):
         return context
 
 
-from homepage.models import AboutPreview, AboutCMS, ZiplineCMS, SustainabilityCMS, SustainabilityPillar, TeamMember
 
 class AboutView(TemplateView):
     template_name = 'homepage/about.html'
@@ -117,13 +126,12 @@ class ZiplineView(TemplateView):
             valid_codes = [c.iso_code for c in published_currencies]
             if selected_currency not in valid_codes:
                 selected_currency = default_currency
-        except Exception:
+        except (ValueError, TypeError, KeyError, AttributeError):
             selected_currency = 'USD'
 
-        from django.db.models import Prefetch
-        from homepage.models.zipline_package import ZiplinePackage, ZiplinePackageBasePrice
         zipline_packages = list(ZiplinePackage.objects.filter(
-            is_published=True
+            is_published=True,
+            base_prices__currency__iso_code=selected_currency
         ).prefetch_related(
             Prefetch(
                 'base_prices',

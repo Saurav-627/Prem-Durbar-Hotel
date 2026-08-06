@@ -1,11 +1,12 @@
 from typing import Literal, TypedDict
+
 from django.conf import settings
 
 from .base_payment import BasePayment
 from .esewa_payment import EsewaPayment
 from .khalti_payment import KhaltiPayment
 from .stripe_payment import StripePayment
-from core.services.email_service import send_booking_invoice_email
+
 
 class PaymentProcessorConfig(TypedDict):
     code: Literal["esewa", "khalti", "stripe"]
@@ -33,7 +34,7 @@ def get_payment_processor(config: PaymentProcessorConfig) -> BasePayment:
             demo=config["demo"],
         )
     else:
-        raise ValueError("Invalid payment processor %s" % config["code"])
+        raise ValueError(f"Invalid payment processor {config['code']}")
 
 def get_processor_by_gateway_name(gateway_name: str) -> BasePayment:
     """
@@ -67,8 +68,8 @@ __all__ = [
     "BasePayment",
     "EsewaPayment",
     "KhaltiPayment",
+    "PaymentProcessorConfig",
     "StripePayment",
     "get_payment_processor",
-    "get_processor_by_gateway_name",
-    "PaymentProcessorConfig"
+    "get_processor_by_gateway_name"
 ]

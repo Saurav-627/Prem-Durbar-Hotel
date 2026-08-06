@@ -1,7 +1,10 @@
+from typing import ClassVar
+
 from django.contrib import admin
 from django.utils.html import format_html
-from .models.coupon import Coupon, CouponMinSpend
+
 from .models.booking import Booking
+from .models.coupon import Coupon, CouponMinSpend
 
 
 class CouponMinSpendInline(admin.TabularInline):
@@ -14,7 +17,7 @@ class CouponAdmin(admin.ModelAdmin):
     list_display = ('code', 'discount_type', 'discount_value', 'applicable_to', 'use_count', 'max_uses', 'valid_from', 'valid_to', 'is_active')
     list_filter = ('discount_type', 'is_active', 'applicable_to')
     search_fields = ('code',)
-    inlines = [CouponMinSpendInline]
+    inlines = (CouponMinSpendInline,)
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
@@ -24,7 +27,7 @@ class BookingAdmin(admin.ModelAdmin):
     readonly_fields = ('booking_uid', 'waiver_accepted', 'waiver_accepted_at', 'created_at', 'updated_at')
     list_select_related = ('room', 'zipline_package')
 
-    STATUS_STYLES = {
+    STATUS_STYLES: ClassVar = {
         'draft': ('⚪', '#374151', '#f3f4f6'),
         'pending': ('🟡', '#713f12', '#fef9c3'),
         'confirmed': ('🟢', '#14532d', '#bbf7d0'),

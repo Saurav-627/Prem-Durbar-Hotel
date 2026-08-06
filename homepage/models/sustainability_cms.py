@@ -23,6 +23,7 @@ class SustainabilityCMS(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk and SustainabilityCMS.objects.exists():
+            # pyrefly: ignore [missing-attribute]
             self.pk = SustainabilityCMS.objects.first().pk
         super().save(*args, **kwargs)
 
@@ -35,7 +36,7 @@ class SustainabilityPillar(models.Model):
     is_published = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ['order', 'title']
+        ordering = ('order', 'title',)
         verbose_name = "Sustainability Pillar"
         verbose_name_plural = "Sustainability Pillars"
 

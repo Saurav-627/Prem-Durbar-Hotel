@@ -1,5 +1,6 @@
 from django.urls import path
-from .views.public import HomeView, AboutView, ZiplineView, SustainabilityView
+
+from .views.public import AboutView, HomeView, SustainabilityView, ZiplineView
 
 app_name = 'homepage'
 

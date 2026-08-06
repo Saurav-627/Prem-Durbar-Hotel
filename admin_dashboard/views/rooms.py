@@ -1,22 +1,31 @@
 import datetime
 from decimal import Decimal
-from django.utils import timezone
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import View, CreateView, UpdateView, DeleteView
-from django.urls import reverse, reverse_lazy
+
 from django.contrib import messages
 from django.forms import inlineformset_factory
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse, reverse_lazy
+from django.utils import timezone
+from django.views.generic import CreateView, DeleteView, UpdateView, View
 
+from admin_dashboard.forms import (
+    RoomBasePriceForm,
+    RoomCategoryForm,
+    RoomFacilityForm,
+    RoomForm,
+    RoomImageForm,
+    RoomPolicyForm,
+    RoomPriceForm,
+)
 from admin_dashboard.mixins import StaffRequiredMixin
 from rooms.models.room import Room
+from rooms.models.room_availability import RoomAvailability
+from rooms.models.room_base_price import RoomBasePrice
 from rooms.models.room_category import RoomCategory
 from rooms.models.room_facility import RoomFacility
 from rooms.models.room_image import RoomImage
 from rooms.models.room_policy import RoomPolicy
 from rooms.models.room_seasonal_price import RoomSeasonalPrice
-from rooms.models.room_availability import RoomAvailability
-from rooms.models.room_base_price import RoomBasePrice
-from admin_dashboard.forms import RoomForm, RoomCategoryForm, RoomFacilityForm, RoomPriceForm, RoomImageForm, RoomPolicyForm, RoomBasePriceForm
 
 # Formsets for inline editing on Room
 RoomImageFormSet = inlineformset_factory(
@@ -42,6 +51,7 @@ RoomBasePriceFormSet = inlineformset_factory(
 
 from django.core.paginator import Paginator
 
+
 class RoomDashboardView(StaffRequiredMixin, View):
     permission_required = 'rooms.view_room'
     def get(self, request):
@@ -65,6 +75,7 @@ class RoomDashboardView(StaffRequiredMixin, View):
 
 def get_category_inventory_map():
     import json
+
     from rooms.models.room_category import RoomCategory
     return json.dumps({str(c.id): c.total_rooms for c in RoomCategory.objects.all()})
 
@@ -274,7 +285,7 @@ class RoomSeasonalPriceDeleteView(StaffRequiredMixin, DeleteView):
 # Calendar and Availability View
 class RoomAvailabilityCalendarView(StaffRequiredMixin, View):
     def get(self, request):
-        today = timezone.localdate() if hasattr(timezone, 'localdate') else datetime.date.today()
+        today = timezone.now().date()
         year = int(request.GET.get('year', today.year))
         month = int(request.GET.get('month', today.month))
         
@@ -340,8 +351,8 @@ class RoomBulkPriceUpdateView(StaffRequiredMixin, View):
         adjustment_type = request.POST.get('adjustment_type', 'percentage') # percentage or fixed
         try:
             adjustment_value = Decimal(request.POST.get('adjustment_value', '0') or '0')
-        except Exception:
-            adjustment_value = Decimal('0')
+        except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError):
+            adjustment_value = Decimal(0)
         
         if not room_ids:
             messages.warning(request, "No rooms selected for bulk pricing update.")
@@ -351,7 +362,7 @@ class RoomBulkPriceUpdateView(StaffRequiredMixin, View):
         room_base_prices = RoomBasePrice.objects.filter(room_id__in=room_ids)
         for cp in room_base_prices:
             if adjustment_type == 'percentage':
-                cp.base_price = cp.base_price * (Decimal('1') + adjustment_value / Decimal('100'))
+                cp.base_price = cp.base_price * (Decimal(1) + adjustment_value / Decimal(100))
             else:
                 cp.base_price = cp.base_price + adjustment_value
             cp.save()

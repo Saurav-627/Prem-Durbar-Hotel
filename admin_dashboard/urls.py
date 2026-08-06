@@ -1,5 +1,20 @@
 from django.urls import path
-from .views import auth, home, settings, rooms, bookings, payments, dining, contact, cms, users, zipline, coupons, notifications
+
+from .views import (
+    auth,
+    bookings,
+    cms,
+    contact,
+    coupons,
+    dining,
+    home,
+    notifications,
+    payments,
+    rooms,
+    settings,
+    users,
+    zipline,
+)
 
 app_name = 'admin_dashboard'
 

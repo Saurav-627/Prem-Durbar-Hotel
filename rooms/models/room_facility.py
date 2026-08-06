@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class RoomFacility(models.Model):
     name = models.CharField(max_length=100, unique=True)
     icon_class = models.CharField(max_length=100, blank=True, null=True, help_text="FontAwesome or Lucide icon class")

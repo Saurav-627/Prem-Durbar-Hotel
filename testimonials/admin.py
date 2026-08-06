@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
+
 from .models.testimonial import Testimonial
+
 
 @admin.register(Testimonial)
 class TestimonialAdmin(ModelAdmin):

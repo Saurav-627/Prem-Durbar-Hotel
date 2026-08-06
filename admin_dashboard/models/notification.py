@@ -25,7 +25,7 @@ class Notification(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ('-created_at',)
         verbose_name = "Notification"
         verbose_name_plural = "Notifications"
 
@@ -44,7 +44,7 @@ def create_admin_notification(notification_type, title, message, link_url=None):
             message=message,
             link_url=link_url
         )
-    except Exception as e:
+    except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError) as e:
         import logging
         logger = logging.getLogger(__name__)
         logger.error(f"Failed to create admin notification: {e}")

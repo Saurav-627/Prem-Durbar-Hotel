@@ -1,7 +1,9 @@
 from django.contrib import admin
 from django.utils.html import format_html
+
 from .models.payment import Payment
 from .models.payment_processor import PaymentProcessor, PaymentProcessorCurrency
+
 
 class PaymentProcessorCurrencyInline(admin.TabularInline):
     model = PaymentProcessorCurrency
@@ -12,7 +14,7 @@ class PaymentProcessorAdmin(admin.ModelAdmin):
     list_display = ('name', 'code', 'apply_tax', 'is_published')
     list_filter = ('apply_tax', 'is_published')
     search_fields = ('name', 'code')
-    inlines = [PaymentProcessorCurrencyInline]
+    inlines = (PaymentProcessorCurrencyInline,)
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):

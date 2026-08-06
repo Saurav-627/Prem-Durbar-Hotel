@@ -1,9 +1,10 @@
-from django.views.generic import ListView, DetailView
-from django.db.models import Sum, Q, CharField
+from django.db.models import CharField, Q, Sum
 from django.db.models.functions import Coalesce
+from django.views.generic import DetailView, ListView
 
 from admin_dashboard.mixins import StaffRequiredMixin
 from payments.models.payment import Payment
+
 
 class PaymentListView(StaffRequiredMixin, ListView):
     permission_required = 'payments.view_payment'

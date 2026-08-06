@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class ContactInquiryCategory(models.Model):
     name = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, unique=True)
@@ -7,7 +8,7 @@ class ContactInquiryCategory(models.Model):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ['ordering', 'name']
+        ordering = ('ordering', 'name',)
         verbose_name = "Contact Inquiry Category"
         verbose_name_plural = "Contact Inquiry Categories"
 

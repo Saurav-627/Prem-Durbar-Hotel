@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
 
+
 class NewsletterSubscriber(models.Model):
     email = models.EmailField(unique=True, help_text="Subscriber email address")
     is_verified = models.BooleanField(default=False, help_text="Email ownership verified via double opt-in")
@@ -9,7 +10,7 @@ class NewsletterSubscriber(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ('-created_at',)
         verbose_name = "Newsletter Subscriber"
         verbose_name_plural = "Newsletter Subscribers"
 

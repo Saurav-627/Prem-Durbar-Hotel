@@ -36,5 +36,6 @@ class AboutPreview(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk and AboutPreview.objects.exists():
+            # pyrefly: ignore [missing-attribute]
             self.pk = AboutPreview.objects.first().pk
         super().save(*args, **kwargs)

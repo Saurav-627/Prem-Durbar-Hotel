@@ -1,15 +1,16 @@
 import datetime
-from django.views.generic import TemplateView
-from django.db.models import Sum
-from django.utils import timezone
+
 from django.contrib.auth import get_user_model
+from django.db.models import Sum
 from django.urls import reverse
+from django.utils import timezone
+from django.views.generic import TemplateView
 
 from admin_dashboard.mixins import StaffRequiredMixin
 from booking.models.booking import Booking
-from rooms.models.room_category import RoomCategory
-from payments.models.payment import Payment
 from contact.models.inquiry import ContactInquiry
+from payments.models.payment import Payment
+from rooms.models.room_category import RoomCategory
 
 User = get_user_model()
 
@@ -61,7 +62,7 @@ class DashboardHomeView(StaffRequiredMixin, TemplateView):
             created_at__date=today
         ).select_related('currency', 'booking')
         
-        revenue_today_by_currency = {}
+        revenue_today_by_currency: dict = {}
         for p in payments_today:
             c_code = p.currency.iso_code if p.currency else (p.booking.currency_code if p.booking else 'USD')
             revenue_today_by_currency[c_code] = revenue_today_by_currency.get(c_code, 0) + p.amount
@@ -80,7 +81,7 @@ class DashboardHomeView(StaffRequiredMixin, TemplateView):
             created_at__date__lte=today
         ).select_related('currency', 'booking')
         
-        revenue_month_by_currency = {}
+        revenue_month_by_currency: dict = {}
         for p in payments_month:
             c_code = p.currency.iso_code if p.currency else (p.booking.currency_code if p.booking else 'USD')
             revenue_month_by_currency[c_code] = revenue_month_by_currency.get(c_code, 0) + p.amount
@@ -124,7 +125,7 @@ class DashboardHomeView(StaffRequiredMixin, TemplateView):
             b_cnt = Booking.objects.filter(created_at__date=date_point).count()
             # pyrefly: ignore [missing-attribute]
             day_payments = Payment.objects.filter(status='success', created_at__date=date_point).select_related('currency', 'booking')
-            day_rev_by_curr = {}
+            day_rev_by_curr: dict = {}
             p_sum = 0
             for p in day_payments:
                 c_code = p.currency.iso_code if p.currency else (p.booking.currency_code if p.booking else 'USD')
@@ -163,7 +164,7 @@ class DashboardHomeView(StaffRequiredMixin, TemplateView):
             elif b.zipline_package:
                 item_desc = f"{b.zipline_package.name} · {b.num_tickets} ticket(s)"
             else:
-                item_desc = f"Booking {b.booking_uid[:8]}"
+                item_desc = f"Booking {str(b.booking_uid)[:8]}"
 
             activities.append({
                 'type': 'booking',
@@ -201,7 +202,7 @@ class DashboardHomeView(StaffRequiredMixin, TemplateView):
             
             'occupied_rooms_count': occupied_rooms_count,
             'available_rooms_count': available_rooms_count,
-            'occupancy_rate': int((occupied_rooms_count / total_rooms_capacity * 100)) if total_rooms_capacity > 0 else 0,
+            'occupancy_rate': int(occupied_rooms_count / total_rooms_capacity * 100) if total_rooms_capacity > 0 else 0,
             
             'pending_bookings_count': pending_bookings_count,
             'confirmed_bookings_count': confirmed_bookings_count,

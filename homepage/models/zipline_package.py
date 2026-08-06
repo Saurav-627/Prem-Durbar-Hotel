@@ -1,10 +1,14 @@
 from django.db import models
 from django.utils.text import slugify
+
 from core.utils import UploadTo, ValidateFileSize
 from settings_manager.models.currency import Currency
 
 
 class ZiplinePackage(models.Model):
+    base_prices: models.QuerySet
+    seasonal_prices: models.QuerySet
+    bookings: models.QuerySet
     name = models.CharField(max_length=200)
     slug = models.SlugField(max_length=250, unique=True, blank=True)
     description = models.TextField()
@@ -25,7 +29,7 @@ class ZiplinePackage(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['order', 'id']
+        ordering = ('order', 'id',)
         verbose_name = "Zipline Package"
         verbose_name_plural = "Zipline Packages"
 
@@ -105,6 +109,9 @@ class ZiplinePackage(models.Model):
 
 
 class ZiplinePackageBasePrice(models.Model):
+    # Type hints for Pyrefly IDE static analyzer (Django dynamic DB fields)
+    package_id: int | None
+    currency_id: int | None
     """Base price for a zipline package in a specific currency."""
     package = models.ForeignKey(
         ZiplinePackage,

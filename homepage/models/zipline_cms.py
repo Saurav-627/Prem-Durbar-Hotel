@@ -1,5 +1,7 @@
 from django.db import models
+
 from core.utils import UploadTo, ValidateFileSize
+
 
 class ZiplineCMS(models.Model):
     hero_subtitle = models.CharField(max_length=150, default="Nagarkot Adventure Destination")

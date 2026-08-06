@@ -1,11 +1,11 @@
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
-from django.urls import reverse, reverse_lazy
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.db.models import Q
+from django.urls import reverse, reverse_lazy
+from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
-from admin_dashboard.mixins import StaffRequiredMixin
 from admin_dashboard.forms import UserForm
+from admin_dashboard.mixins import StaffRequiredMixin
 
 User = get_user_model()
 

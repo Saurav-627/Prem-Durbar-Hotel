@@ -1,6 +1,7 @@
 from django.urls import path
-from .views.public import ContactView, subscribe_newsletter, verify_newsletter
+
 from .views.ajax import submit_inquiry_ajax
+from .views.public import ContactView, subscribe_newsletter, verify_newsletter
 
 app_name = 'contact'
 

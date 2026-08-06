@@ -1,16 +1,21 @@
-from django.shortcuts import render, redirect
-from django.views.generic import View, CreateView, UpdateView, DeleteView
-from django.urls import reverse
 from django.contrib import messages
-
-from admin_dashboard.mixins import StaffRequiredMixin
-from settings_manager.models.hotel_settings import HotelSettings
-from settings_manager.models.currency import Currency
-from settings_manager.models.navigation import NavigationMenu
-from payments.models.payment_processor import PaymentProcessor
-from admin_dashboard.forms import HotelSettingsForm, CurrencyForm, NavigationMenuForm, PaymentProcessorForm
-
 from django.core.exceptions import PermissionDenied
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.views.generic import CreateView, DeleteView, UpdateView, View
+
+from admin_dashboard.forms import (
+    CurrencyForm,
+    HotelSettingsForm,
+    NavigationMenuForm,
+    PaymentProcessorForm,
+)
+from admin_dashboard.mixins import StaffRequiredMixin
+from payments.models.payment_processor import PaymentProcessor
+from settings_manager.models.currency import Currency
+from settings_manager.models.hotel_settings import HotelSettings
+from settings_manager.models.navigation import NavigationMenu
+
 
 class SettingsDashboardView(StaffRequiredMixin, View):
     permission_required = 'settings_manager.view_hotelsettings'

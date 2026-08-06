@@ -1,18 +1,26 @@
+import logging
 import secrets
-from django.views.generic import TemplateView
-from django.shortcuts import redirect, render
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+
 from django.contrib import messages
-from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from django.http import JsonResponse
+from django.shortcuts import redirect
 from django.urls import reverse
+from django.views.decorators.http import require_POST
+from django.views.generic import TemplateView
+
+from admin_dashboard.models.notification import create_admin_notification
+from core.services.email_service import (
+    send_newsletter_verification_email,
+    send_newsletter_welcome_email,
+)
 
 from ..models.branch import Branch
 from ..models.category import ContactInquiryCategory
 from ..models.newsletter import NewsletterSubscriber
-from core.services.email_service import send_newsletter_welcome_email
-from core.services.email_service import send_newsletter_verification_email
+
+logger = logging.getLogger(__name__)
 
 
 class ContactView(TemplateView):
@@ -49,7 +57,7 @@ def subscribe_newsletter(request):
         messages.error(request, msg)
         return redirect(request.META.get('HTTP_REFERER') or '/')
 
-    subscriber, created = NewsletterSubscriber.objects.get_or_create(
+    subscriber, _ = NewsletterSubscriber.objects.get_or_create(
         email=email
     )
 
@@ -74,7 +82,7 @@ def subscribe_newsletter(request):
     try:
         send_newsletter_verification_email(subscriber, verification_url, request=request)
     except Exception:
-        pass
+        logger.exception("Failed to send newsletter verification email")
 
     success_msg = "✉️ A verification link has been sent to your email. Please check your inbox to confirm your subscription."
     
@@ -105,11 +113,10 @@ def verify_newsletter(request, token):
     try:
         send_newsletter_welcome_email(subscriber.email, request=request)
     except Exception:
-        pass
+        logger.exception("Failed to send newsletter welcome email")
 
     # Create Staff Admin Notification
     try:
-        from admin_dashboard.models.notification import create_admin_notification
         create_admin_notification(
             notification_type='inquiry_received',
             title='Verified Newsletter Subscriber',
@@ -117,7 +124,7 @@ def verify_newsletter(request, token):
             link_url=reverse('admin_dashboard:contact_dashboard') + "?tab=subscribers"
         )
     except Exception:
-        pass
+        logger.exception("Failed to create newsletter admin notification")
 
     messages.success(request, "🎉 Your email has been verified successfully! Welcome to the Prem Durbar newsletter.")
     return redirect('/')

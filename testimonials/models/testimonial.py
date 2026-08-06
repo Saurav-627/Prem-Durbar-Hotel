@@ -1,14 +1,16 @@
 from django.db import models
+
 from core.utils import UploadTo, ValidateFileSize
 
+
 class Testimonial(models.Model):
-    SOURCE_CHOICES = [
+    SOURCE_CHOICES = (
         ('google', 'Google Review'),
         ('booking', 'Booking.com'),
         ('agoda', 'Agoda'),
         ('tripadvisor', 'Tripadvisor'),
         ('direct', 'Direct Guest Feedback'),
-    ]
+    )
 
     guest_name = models.CharField(max_length=100)
     guest_image = models.ImageField(
@@ -26,7 +28,7 @@ class Testimonial(models.Model):
     created_at = models.DateField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ('-created_at',)
 
     def __str__(self):
         return f"{self.guest_name} ({self.rating} stars) - {self.source}"

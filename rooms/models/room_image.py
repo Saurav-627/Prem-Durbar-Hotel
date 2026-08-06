@@ -1,9 +1,13 @@
 from django.db import models
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
+
 from core.utils import UploadTo, ValidateFileSize
 
+
 class RoomImage(models.Model):
+    # Type hints for Pyrefly IDE static analyzer (Django dynamic DB fields)
+    room_id: int | None
     room = models.ForeignKey('Room', on_delete=models.CASCADE, related_name='images')
     image = models.ImageField(
         upload_to=UploadTo('rooms/gallery'),

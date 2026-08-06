@@ -1,6 +1,10 @@
 from django.db import models
 
+
 class RoomAvailability(models.Model):
+    # Type hints for Pyrefly IDE static analyzer (Django dynamic DB fields)
+    room_id: int | None
+    booking_id: int | None
     room = models.ForeignKey('Room', on_delete=models.CASCADE, related_name='availabilities')
     date = models.DateField()
     rooms_booked = models.PositiveIntegerField(default=1, help_text='Number of physical rooms occupied for this booking-night')
@@ -10,9 +14,9 @@ class RoomAvailability(models.Model):
     class Meta:
         verbose_name = 'Room Occupancy'
         verbose_name_plural = 'Room Occupancies'
-        constraints = [
+        constraints = (
             models.UniqueConstraint(fields=['room', 'date', 'booking'], name='unique_room_booking_day_occupancy'),
-        ]
+        )
 
     def __str__(self):
         status = 'Available' if self.is_available else 'Booked'

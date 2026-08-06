@@ -1,9 +1,13 @@
 from django.db import models
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFill
+
 from core.utils import UploadTo, ValidateFileSize
 
+
 class GalleryItem(models.Model):
+    # Type hints for Pyrefly IDE static analyzer (Django dynamic DB fields)
+    category_id: int | None
     category = models.ForeignKey('GalleryCategory', on_delete=models.CASCADE, related_name='items')
     image = models.ImageField(
         upload_to=UploadTo('gallery'),
@@ -30,7 +34,7 @@ class GalleryItem(models.Model):
     )
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ('-created_at',)
         verbose_name = "Gallery Item"
         verbose_name_plural = "Gallery Items"
 

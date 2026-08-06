@@ -1,7 +1,17 @@
 from django.db import models
+from django.utils import timezone
 from django.utils.text import slugify
 
+
 class Room(models.Model):
+    base_prices: models.QuerySet
+    seasonal_prices: models.QuerySet
+    availabilities: models.QuerySet
+    bookings: models.QuerySet
+    images: models.QuerySet
+    policies: models.QuerySet
+    # Type hints for Pyrefly IDE static analyzer (Django dynamic DB fields)
+    category_id: int | None
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=250, unique=True, blank=True)
     category = models.ForeignKey(
@@ -26,7 +36,7 @@ class Room(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['id']
+        ordering = ('id',)
 
     def set_active_currency(self, currency_code):
         self._active_currency_code = currency_code
@@ -79,8 +89,7 @@ class Room(models.Model):
     @property
     def active_seasonal(self):
         """Return the active RoomSeasonalPrice override for today matching the active currency, or None."""
-        import datetime
-        today = datetime.date.today()
+        today = timezone.now().date()
         active_currency_code = getattr(self, '_active_currency_code', None)
         seasonal_qs = getattr(self, '_prefetched_objects_cache', {}).get('seasonal_prices', None)
         if seasonal_qs is None:
@@ -123,7 +132,7 @@ class Room(models.Model):
 
     @property
     def children_range(self):
-        return range(0, max(0, self.max_children) + 1)
+        return range(max(0, self.max_children) + 1)
 
     @property
     def added_base_prices(self):

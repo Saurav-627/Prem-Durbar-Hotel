@@ -1,6 +1,8 @@
-from django.db.utils import ProgrammingError, OperationalError
+from django.db.utils import OperationalError, ProgrammingError
+
 from settings_manager.models.hotel_settings import HotelSettings
 from settings_manager.models.navigation import NavigationMenu
+
 
 def global_settings(request):
     # Safe defaults to prevent migration crashes

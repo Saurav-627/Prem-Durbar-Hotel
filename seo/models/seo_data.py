@@ -1,5 +1,7 @@
 from django.db import models
+
 from core.utils import UploadTo, ValidateFileSize
+
 
 class SEOData(models.Model):
     path = models.CharField(max_length=255, unique=True, help_text="Relative path, e.g. '/' or '/rooms/' or '/contact/'")

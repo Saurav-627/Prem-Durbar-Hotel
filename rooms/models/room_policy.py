@@ -1,6 +1,9 @@
 from django.db import models
 
+
 class RoomPolicy(models.Model):
+    # Type hints for Pyrefly IDE static analyzer (Django dynamic DB fields)
+    room_id: int | None
     room = models.ForeignKey('Room', on_delete=models.CASCADE, related_name='policies')
     title = models.CharField(max_length=150, help_text="e.g. Cancellation Policy, Pet Policy, Check-in rules")
     description = models.TextField()

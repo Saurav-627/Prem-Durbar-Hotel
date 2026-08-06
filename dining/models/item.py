@@ -1,7 +1,9 @@
 from django.db import models
 from django.utils.text import slugify
+
 from core.utils import UploadTo, ValidateFileSize
 from settings_manager.models.currency import Currency
+
 
 class DiningCategory(models.Model):
     name = models.CharField(max_length=100)
@@ -12,7 +14,7 @@ class DiningCategory(models.Model):
     is_published = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ['order', 'name']
+        ordering = ('order', 'name',)
         verbose_name = 'Dining Category'
         verbose_name_plural = 'Dining Categories'
 
@@ -26,6 +28,10 @@ class DiningCategory(models.Model):
 
 
 class DiningItem(models.Model):
+    base_prices: models.QuerySet
+    # Type hints for Pyrefly IDE static analyzer (Django dynamic DB fields)
+    category_id: int | None
+    currency_id: int | None
     category = models.ForeignKey(DiningCategory, on_delete=models.CASCADE, related_name='items')
     title = models.CharField(max_length=150)
     slug = models.SlugField(max_length=180, unique=True, blank=True)
@@ -47,7 +53,7 @@ class DiningItem(models.Model):
     order = models.PositiveIntegerField(default=0)
 
     class Meta:
-        ordering = ['order', 'title']
+        ordering = ('order', 'title',)
         verbose_name = 'Dining Item'
         verbose_name_plural = 'Dining Items'
 
@@ -119,6 +125,9 @@ class DiningItem(models.Model):
 
 
 class DiningItemBasePrice(models.Model):
+    # Type hints for Pyrefly IDE static analyzer (Django dynamic DB fields)
+    item_id: int | None
+    currency_id: int | None
     """Permanent base price for a dining menu item in a specific currency."""
     item = models.ForeignKey(
         DiningItem,

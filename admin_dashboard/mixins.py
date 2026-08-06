@@ -1,12 +1,12 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
-from django.shortcuts import redirect
 from django.core.exceptions import PermissionDenied
+from django.shortcuts import redirect
 
 class StaffRequiredMixin(UserPassesTestMixin):
     permission_required = None
 
     def test_func(self):
-        user = self.request.user
+        user = self.request.user # pyrefly: ignore [missing-attribute]
         if not user.is_authenticated:
             return False
         
@@ -27,7 +27,7 @@ class StaffRequiredMixin(UserPassesTestMixin):
         return True
 
     def handle_no_permission(self):
-        if not self.request.user.is_authenticated:
+        if not self.request.user.is_authenticated: # pyrefly: ignore [missing-attribute]
             return redirect('admin_dashboard:login')
         raise PermissionDenied("You do not have the required permission to access this feature.")
 

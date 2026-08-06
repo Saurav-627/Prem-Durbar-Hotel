@@ -1,13 +1,13 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import View, DeleteView
-from django.urls import reverse_lazy
 from django.contrib import messages
-
-from admin_dashboard.mixins import StaffRequiredMixin
-from dining.models.item import DiningCategory, DiningItem, DiningItemBasePrice
-from admin_dashboard.forms import DiningItemForm, DiningItemBasePriceFormSet
-
 from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse, reverse_lazy
+from django.views.generic import DeleteView, View
+
+from admin_dashboard.forms import DiningItemBasePriceFormSet, DiningItemForm
+from admin_dashboard.mixins import StaffRequiredMixin
+from dining.models.item import DiningCategory, DiningItem
+
 
 class DiningDashboardView(StaffRequiredMixin, View):
     permission_required = 'dining.view_diningitem'
@@ -47,18 +47,20 @@ class DiningItemCreateView(StaffRequiredMixin, View):
             
             if currency_price_formset.is_valid():
                 item.save()
-                prices = currency_price_formset.save()
+                _prices = currency_price_formset.save()
                 
                 # Update item.base_price with NPR price or first price entered
                 npr_price = item.base_prices.filter(currency__iso_code='NPR').first()
                 if npr_price:
                     item.base_price = npr_price.base_price
                 elif item.base_prices.exists():
-                    item.base_price = item.base_prices.first().base_price
+                    bp = item.base_prices.first()
+                    if bp is not None and getattr(bp, "base_price", None):
+                        item.base_price = bp.base_price
                 item.save()
                 
                 messages.success(request, "Food menu item created successfully.")
-                return redirect(reverse_lazy('admin_dashboard:dining_dashboard'))
+                return redirect(reverse('admin_dashboard:dining_dashboard'))
         else:
             currency_price_formset = DiningItemBasePriceFormSet(request.POST)
             
@@ -96,11 +98,13 @@ class DiningItemUpdateView(StaffRequiredMixin, View):
             if npr_price:
                 item.base_price = npr_price.base_price
             elif item.base_prices.exists():
-                item.base_price = item.base_prices.first().base_price
+                bp = item.base_prices.first()
+                if bp is not None and getattr(bp, "base_price", None):
+                    item.base_price = bp.base_price
             item.save()
             
             messages.success(request, "Food menu item updated successfully.")
-            return redirect(reverse_lazy('admin_dashboard:dining_dashboard'))
+            return redirect(reverse('admin_dashboard:dining_dashboard'))
             
         return render(request, 'admin_dashboard/dining/item_form.html', {
             'form': form,
@@ -115,6 +119,7 @@ class DiningItemDeleteView(StaffRequiredMixin, DeleteView):
     template_name = 'admin_dashboard/confirm_delete.html'
     permission_required = 'dining.delete_diningitem'
     
+    # pyrefly: ignore [bad-override]
     def get_success_url(self):
         messages.success(self.request, "Food menu item deleted successfully.")
         return reverse_lazy('admin_dashboard:dining_dashboard')

@@ -1,8 +1,10 @@
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
+
+from .models.currency import Currency
 from .models.hotel_settings import HotelSettings
 from .models.navigation import NavigationMenu
-from .models.currency import Currency
+
 
 @admin.register(HotelSettings)
 class HotelSettingsAdmin(ModelAdmin):

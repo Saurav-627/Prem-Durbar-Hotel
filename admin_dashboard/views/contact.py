@@ -1,18 +1,21 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import View, CreateView, UpdateView, DeleteView, DetailView
-from django.urls import reverse_lazy
 from django.contrib import messages
+from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DeleteView, DetailView, UpdateView, View
 
+from admin_dashboard.forms import (
+    BranchForm,
+    BroadcastNewsletterForm,
+    ContactInquiryCategoryForm,
+)
 from admin_dashboard.mixins import StaffRequiredMixin
 from contact.models.branch import Branch
-from contact.models.inquiry import ContactInquiry
 from contact.models.category import ContactInquiryCategory
+from contact.models.inquiry import ContactInquiry
 from contact.models.newsletter import NewsletterSubscriber
-from admin_dashboard.forms import BranchForm, ContactInquiryCategoryForm, BroadcastNewsletterForm
 from core.services.email_service import send_newsletter_broadcast_email
 
-
-from django.core.paginator import Paginator
 
 class ContactDashboardView(StaffRequiredMixin, View):
     permission_required = 'contact.view_contactinquiry'

@@ -1,13 +1,15 @@
 from django.db import models
+
 from core.utils import UploadTo, ValidateFileSize
 
+
 class HotelSettings(models.Model):
-    THEME_CHOICES = [
+    THEME_CHOICES = (
         ('light', 'Light Mode'),
         ('dark', 'Dark Mode'),
         ('luxury', 'Luxury Gold Mode'),
         ('festival', 'Festival Theme'),
-    ]
+    )
 
     site_name = models.CharField(max_length=100, default="Prem Durbar")
     favicon = models.ImageField(

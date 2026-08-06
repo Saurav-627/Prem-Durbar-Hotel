@@ -1,6 +1,8 @@
 from django.contrib import admin
-from .models.hero_slide import HeroSlide
+
 from .models.about_preview import AboutPreview
+from .models.hero_slide import HeroSlide
+
 
 @admin.register(HeroSlide)
 class HeroSlideAdmin(admin.ModelAdmin):

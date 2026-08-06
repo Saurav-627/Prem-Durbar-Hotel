@@ -1,7 +1,7 @@
-from .coupon import Coupon
 from .booking import Booking
+from .coupon import Coupon
 
 __all__ = [
-    'Coupon',
     'Booking',
+    'Coupon',
 ]

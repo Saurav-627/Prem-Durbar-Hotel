@@ -1,12 +1,24 @@
 import datetime
+import logging
 from decimal import Decimal
-from django.shortcuts import redirect, get_object_or_404
-from django.views.decorators.http import require_POST
+
 from django.contrib import messages
 from django.db.models import Prefetch
-from homepage.models.zipline_package import ZiplinePackage, ZiplinePackageBasePrice
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
+from django.utils import timezone
+from django.views.decorators.http import require_POST
+
+from admin_dashboard.models.notification import create_admin_notification
+from homepage.models.zipline_package import (
+    ZiplinePackage,
+    ZiplinePackageBasePrice,
+)
+
 from ..models.booking import Booking
 from ..models.coupon import Coupon
+
+logger = logging.getLogger(__name__)
 
 
 @require_POST
@@ -16,7 +28,9 @@ def create_zipline_booking(request, package_id):
     flight ticket counters, slot selection, and input validation.
     """
     selected_currency = request.COOKIES.get('currency', 'USD')
-    package_qs = ZiplinePackage.objects.prefetch_related(
+    package_qs = ZiplinePackage.objects.filter(
+        base_prices__currency__iso_code=selected_currency
+    ).prefetch_related(
         Prefetch(
             'base_prices',
             queryset=ZiplinePackageBasePrice.objects.filter(currency__iso_code=selected_currency),
@@ -49,17 +63,21 @@ def create_zipline_booking(request, package_id):
 
     try:
         no_of_flights = max(1, int(no_of_flights_str))
-        flight_date = datetime.datetime.strptime(flight_date_str, "%Y-%m-%d").date() if flight_date_str else datetime.date.today()
+        flight_date = (
+            datetime.date.fromisoformat(flight_date_str)
+            if flight_date_str
+            else timezone.now().date()
+        )
     except (ValueError, TypeError):
         messages.error(request, "Invalid input details for Zipline booking.")
         return redirect('homepage:home')
 
-    today_date = datetime.date.today()
+    today_date = timezone.now().date()
     if flight_date < today_date:
         messages.error(request, "Flight date cannot be in the past. Please select today or a future date.")
         return redirect('homepage:home')
 
-    unit_price = package.final_price or 0
+    unit_price = package.final_price or Decimal('0.00')
     subtotal = unit_price * no_of_flights
 
     discount = Decimal('0.00')
@@ -79,7 +97,6 @@ def create_zipline_booking(request, package_id):
 
     total = subtotal - discount
 
-    from django.utils import timezone
     waiver_raw = request.POST.get('waiver_accepted')
     waiver_accepted = waiver_raw in ['on', 'true', '1', True]
 
@@ -111,8 +128,6 @@ def create_zipline_booking(request, package_id):
 
     # Trigger Admin Notification
     try:
-        from django.urls import reverse
-        from admin_dashboard.models.notification import create_admin_notification
         create_admin_notification(
             notification_type='booking_created',
             title=f"New Zipline Booking [{booking.booking_uid}]",
@@ -120,6 +135,6 @@ def create_zipline_booking(request, package_id):
             link_url=reverse('admin_dashboard:booking_detail', kwargs={'pk': booking.pk})
         )
     except Exception:
-        pass
+        logger.exception("Failed to create zipline booking notification")
 
     return redirect('booking:checkout_page', booking_uid=booking.booking_uid)

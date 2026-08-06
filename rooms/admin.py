@@ -1,13 +1,16 @@
 from django.contrib import admin
-from django.utils.html import format_html
 from django.contrib.admin import ModelAdmin, TabularInline
-from .models.room_category import RoomCategory
+from django.utils.html import format_html
+
 from .models.room import Room
-from .models.room_image import RoomImage
-from .models.room_facility import RoomFacility
-from .models.room_seasonal_price import RoomSeasonalPrice
-from .models.room_policy import RoomPolicy
 from .models.room_availability import RoomAvailability
+from .models.room_base_price import RoomBasePrice
+from .models.room_category import RoomCategory
+from .models.room_facility import RoomFacility
+from .models.room_image import RoomImage
+from .models.room_policy import RoomPolicy
+from .models.room_seasonal_price import RoomSeasonalPrice
+
 
 class RoomImageInline(TabularInline):
     model = RoomImage
@@ -39,8 +42,8 @@ class RoomAdmin(ModelAdmin):
     list_filter = ('category', 'is_published', 'is_featured', 'facilities')
     search_fields = ('title', 'description', 'highlights')
     prepopulated_fields = {'slug': ('title',)}
-    inlines = [RoomBasePriceInline, RoomImageInline, RoomPolicyInline, RoomPriceInline]
-    actions = ['duplicate_room']
+    inlines = (RoomBasePriceInline, RoomImageInline, RoomPolicyInline, RoomPriceInline)
+    actions = ('duplicate_room',)
 
     @admin.display(description='Prices')
     def base_price_display(self, obj):

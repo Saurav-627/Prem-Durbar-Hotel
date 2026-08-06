@@ -1,9 +1,13 @@
-import json
 import datetime
+import json
+from decimal import Decimal
+
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+
 from rooms.models.room import Room
+
 from ..models.booking import Booking
 
 
@@ -38,8 +42,8 @@ def channel_manager_sync(request):
         return JsonResponse({'status': 'error', 'message': 'Room not found'}, status=404)
         
     try:
-        check_in = datetime.datetime.strptime(check_in_str, "%Y-%m-%d").date()
-        check_out = datetime.datetime.strptime(check_out_str, "%Y-%m-%d").date()
+        check_in = datetime.date.fromisoformat(check_in_str)
+        check_out = datetime.date.fromisoformat(check_out_str)
     except ValueError:
         return JsonResponse({'status': 'error', 'message': 'Invalid dates'}, status=400)
         
@@ -48,7 +52,7 @@ def channel_manager_sync(request):
     
     # Calculate price
     nights = (check_out - check_in).days
-    subtotal = room.base_price * nights
+    subtotal = (room.base_price or Decimal("0.00")) * nights
     total = subtotal
     
     if not booking:
@@ -61,7 +65,7 @@ def channel_manager_sync(request):
             check_in=check_in,
             check_out=check_out,
             subtotal=subtotal,
-            tax=0,
+            tax=Decimal("0.00"),
             total=total,
             status='confirmed',  # OTA bookings are usually confirmed
             channel_name=channel,
@@ -78,7 +82,7 @@ def channel_manager_sync(request):
         booking.check_in = check_in
         booking.check_out = check_out
         booking.subtotal = subtotal
-        booking.tax = 0
+        booking.tax = Decimal("0.00")
         booking.total = total
         booking.channel_raw_payload = data
         booking.save()

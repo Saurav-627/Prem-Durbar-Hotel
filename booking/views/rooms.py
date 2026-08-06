@@ -1,14 +1,20 @@
 import datetime
+import logging
 from decimal import Decimal
-from django.shortcuts import redirect, get_object_or_404
-from django.views.decorators.http import require_POST
 from django.contrib import messages
-from django.db.models import Sum, Prefetch
+from django.db.models import Prefetch, Sum
+from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
+from django.views.decorators.http import require_POST
+from admin_dashboard.models.notification import create_admin_notification
 from rooms.models.room import Room
 from rooms.models.room_availability import RoomAvailability
 from rooms.models.room_base_price import RoomBasePrice
 from ..models.booking import Booking
 from ..models.coupon import Coupon
+
+
+logger = logging.getLogger(__name__)
 
 
 @require_POST
@@ -39,8 +45,8 @@ def create_booking(request, room_id):
     special_requests = request.POST.get('special_requests', '')
 
     try:
-        check_in = datetime.datetime.strptime(check_in_str, "%Y-%m-%d").date()
-        check_out = datetime.datetime.strptime(check_out_str, "%Y-%m-%d").date()
+        check_in = datetime.date.fromisoformat(check_in_str)
+        check_out = datetime.date.fromisoformat(check_out_str)
         adults = int(adults_str)
         children = int(children_str)
         num_rooms = max(1, int(request.POST.get('num_rooms', '1')))
@@ -61,8 +67,7 @@ def create_booking(request, room_id):
             total=Sum('rooms_booked')
         )['total'] or 0
         remaining = room.total_rooms - booked_count
-        if remaining < available_rooms:
-            available_rooms = remaining
+        available_rooms = min(available_rooms, remaining)
         if booked_count + num_rooms > room.total_rooms:
             blocked = True
         check_date += datetime.timedelta(days=1)
@@ -147,8 +152,6 @@ def create_booking(request, room_id):
 
     # Trigger Admin Notification
     try:
-        from django.urls import reverse
-        from admin_dashboard.models.notification import create_admin_notification
         create_admin_notification(
             notification_type='booking_created',
             title=f"New Room Booking [{booking.booking_uid}]",
@@ -156,6 +159,6 @@ def create_booking(request, room_id):
             link_url=reverse('admin_dashboard:booking_detail', kwargs={'pk': booking.pk})
         )
     except Exception:
-        pass
+        logger.exception("Failed to create booking notification")
 
     return redirect('booking:checkout_page', booking_uid=booking.booking_uid)

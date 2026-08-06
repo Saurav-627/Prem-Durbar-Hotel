@@ -23,6 +23,7 @@ class BasePayment(ABC):
 
     def __init__(self, *, client_id: str | None, client_secret: str | None, demo: bool = True):
         self.client_id = client_id
+        # pyrefly: ignore [bad-assignment]
         self.client_secret = client_secret
         self.demo = demo
 

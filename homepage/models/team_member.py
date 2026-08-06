@@ -1,5 +1,7 @@
 from django.db import models
+
 from core.utils import UploadTo, ValidateFileSize
+
 
 class TeamMember(models.Model):
     name = models.CharField(max_length=150)
@@ -10,7 +12,7 @@ class TeamMember(models.Model):
     is_published = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ['order', 'id']
+        ordering = ('order', 'id',)
         verbose_name = "Team Member"
         verbose_name_plural = "Team Members"
 

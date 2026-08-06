@@ -1,5 +1,7 @@
 import logging
+import typing
 from typing import Any
+
 from django.apps import apps
 from django.conf import settings
 from django.core.management.color import no_style
@@ -14,6 +16,8 @@ def get_model(name):
     return apps.get_model(app_label=app_label, model_name=model_name)
 
 class BaseQuerySet(models.QuerySet):
+    _chain: typing.Callable
+    _clone: typing.Callable
     _active_test_enabled = True
 
     def set_active_test(self, enabled=True):
@@ -23,10 +27,10 @@ class BaseQuerySet(models.QuerySet):
     def with_active_test(self, enabled=True):
         if enabled:
             self.query.add_q(models.Q(is_active=True))
-        return self._chain()
+        return self._chain() # pyrefly: ignore [missing-attribute]
 
     def _clone(self):
-        c = super()._clone()
+        c = super()._clone() # pyrefly: ignore [missing-attribute]
         c._active_test_enabled = self._active_test_enabled
         return c
 
@@ -51,6 +55,7 @@ class BaseQuerySet(models.QuerySet):
         self.with_active_test(self._active_test_enabled)
         return super().get(*args, **kwargs)
 
+    # pyrefly: ignore [bad-override]
     def delete(self, is_soft=True):
         self.with_active_test(self._active_test_enabled)
         if is_soft:
@@ -82,7 +87,7 @@ class BaseModelManager(models.Manager):
         try:
             qs = self.get_queryset().set_active_test(enabled=False)
         except AttributeError as e:
-            raise Exception(
+            raise AttributeError(
                 f"'{self.__class__}' does not have an 'active test manager' in its queryset."
             ) from e
 
@@ -114,6 +119,9 @@ class BaseModelManager(models.Manager):
             return qs.update_or_create(defaults, **kwargs)
 
 class BaseModel(models.Model):
+    # Type hints for Pyrefly IDE static analyzer (Django dynamic DB fields)
+    created_by_id: int | None
+    updated_by_id: int | None
     objects = BaseModelManager()
 
     is_active = models.BooleanField(default=True)
@@ -138,12 +146,13 @@ class BaseModel(models.Model):
         related_name="+",
     )
 
+    # pyrefly: ignore [bad-override]
     def delete(self, is_soft=True, *args, **kwargs):
         if is_soft:
             self.is_active = False
             self.deleted_at = now()
             return self.save()
-        return super().delete(*args, **kwargs)
+        return super().delete(*args, **kwargs) # pyrefly: ignore [bad-override]
 
     class Meta:
         abstract = True

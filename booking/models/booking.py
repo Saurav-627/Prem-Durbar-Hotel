@@ -1,21 +1,32 @@
+import datetime
 import uuid
-from django.db import models
 from django.conf import settings
+from django.db import models
+from django.db.models import Sum
+from rooms.models.room_availability import RoomAvailability
+
 
 class Booking(models.Model):
-    BOOKING_TYPES = [
+    # Type hints for Pyrefly IDE static analyzer (Django dynamic DB fields & relations)
+    user_id: int | None
+    room_id: int | None
+    zipline_package_id: int | None
+    coupon_id: int | None
+    room_dates: models.QuerySet
+    # Type hints for Pyrefly IDE static analyzer (Django dynamic DB fields & relations)
+    BOOKING_TYPES = (
         ('room', 'Room Booking'),
         ('zipline', 'Zipline Package'),
-    ]
+    )
 
-    STATUS_CHOICES = [
+    STATUS_CHOICES = (
         ('draft', 'Draft'),
         ('pending', 'Pending Payment'),
         ('confirmed', 'Confirmed'),
         ('checked_in', 'Checked In'),
         ('checked_out', 'Checked Out'),
         ('cancelled', 'Cancelled'),
-    ]
+    )
 
     booking_uid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     booking_type = models.CharField(max_length=20, choices=BOOKING_TYPES, default='room')
@@ -66,7 +77,7 @@ class Booking(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ('-created_at',)
 
     def __str__(self):
         if self.booking_type == 'zipline' and self.zipline_package:
@@ -123,11 +134,6 @@ class Booking(models.Model):
     def has_room_availability(self):
         if self.booking_type == 'zipline' or not self.room or not self.check_in or not self.check_out:
             return True
-
-        from django.db.models import Sum
-        from rooms.models.room_availability import RoomAvailability
-        import datetime
-
         check_date = self.check_in
         while check_date < self.check_out:
             booked_count = RoomAvailability.objects.filter(room__category=self.room.category, date=check_date).aggregate(
@@ -142,9 +148,6 @@ class Booking(models.Model):
         super().save(*args, **kwargs)
         
         if self.booking_type == 'room' and self.room and self.check_in and self.check_out:
-            from rooms.models.room_availability import RoomAvailability
-            import datetime
-            
             if self.is_reserved:
                 # Delete and recreate so each booking-night is represented once with its room count.
                 self.room_dates.all().delete()
@@ -180,8 +183,8 @@ class Booking(models.Model):
                 return 'Draft'
         return self.get_status_display()
 
+    # pyrefly: ignore [bad-override]
     def delete(self, *args, **kwargs):
         if hasattr(self, 'room_dates'):
             self.room_dates.all().delete()
         super().delete(*args, **kwargs)
-

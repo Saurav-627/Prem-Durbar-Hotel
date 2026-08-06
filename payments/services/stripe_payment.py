@@ -1,7 +1,9 @@
+import logging
+
 import stripe
 from django.conf import settings
+
 from .base_payment import BasePayment, PaymentValidationResult
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +30,7 @@ class StripePayment(BasePayment):
 
         # Amount in minor units (e.g. cents / paisa)
         # pyrefly: ignore [unnecessary-type-conversion]
-        amount_in_minor_units = int(round(total_amount * 100))
+        amount_in_minor_units = round(total_amount * 100)
 
         try:
             checkout_session = stripe.checkout.Session.create(

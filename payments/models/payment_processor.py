@@ -1,7 +1,12 @@
 from django.db import models
+
 from settings_manager.models.base import BaseModel
 
+
 class PaymentProcessorCurrency(models.Model):
+    # Type hints for Pyrefly IDE static analyzer (Django dynamic DB fields)
+    payment_processor_id: int | None
+    currency_id: int | None
     payment_processor = models.ForeignKey(
         'PaymentProcessor',
         on_delete=models.CASCADE,
@@ -17,7 +22,7 @@ class PaymentProcessorCurrency(models.Model):
 
     class Meta:
         db_table = 'payments_paymentprocessor_payment_currencies'
-        indexes = [models.Index(fields=['payment_processor', 'currency'])]
+        indexes = (models.Index(fields=['payment_processor', 'currency']),)
 
 class PaymentProcessor(BaseModel):
     name = models.CharField(max_length=128)
@@ -42,8 +47,8 @@ class PaymentProcessor(BaseModel):
     class Meta:
         verbose_name = "Payment Processor"
         verbose_name_plural = "Payment Processors"
-        indexes = [
+        indexes = (
             models.Index(fields=["is_published"]),
             models.Index(fields=["code"]),
             models.Index(fields=["is_published", "id"]),
-        ]
+        )

@@ -1,19 +1,21 @@
+from decimal import Decimal
+
 from django.db import models
 from django.utils import timezone
-from decimal import Decimal
 
 
 class Coupon(models.Model):
-    DISCOUNT_TYPES = [
+    min_spends: models.QuerySet
+    DISCOUNT_TYPES = (
         ('percentage', 'Percentage (%)'),
         ('fixed', 'Fixed Amount (in selected currency)'),
-    ]
+    )
 
-    APPLICABLE_TYPES = [
+    APPLICABLE_TYPES = (
         ('all', 'All Products (Rooms & Zipline)'),
         ('room', 'Room Stays Only'),
         ('zipline', 'Zipline Flights Only'),
-    ]
+    )
 
     code = models.CharField(max_length=50, unique=True)
     description = models.CharField(max_length=200, blank=True, help_text="Internal note about this coupon (not shown to guests)")
@@ -40,7 +42,7 @@ class Coupon(models.Model):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ['-id']
+        ordering = ('-id',)
         verbose_name = "Coupon"
         verbose_name_plural = "Coupons"
 
@@ -108,6 +110,9 @@ class Coupon(models.Model):
 
 
 class CouponMinSpend(models.Model):
+    # Type hints for Pyrefly IDE static analyzer (Django dynamic DB fields)
+    coupon_id: int | None
+    currency_id: int | None
     """Per-currency minimum spend requirements for a coupon."""
     coupon = models.ForeignKey(
         Coupon,

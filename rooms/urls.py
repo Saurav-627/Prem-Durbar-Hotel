@@ -1,5 +1,11 @@
 from django.urls import path
-from .views.public import RoomListView, RoomDetailView, check_room_availability, get_room_booked_dates
+
+from .views.public import (
+    RoomDetailView,
+    RoomListView,
+    check_room_availability,
+    get_room_booked_dates,
+)
 
 app_name = 'rooms'
 

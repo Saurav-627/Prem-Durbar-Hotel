@@ -1,20 +1,23 @@
-from django.shortcuts import render, get_object_or_404, redirect
+import json
+import logging
+import uuid
+
+import stripe
+from django.conf import settings
 from django.db import transaction
-from django.http import HttpResponse, Http404, JsonResponse
+from django.http import Http404, HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django.conf import settings
+
+from admin_dashboard.models.notification import create_admin_notification
 from booking.models.booking import Booking
+from core.services.email_service import send_booking_invoice_email
+
 from ..models.payment import Payment
 from ..services import get_processor_by_gateway_name
 from ..services.base_payment import PaymentValidationResult
-import uuid
-import json
-import logging
-import stripe
-from core.services.email_service import send_booking_invoice_email
-from admin_dashboard.models.notification import create_admin_notification
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +30,9 @@ def process_payment(request, booking_uid, gateway):
     if gateway not in ['stripe', 'esewa', 'khalti']:
         raise Http404("Invalid payment gateway.")
 
-    from ..models.payment_processor import PaymentProcessor
     from decimal import Decimal
+
+    from ..models.payment_processor import PaymentProcessor
 
     # Fetch payment processor metadata
     processor_meta = PaymentProcessor.objects.filter(code=gateway, is_published=True).first()
@@ -97,7 +101,7 @@ def process_payment(request, booking_uid, gateway):
             payment.save(update_fields=['gateway_response'])
 
             return redirect(result['api_url'])
-        except Exception as e:
+        except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError) as e:
             payment.status = 'failed'
             payment.gateway_response = str(e)
             payment.save()
@@ -157,7 +161,7 @@ def process_payment(request, booking_uid, gateway):
         }
         return render(request, 'payments/process.html', context)
 
-    except Exception as e:
+    except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError) as e:
         payment.status = 'failed'
         payment.gateway_response = str(e)
         payment.save()
@@ -206,7 +210,7 @@ def payment_callback(request, payment_id):
                                     message=f"Received {booking.currency_code} {payment.amount} via STRIPE from {booking.guest_name}.",
                                     link_url=reverse('admin_dashboard:booking_detail', kwargs={'pk': booking.pk})
                                 )
-                            except Exception as email_err:
+                            except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError) as email_err:
                                 logger.error(f"Error dispatching invoice/notification on Stripe callback: {email_err}")
 
                             message = f"Payment of {booking.currency_code} {payment.amount} successful via STRIPE!"
@@ -219,7 +223,7 @@ def payment_callback(request, payment_id):
                     payment.status = 'failed'
                     payment.save(update_fields=['status'])
                     message = f"Stripe payment failed: {validation_result.message}"
-            except Exception as e:
+            except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError) as e:
                 logger.error(f"Stripe validation exception: {e}")
                 message = f"Stripe validation error: {e}"
         else:
@@ -279,7 +283,7 @@ def payment_callback(request, payment_id):
                         message=f"Received {booking.currency_code} {payment.amount} via {gateway.upper()} from {booking.guest_name}.",
                         link_url=reverse('admin_dashboard:booking_detail', kwargs={'pk': booking.pk})
                     )
-                except Exception as email_err:
+                except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError) as email_err:
                     logger.error(f"Error dispatching invoice/notification on {gateway} callback: {email_err}")
 
             message = f"Payment of {booking.currency_code} {payment.amount} successful via {gateway.upper()}!"
@@ -307,7 +311,7 @@ def payment_callback(request, payment_id):
                 'message': f"Payment validation failed for {gateway.upper()}. The booking remains a draft."
             })
 
-    except Exception as e:
+    except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError) as e:
         payment.status = 'failed'
         payment.save(update_fields=['status'])
         booking.status = 'draft'
@@ -365,7 +369,7 @@ def stripe_webhook(request):
         try:
             event_dict = json.loads(payload.decode('utf-8'))
             event = stripe.Event.construct_from(event_dict, stripe.api_key)
-        except Exception as e:
+        except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError) as e:
             logger.error(f"Error parsing Stripe webhook JSON payload: {e}")
             return HttpResponse("Invalid JSON", status=400)
 
@@ -405,7 +409,7 @@ def stripe_webhook(request):
                         payment.status = 'success'
                         try:
                             payment.gateway_response = json.dumps(session_dict, default=str)
-                        except Exception:
+                        except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError):
                             payment.gateway_response = str(session_dict)
                         payment.save(update_fields=['status', 'gateway_response'])
 
@@ -422,7 +426,7 @@ def stripe_webhook(request):
                                 message=f"Received {booking.currency_code} {payment.amount} via STRIPE Webhook from {booking.guest_name}.",
                                 link_url=reverse('admin_dashboard:booking_detail', kwargs={'pk': booking.pk})
                             )
-                        except Exception as email_err:
+                        except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError) as email_err:
                             logger.error(f"Error dispatching invoice/notification in Stripe Webhook: {email_err}")
                     else:
                         payment.status = 'failed'
@@ -443,8 +447,8 @@ def stripe_webhook(request):
 
         return HttpResponse(status=200)
 
-    except Exception as exc:
+    except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError) as exc:
         # pyrefly: ignore [unbound-name]
-        logger.exception(f"Error handling Stripe webhook event ({event_type}): {exc}")
+        logger.exception(f"Error handling Stripe webhook event ({event_type})")
         return HttpResponse(f"Webhook processing error: {exc}", status=500)
 

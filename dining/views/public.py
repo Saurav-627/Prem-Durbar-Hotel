@@ -1,6 +1,9 @@
-from django.views.generic import ListView, DetailView
-from ..models.item import DiningCategory, DiningItem
+from django.views.generic import DetailView, ListView
+
 from settings_manager.models.currency import Currency
+
+from ..models.item import DiningCategory, DiningItem
+
 
 class DiningListView(ListView):
     model = DiningCategory

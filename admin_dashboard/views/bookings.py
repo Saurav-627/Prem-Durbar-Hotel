@@ -1,9 +1,8 @@
-from django.shortcuts import redirect, get_object_or_404
-from django.views.generic import View, ListView, DetailView
 from django.contrib import messages
-from django.utils import timezone
 from django.db.models import Q
-
+from django.shortcuts import get_object_or_404, redirect
+from django.utils import timezone
+from django.views.generic import DetailView, ListView, View
 from admin_dashboard.mixins import StaffRequiredMixin
 from booking.models.booking import Booking
 from payments.models.payment import Payment
@@ -59,8 +58,6 @@ class BookingDetailView(StaffRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # Prefetch currency prices for the booking room
-        from django.db.models import Prefetch
-        from rooms.models.room_base_price import RoomBasePrice
         # Resolve the booking's currency by looking at the subtotal-stored currency (fallback: first available price)
         booking = self.object
         if booking:

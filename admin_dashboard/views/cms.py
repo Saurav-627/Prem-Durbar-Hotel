@@ -1,27 +1,34 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import View, CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
 from django.contrib import messages
-
-from admin_dashboard.mixins import StaffRequiredMixin
-from homepage.models.hero_slide import HeroSlide
-from homepage.models.about_preview import AboutPreview
-from homepage.models.about_cms import AboutCMS
-from homepage.models.zipline_cms import ZiplineCMS
-from homepage.models.sustainability_cms import SustainabilityCMS, SustainabilityPillar
-from homepage.models.team_member import TeamMember
-from testimonials.models.testimonial import Testimonial
-from gallery.models.category import GalleryCategory
-from gallery.models.item import GalleryItem
-from seo.models.seo_data import SEOData
+from django.core.paginator import Paginator
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, DeleteView, UpdateView, View
 
 from admin_dashboard.forms import (
-    HeroSlideForm, AboutPreviewForm, AboutCMSForm, ZiplineCMSForm, 
-    SustainabilityCMSForm, SustainabilityPillarForm, TeamMemberForm,
-    TestimonialForm, GalleryCategoryForm, GalleryItemForm, SEODataForm
+    AboutCMSForm,
+    AboutPreviewForm,
+    GalleryCategoryForm,
+    GalleryItemForm,
+    HeroSlideForm,
+    SEODataForm,
+    SustainabilityCMSForm,
+    SustainabilityPillarForm,
+    TeamMemberForm,
+    TestimonialForm,
+    ZiplineCMSForm,
 )
+from admin_dashboard.mixins import StaffRequiredMixin
+from gallery.models.category import GalleryCategory
+from gallery.models.item import GalleryItem
+from homepage.models.about_cms import AboutCMS
+from homepage.models.about_preview import AboutPreview
+from homepage.models.hero_slide import HeroSlide
+from homepage.models.sustainability_cms import SustainabilityCMS, SustainabilityPillar
+from homepage.models.team_member import TeamMember
+from homepage.models.zipline_cms import ZiplineCMS
+from seo.models.seo_data import SEOData
+from testimonials.models.testimonial import Testimonial
 
-from django.core.paginator import Paginator
 
 class CmsDashboardView(StaffRequiredMixin, View):
     permission_required = 'homepage.view_heroslide'

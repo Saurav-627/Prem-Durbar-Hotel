@@ -1,6 +1,10 @@
 from django.db import models
 
+
 class RoomSeasonalPrice(models.Model):
+    # Type hints for Pyrefly IDE static analyzer (Django dynamic DB fields)
+    room_id: int | None
+    currency_id: int | None
     """Temporary seasonal price override for a room during a date range."""
     room = models.ForeignKey('Room', on_delete=models.CASCADE, related_name='seasonal_prices')
     currency = models.ForeignKey(
@@ -19,7 +23,7 @@ class RoomSeasonalPrice(models.Model):
     class Meta:
         verbose_name = "Room Seasonal Price"
         verbose_name_plural = "Room Seasonal Prices"
-        ordering = ['start_date']
+        ordering = ('start_date',)
 
     def __str__(self):
         currency_str = self.currency.iso_code if self.currency else "ALL"

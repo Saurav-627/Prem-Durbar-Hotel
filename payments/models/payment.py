@@ -1,20 +1,25 @@
-from django.db import models
 from decimal import Decimal
 
+from django.db import models
+
+
 class Payment(models.Model):
-    GATEWAY_CHOICES = [
+    # Type hints for Pyrefly IDE static analyzer (Django dynamic DB fields)
+    booking_id: int | None
+    currency_id: int | None
+    GATEWAY_CHOICES = (
         ('stripe', 'Stripe'),
         ('esewa', 'eSewa'),
         ('khalti', 'Khalti'),
-    ]
+    )
 
-    STATUS_CHOICES = [
+    STATUS_CHOICES = (
         ('draft', 'Draft'),
         ('pending', 'Pending'),
         ('success', 'Success'),
         ('failed', 'Failed'),
         ('refunded', 'Refunded'),
-    ]
+    )
 
     booking = models.ForeignKey('booking.Booking', on_delete=models.CASCADE, related_name='payments')
     gateway = models.CharField(max_length=20, choices=GATEWAY_CHOICES)
@@ -31,7 +36,7 @@ class Payment(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ('-created_at',)
 
     def __str__(self):
         return f"Payment {self.id} for Booking {self.booking.id} (${self.amount})"

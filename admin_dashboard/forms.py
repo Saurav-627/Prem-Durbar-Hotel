@@ -1,31 +1,34 @@
+from typing import ClassVar
+
 from django import forms
-from settings_manager.models.hotel_settings import HotelSettings
-from payments.models.payment_processor import PaymentProcessor, PaymentProcessorCurrency
-from settings_manager.models.navigation import NavigationMenu
-from settings_manager.models.currency import Currency
-from homepage.models.hero_slide import HeroSlide
-from homepage.models.about_preview import AboutPreview
-from homepage.models.about_cms import AboutCMS
-from homepage.models.zipline_cms import ZiplineCMS
-from homepage.models.sustainability_cms import SustainabilityCMS, SustainabilityPillar
-from homepage.models.team_member import TeamMember
-from rooms.models.room_category import RoomCategory
-from rooms.models.room import Room
-from rooms.models.room_image import RoomImage
-from rooms.models.room_facility import RoomFacility
-from rooms.models.room_policy import RoomPolicy
-from rooms.models.room_seasonal_price import RoomSeasonalPrice
+from django.contrib.auth import get_user_model
+
 from booking.models.booking import Booking
 from booking.models.coupon import Coupon
+from contact.models.branch import Branch
+from contact.models.category import ContactInquiryCategory
+from contact.models.inquiry import ContactInquiry
 from dining.models.item import DiningCategory, DiningItem, DiningItemBasePrice
 from gallery.models.category import GalleryCategory
 from gallery.models.item import GalleryItem
-from contact.models.branch import Branch
-from contact.models.inquiry import ContactInquiry
-from contact.models.category import ContactInquiryCategory
-from testimonials.models.testimonial import Testimonial
+from homepage.models.about_cms import AboutCMS
+from homepage.models.about_preview import AboutPreview
+from homepage.models.hero_slide import HeroSlide
+from homepage.models.sustainability_cms import SustainabilityCMS, SustainabilityPillar
+from homepage.models.team_member import TeamMember
+from homepage.models.zipline_cms import ZiplineCMS
+from payments.models.payment_processor import PaymentProcessor, PaymentProcessorCurrency
+from rooms.models.room import Room
+from rooms.models.room_category import RoomCategory
+from rooms.models.room_facility import RoomFacility
+from rooms.models.room_image import RoomImage
+from rooms.models.room_policy import RoomPolicy
+from rooms.models.room_seasonal_price import RoomSeasonalPrice
 from seo.models.seo_data import SEOData
-from django.contrib.auth import get_user_model
+from settings_manager.models.currency import Currency
+from settings_manager.models.hotel_settings import HotelSettings
+from settings_manager.models.navigation import NavigationMenu
+from testimonials.models.testimonial import Testimonial
 
 User = get_user_model()
 
@@ -50,10 +53,7 @@ class TailwindFormMixin:
             elif isinstance(widget, forms.Textarea):
                 css_classes = "w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all duration-200 h-28"
             # Date/Time input
-            elif isinstance(widget, (forms.DateInput, forms.DateTimeInput, forms.TimeInput)):
-                css_classes = "w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all duration-200 cursor-pointer"
-            # Standard Select or SelectMultiple
-            elif isinstance(widget, (forms.Select, forms.SelectMultiple)):
+            elif isinstance(widget, (forms.DateInput, forms.DateTimeInput, forms.TimeInput, forms.Select, forms.SelectMultiple)):
                 css_classes = "w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all duration-200 cursor-pointer"
             # File Uploads
             elif isinstance(widget, forms.FileInput):
@@ -106,10 +106,11 @@ class RoomCategoryForm(TailwindFormMixin, forms.ModelForm):
 
 from rooms.models.room_base_price import RoomBasePrice
 
+
 class RoomForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = Room
-        exclude = ['created_at', 'updated_at']
+        exclude = ('created_at', 'updated_at')
 
 class RoomBasePriceForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
@@ -205,22 +206,22 @@ class BookingForm(TailwindFormMixin, forms.ModelForm):
 
 class CouponForm(TailwindFormMixin, forms.ModelForm):
     valid_from = forms.DateTimeField(
-        input_formats=['%Y-%m-%dT%H:%M', '%Y-%m-%d %H:%M', '%Y-%m-%d'],
+        input_formats=['%Y-%m-%dT%H:%M', '%Y-%m-%d %H:%M', '%Y-%m-%d %H:%M:%S', '%Y-%m-%d'],
         widget=forms.DateTimeInput(
             attrs={
                 'type': 'text',
-                'class': 'w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all duration-200 cursor-pointer air-datepicker-from',
+                'class': 'w-full pl-10 pr-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all duration-200 cursor-pointer air-datepicker-from',
                 'placeholder': 'Select start date & time...',
                 'autocomplete': 'off',
             }
         ),
     )
     valid_to = forms.DateTimeField(
-        input_formats=['%Y-%m-%dT%H:%M', '%Y-%m-%d %H:%M', '%Y-%m-%d'],
+        input_formats=['%Y-%m-%dT%H:%M', '%Y-%m-%d %H:%M', '%Y-%m-%d %H:%M:%S', '%Y-%m-%d'],
         widget=forms.DateTimeInput(
             attrs={
                 'type': 'text',
-                'class': 'w-full px-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all duration-200 cursor-pointer air-datepicker-to',
+                'class': 'w-full pl-10 pr-4 py-2.5 rounded-lg border border-neutral-300 dark:border-neutral-700 bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100 focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary outline-none transition-all duration-200 cursor-pointer air-datepicker-to',
                 'placeholder': 'Select expiry date & time...',
                 'autocomplete': 'off',
             }
@@ -229,15 +230,16 @@ class CouponForm(TailwindFormMixin, forms.ModelForm):
 
     class Meta:
         model = Coupon
-        exclude = ['use_count']
+        exclude = ('use_count',)
 
 
 from booking.models.coupon import CouponMinSpend
 
+
 class CouponMinSpendForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = CouponMinSpend
-        fields = ['currency', 'min_spend']
+        fields = ('currency', 'min_spend')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -285,13 +287,13 @@ class DiningCategoryForm(TailwindFormMixin, forms.ModelForm):
 class DiningItemForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = DiningItem
-        fields = ['category', 'title', 'slug', 'description', 'image', 'image_url', 'is_vegetarian', 'is_vegan', 'is_spicy', 'is_chef_special', 'is_published', 'order']
+        fields = ('category', 'title', 'slug', 'description', 'image', 'image_url', 'is_vegetarian', 'is_vegan', 'is_spicy', 'is_chef_special', 'is_published', 'order')
 
 
 class DiningItemBasePriceForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = DiningItemBasePrice
-        fields = ['currency', 'base_price']
+        fields = ('currency', 'base_price')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -376,7 +378,8 @@ class SEODataForm(TailwindFormMixin, forms.ModelForm):
         model = SEOData
         fields = '__all__'
 
-from django.contrib.auth.models import Permission, Group
+from django.contrib.auth.models import Permission
+
 
 class UserForm(TailwindFormMixin, forms.ModelForm):
     password = forms.CharField(
@@ -387,11 +390,11 @@ class UserForm(TailwindFormMixin, forms.ModelForm):
 
     class Meta:
         model = User
-        fields = [
+        fields = (
             'username', 'first_name', 'last_name', 'email', 'phone',
             'is_active', 'is_staff', 'is_superuser',
             'is_hotel_admin', 'is_guest', 'avatar', 'groups', 'user_permissions'
-        ]
+        )
 
 
     def __init__(self, *args, **kwargs):
@@ -437,7 +440,7 @@ class PaymentProcessorForm(TailwindFormMixin, forms.ModelForm):
 
     class Meta:
         model = PaymentProcessor
-        fields = ['name', 'code', 'apply_tax', 'is_published']
+        fields = ('name', 'code', 'apply_tax', 'is_published')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -479,7 +482,7 @@ class ZiplineCMSForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = ZiplineCMS
         fields = '__all__'
-        widgets = {
+        widgets: ClassVar = {
             'video_file': forms.ClearableFileInput(attrs={'accept': 'video/*'}),
             'available_time_slots': forms.Textarea(attrs={
                 'placeholder': "Morning (09:00 AM - 12:00 PM)\nAfternoon (12:00 PM - 03:00 PM)\nSunset Flight (03:00 PM - 06:00 PM)",
@@ -508,10 +511,11 @@ class TeamMemberForm(TailwindFormMixin, forms.ModelForm):
 
 from homepage.models.zipline_package import ZiplinePackage, ZiplinePackageBasePrice
 
+
 class ZiplinePackageForm(TailwindFormMixin, forms.ModelForm):
     class Meta:
         model = ZiplinePackage
-        exclude = ['created_at', 'updated_at']
+        exclude = ('created_at', 'updated_at')
 
 
 class ZiplinePackageBasePriceForm(TailwindFormMixin, forms.ModelForm):

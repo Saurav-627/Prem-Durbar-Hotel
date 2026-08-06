@@ -1,5 +1,5 @@
-from decimal import ROUND_HALF_UP, Decimal
 import re
+from decimal import ROUND_HALF_UP, Decimal
 
 TWOPLACES = Decimal("0.01")
 
@@ -15,6 +15,7 @@ def to_minor_units(value) -> int:
     """
     return int((decimal_2(value) * 100).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
 
+# pyrefly: ignore [bad-function-definition]
 def clean_and_split_remarks(remarks2: str, max_len: int = 25, remove_word: str = None, prefix: str = "Buy", suffix: str = "Credits") -> tuple[str, str]:
     remarks1 = prefix
     if remove_word:

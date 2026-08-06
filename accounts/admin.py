@@ -4,6 +4,7 @@ from .models.user import User
 
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
+    # pyrefly: ignore [unsupported-operation]
     fieldsets = BaseUserAdmin.fieldsets + (
         ('Custom Profile Info', {'fields': ('phone', 'is_hotel_admin', 'is_guest', 'avatar')}),
     )

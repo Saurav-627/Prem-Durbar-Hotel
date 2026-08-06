@@ -1,12 +1,13 @@
 from django.db import models
 
+
 class ContactInquiry(models.Model):
-    CATEGORY_CHOICES = [
+    CATEGORY_CHOICES = (
         ('general', 'General Inquiry'),
         ('room', 'Room Booking Inquiry'),
         ('event', 'Event & Banquets Inquiry'),
         ('dining', 'Dining & Table Booking'),
-    ]
+    )
 
     name = models.CharField(max_length=100)
     email = models.EmailField()
@@ -17,7 +18,7 @@ class ContactInquiry(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ('-created_at',)
         verbose_name = "Contact Inquiry"
         verbose_name_plural = "Contact Inquiries"
 

@@ -1,14 +1,16 @@
 from django.db import models
+
 from core.utils import UploadTo, ValidateFileSize
 
+
 class HeroSlide(models.Model):
-    ANIMATION_CHOICES = [
+    ANIMATION_CHOICES = (
         ('fadeInDown', 'Fade In Down'),
         ('fadeInUp', 'Fade In Up'),
         ('zoomIn', 'Zoom In'),
         ('slideInLeft', 'Slide In Left'),
         ('slideInRight', 'Slide In Right'),
-    ]
+    )
 
     title = models.CharField(max_length=150)
     subtitle = models.CharField(max_length=250, blank=True, null=True)
@@ -35,7 +37,7 @@ class HeroSlide(models.Model):
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ['order', 'id']
+        ordering = ('order', 'id',)
         verbose_name = "Hero Slide"
         verbose_name_plural = "Hero Slides"
 

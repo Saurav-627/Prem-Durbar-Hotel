@@ -1,6 +1,6 @@
 from .branch import Branch
-from .inquiry import ContactInquiry
 from .category import ContactInquiryCategory
+from .inquiry import ContactInquiry
 from .newsletter import NewsletterSubscriber
 
 __all__ = [

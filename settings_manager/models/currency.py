@@ -1,5 +1,7 @@
 from django.db import models
+
 from .base import BaseModel
+
 
 class Currency(BaseModel):
     name = models.CharField(max_length=128)
@@ -19,10 +21,10 @@ class Currency(BaseModel):
         return self.display_name
     
     class Meta:
-        ordering = ["sequence", "id"]
-        indexes = [
+        ordering = ("sequence", "id",)
+        indexes = (
             models.Index(fields=["iso_code"]),
-        ]
+        )
 
     @classmethod
     def get_by_iso_code(cls, iso_code):

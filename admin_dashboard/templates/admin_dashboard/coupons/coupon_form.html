@@ -106,10 +106,10 @@
                                 Valid From <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
-                                <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-neutral-400 text-sm">
+                                <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-neutral-400 text-sm z-10">
                                     <i class="fa-regular fa-calendar-check"></i>
                                 </span>
-                                <div class="pl-8">{{ form.valid_from }}</div>
+                                {{ form.valid_from }}
                             </div>
                             {% if form.valid_from.errors %}
                             <p class="text-red-500 text-xs mt-1">{{ form.valid_from.errors|join:", " }}</p>
@@ -121,10 +121,10 @@
                                 Expires On <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
-                                <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-neutral-400 text-sm">
+                                <span class="absolute inset-y-0 left-3 flex items-center pointer-events-none text-neutral-400 text-sm z-10">
                                     <i class="fa-regular fa-calendar-xmark"></i>
                                 </span>
-                                <div class="pl-8">{{ form.valid_to }}</div>
+                                {{ form.valid_to }}
                             </div>
                             {% if form.valid_to.errors %}
                             <p class="text-red-500 text-xs mt-1">{{ form.valid_to.errors|join:", " }}</p>
@@ -190,9 +190,9 @@
                                 <span class="text-xs font-semibold text-neutral-700 dark:text-neutral-300 block">Active</span>
                                 <span class="text-[11px] text-neutral-400">Guests can apply this code when active</span>
                             </div>
-                            <label class="relative inline-flex items-center cursor-pointer">
+                            <label class="relative inline-flex items-center cursor-pointer select-none">
                                 {{ form.is_active }}
-                                <div class="peer-checked:bg-brand-primary bg-neutral-300 dark:bg-neutral-600 peer-focus:ring-2 peer-focus:ring-brand-primary/40 w-11 h-6 rounded-full ml-2 after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5 pointer-events-none"></div>
+                                <div class="w-11 h-6 bg-neutral-300 dark:bg-neutral-600 peer-checked:bg-brand-primary rounded-full relative transition-all duration-200 peer-focus:ring-2 peer-focus:ring-brand-primary/40 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-5"></div>
                             </label>
                         </div>
                         <!-- Max Uses -->
@@ -245,32 +245,30 @@
     </form>
 </div>
 
-<!-- AirDatepicker -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/air-datepicker@3.5.3/air-datepicker.min.css">
-<script src="https://cdn.jsdelivr.net/npm/air-datepicker@3.5.3/air-datepicker.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/air-datepicker@3.5.3/locale/en.js"></script>
 <script>
-(function() {
-    const sharedOpts = {
-        locale: AirDatepickerLocaleEn,
-        timepicker: true,
-        dateFormat: 'yyyy-MM-dd',
-        timeFormat: 'HH:mm',
-        autoClose: true,
-        position: 'bottom left',
-    };
-
+document.addEventListener("DOMContentLoaded", function() {
     const fromEl = document.querySelector('.air-datepicker-from');
     const toEl = document.querySelector('.air-datepicker-to');
     let dpFrom, dpTo;
+
+    const baseConfig = window.defaultAirDatepickerConfig || {
+        autoClose: true,
+        dateFormat: 'yyyy-MM-dd',
+        timeFormat: 'HH:mm',
+    };
 
     if (fromEl) {
         fromEl.readOnly = true;
         fromEl.setAttribute('inputmode', 'none');
         dpFrom = new AirDatepicker(fromEl, {
-            ...sharedOpts,
+            ...baseConfig,
+            timepicker: true,
+            dateFormat: 'yyyy-MM-dd',
+            timeFormat: 'HH:mm',
             onSelect({ date }) {
-                if (dpTo) dpTo.update({ minDate: date });
+                if (dpTo && date) dpTo.update({ minDate: date });
+                fromEl.dispatchEvent(new Event('input', { bubbles: true }));
+                fromEl.dispatchEvent(new Event('change', { bubbles: true }));
             }
         });
     }
@@ -279,12 +277,17 @@
         toEl.readOnly = true;
         toEl.setAttribute('inputmode', 'none');
         dpTo = new AirDatepicker(toEl, {
-            ...sharedOpts,
+            ...baseConfig,
+            timepicker: true,
+            dateFormat: 'yyyy-MM-dd',
+            timeFormat: 'HH:mm',
             onSelect({ date }) {
-                if (dpFrom) dpFrom.update({ maxDate: date });
+                if (dpFrom && date) dpFrom.update({ maxDate: date });
+                toEl.dispatchEvent(new Event('input', { bubbles: true }));
+                toEl.dispatchEvent(new Event('change', { bubbles: true }));
             }
         });
     }
-})();
+});
 </script>
 {% endblock %}

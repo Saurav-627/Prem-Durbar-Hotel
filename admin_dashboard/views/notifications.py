@@ -1,8 +1,9 @@
-from django.views.generic import ListView
-from django.shortcuts import get_object_or_404, redirect
-from django.http import JsonResponse
-from django.views.decorators.http import require_POST
 from django.contrib import messages
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.views.decorators.http import require_POST
+from django.views.generic import ListView
+
 from ..mixins import StaffRequiredMixin
 from ..models.notification import Notification
 

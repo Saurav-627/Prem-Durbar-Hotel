@@ -12,7 +12,7 @@ class RoomCategory(models.Model):
     class Meta:
         verbose_name = "Room Category"
         verbose_name_plural = "Room Categories"
-        ordering = ["order", "name"]
+        ordering = ("order", "name",)
 
     def __str__(self):
         return self.name

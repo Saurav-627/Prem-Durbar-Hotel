@@ -1,7 +1,11 @@
-from django.db.utils import ProgrammingError, OperationalError
-from .models.seo_data import SEOData
+import logging
+
+from django.db.utils import OperationalError, ProgrammingError
 
 from settings_manager.models.hotel_settings import HotelSettings
+
+from .models.seo_data import SEOData
+
 
 def seo_meta(request):
     site_name = 'Prem Durbar'
@@ -9,8 +13,8 @@ def seo_meta(request):
         hs = HotelSettings.objects.first()
         if hs and hs.site_name:
             site_name = hs.site_name
-    except Exception:
-        pass
+    except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError) as e:
+        logging.getLogger(__name__).debug(f"Handled exception: {e}")
 
     meta = {
         'title': f'{site_name} | Premium Five-Star Luxury Hotel & CMS',
@@ -46,7 +50,7 @@ def seo_meta(request):
             if meta_obj.og_image:
                 meta['og_image'] = request.build_absolute_uri(meta_obj.og_image.url)
             meta['twitter_card'] = meta_obj.twitter_card
-            meta['structured_data'] = meta_obj.structured_data
+            meta['structured_data'] = meta_obj.structured_data or ""
     except (ProgrammingError, OperationalError):
         pass
 

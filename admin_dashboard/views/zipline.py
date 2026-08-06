@@ -1,13 +1,17 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import View, DeleteView
-from django.urls import reverse_lazy
 from django.contrib import messages
 from django.forms import inlineformset_factory
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.views.generic import DeleteView, View
 
+from admin_dashboard.forms import (
+    ZiplineCMSForm,
+    ZiplinePackageBasePriceForm,
+    ZiplinePackageForm,
+)
 from admin_dashboard.mixins import StaffRequiredMixin
 from homepage.models.zipline_cms import ZiplineCMS
 from homepage.models.zipline_package import ZiplinePackage, ZiplinePackageBasePrice
-from admin_dashboard.forms import ZiplineCMSForm, ZiplinePackageForm, ZiplinePackageBasePriceForm
 
 ZiplinePackageBasePriceFormSet = inlineformset_factory(
     ZiplinePackage, ZiplinePackageBasePrice, form=ZiplinePackageBasePriceForm,

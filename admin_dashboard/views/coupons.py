@@ -1,12 +1,12 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import View, DeleteView
-from django.urls import reverse_lazy
-from django.forms import inlineformset_factory
 from django.contrib import messages
+from django.forms import inlineformset_factory
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse, reverse_lazy
+from django.views.generic import DeleteView, View
+
+from admin_dashboard.forms import CouponForm, CouponMinSpendForm
 from admin_dashboard.mixins import StaffRequiredMixin
 from booking.models.coupon import Coupon, CouponMinSpend
-from admin_dashboard.forms import CouponForm, CouponMinSpendForm
-
 
 MinSpendFormSet = inlineformset_factory(
     Coupon,
@@ -27,6 +27,7 @@ class CouponDashboardView(StaffRequiredMixin, View):
         coupons = Coupon.objects.prefetch_related('min_spends__currency').order_by('-id')
         now = timezone.now()
         for c in coupons:
+            # pyrefly: ignore [missing-attribute]
             c.is_expired_now = now > c.valid_to
         return render(request, 'admin_dashboard/coupons/dashboard.html', {
             'coupons': coupons,
@@ -59,7 +60,7 @@ class CouponCreateView(StaffRequiredMixin, View):
             for obj in min_spend_formset.deleted_objects:
                 obj.delete()
             messages.success(request, f"Promo code '{coupon.code}' created successfully.")
-            return redirect(reverse_lazy('admin_dashboard:coupon_dashboard'))
+            return redirect(reverse('admin_dashboard:coupon_dashboard'))
 
         messages.error(request, "Error creating coupon. Please review highlighted inputs below.")
         return render(request, 'admin_dashboard/coupons/coupon_form.html', {
@@ -100,7 +101,7 @@ class CouponUpdateView(StaffRequiredMixin, View):
             for obj in min_spend_formset.deleted_objects:
                 obj.delete()
             messages.success(request, f"Promo code '{coupon.code}' updated successfully.")
-            return redirect(reverse_lazy('admin_dashboard:coupon_dashboard'))
+            return redirect(reverse('admin_dashboard:coupon_dashboard'))
 
         messages.error(request, "Error updating coupon. Please review highlighted inputs below.")
         return render(request, 'admin_dashboard/coupons/coupon_form.html', {
@@ -120,6 +121,7 @@ class CouponDeleteView(StaffRequiredMixin, DeleteView):
     permission_required = 'booking.delete_coupon'
 
 
+    # pyrefly: ignore [bad-override]
     def get_success_url(self):
         messages.success(self.request, "Coupon deleted successfully.")
         return reverse_lazy('admin_dashboard:coupon_dashboard')

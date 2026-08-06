@@ -1,12 +1,16 @@
-from django.views.generic import ListView, DetailView
+import datetime
+
 from django.db.models import Sum
 from django.http import JsonResponse
+from django.utils import timezone
 from django.views.decorators.http import require_GET
-import datetime
+from django.views.generic import DetailView, ListView
+
 from ..models.room import Room
-from ..models.room_facility import RoomFacility
-from ..models.room_category import RoomCategory
 from ..models.room_availability import RoomAvailability
+from ..models.room_category import RoomCategory
+from ..models.room_facility import RoomFacility
+
 
 class RoomListView(ListView):
     model = Room
@@ -26,13 +30,14 @@ class RoomListView(ListView):
             valid_codes = [c.iso_code for c in published_currencies]
             if selected_currency not in valid_codes:
                 selected_currency = default_currency
-        except Exception:
+        except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError):
             selected_currency = 'USD'
 
         queryset = queryset.filter(base_prices__currency__iso_code=selected_currency)
         
         # Prefetch the active currency price
         from django.db.models import Prefetch
+
         from rooms.models.room_base_price import RoomBasePrice
         queryset = queryset.prefetch_related(
             Prefetch(
@@ -91,7 +96,7 @@ class RoomListView(ListView):
             selected_currency = self.request.COOKIES.get('currency', default_currency)
             currency_obj = Currency.objects.filter(iso_code=selected_currency, is_published=True).first()
             context['selected_currency_symbol'] = currency_obj.symbol if currency_obj else '$'
-        except Exception:
+        except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError):
             selected_currency = 'USD'
             context['selected_currency_symbol'] = '$'
             
@@ -111,6 +116,7 @@ class RoomDetailView(DetailView):
     def get_queryset(self):
         selected_currency = self.request.COOKIES.get('currency', 'USD')
         from django.db.models import Prefetch
+
         from rooms.models.room_base_price import RoomBasePrice
         return super().get_queryset().filter(is_published=True).prefetch_related(
             'images', 'facilities', 'policies', 'seasonal_prices__currency',
@@ -138,7 +144,7 @@ class RoomDetailView(DetailView):
         try:
             currency_obj = Currency.objects.filter(iso_code=selected_currency, is_published=True).first()
             context['selected_currency_symbol'] = currency_obj.symbol if currency_obj else '$'
-        except Exception:
+        except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError):
             context['selected_currency_symbol'] = '$'
             
         return context
@@ -153,8 +159,8 @@ def check_room_availability(request, room_id):
         return JsonResponse({'available': False, 'message': 'Missing date parameters.'}, status=400)
         
     try:
-        check_in = datetime.datetime.strptime(check_in_str, "%Y-%m-%d").date()
-        check_out = datetime.datetime.strptime(check_out_str, "%Y-%m-%d").date()
+        check_in = datetime.date.fromisoformat(check_in_str)
+        check_out = datetime.date.fromisoformat(check_out_str)
         num_rooms = int(num_rooms_str)
     except ValueError:
         return JsonResponse({'available': False, 'message': 'Invalid parameter format.'}, status=400)
@@ -176,8 +182,7 @@ def check_room_availability(request, room_id):
             total=Sum('rooms_booked')
         )['total'] or 0
         remaining = room.total_rooms - booked_count
-        if remaining < available_rooms:
-            available_rooms = remaining
+        available_rooms = min(available_rooms, remaining)
         if booked_count + num_rooms > room.total_rooms:
             is_available = False
         check_date += datetime.timedelta(days=1)
@@ -196,7 +201,7 @@ def get_room_booked_dates(request, room_id):
         return JsonResponse({'booked_dates': []}, status=404)
         
     # Get all occupancies from today onwards
-    today = datetime.date.today()
+    today = timezone.now().date()
     
     # We aggregate total booked rooms grouped by date
     occupancies = RoomAvailability.objects.filter(

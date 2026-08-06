@@ -1,7 +1,8 @@
 from django.contrib import admin
+
 from .models.branch import Branch
-from .models.inquiry import ContactInquiry
 from .models.category import ContactInquiryCategory
+from .models.inquiry import ContactInquiry
 from .models.newsletter import NewsletterSubscriber
 
 @admin.register(ContactInquiryCategory)

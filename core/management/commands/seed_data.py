@@ -1,10 +1,11 @@
 import os
-import yaml
 from datetime import timedelta
-from django.core.management.base import BaseCommand
-from django.contrib.auth import get_user_model
-from django.utils import timezone
+
+import yaml
 from django.apps import apps
+from django.contrib.auth import get_user_model
+from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -133,7 +134,7 @@ class Command(BaseCommand):
                 folder_files = [
                     os.path.join(folder_path, f)
                     for f in sorted(os.listdir(folder_path))
-                    if f.endswith(".yaml") or f.endswith(".yml")
+                    if f.endswith((".yaml", ".yml"))
                 ]
                 files_to_process.extend(folder_files)
 
@@ -256,9 +257,9 @@ class Command(BaseCommand):
             # -- 3. Complex Models: Rooms with nested FKs, M2Ms, Images, Prices & Policies
             if "rooms" in data:
                 from rooms.models.room import Room
+                from rooms.models.room_base_price import RoomBasePrice
                 from rooms.models.room_category import RoomCategory
                 from rooms.models.room_facility import RoomFacility
-                from rooms.models.room_base_price import RoomBasePrice
                 from rooms.models.room_image import RoomImage
                 from rooms.models.room_policy import RoomPolicy
                 from settings_manager.models.currency import Currency
@@ -340,9 +341,14 @@ class Command(BaseCommand):
 
             # -- 4. Dining Items with Category FK & Multi-Currency Base Prices
             if "dining_items" in data:
-                from dining.models.item import DiningItem, DiningCategory, DiningItemBasePrice
-                from settings_manager.models.currency import Currency
                 from django.utils.text import slugify
+
+                from dining.models.item import (
+                    DiningCategory,
+                    DiningItem,
+                    DiningItemBasePrice,
+                )
+                from settings_manager.models.currency import Currency
 
                 count_created = 0
                 count_updated = 0
@@ -400,9 +406,13 @@ class Command(BaseCommand):
 
             # -- 5. Zipline Packages with Multi-Currency Base Prices
             if "zipline_packages" in data:
-                from homepage.models.zipline_package import ZiplinePackage, ZiplinePackageBasePrice
-                from settings_manager.models.currency import Currency
                 from django.utils.text import slugify
+
+                from homepage.models.zipline_package import (
+                    ZiplinePackage,
+                    ZiplinePackageBasePrice,
+                )
+                from settings_manager.models.currency import Currency
 
                 count_created = 0
                 count_updated = 0

@@ -1,6 +1,10 @@
 from django.db import models
 
+
 class RoomBasePrice(models.Model):
+    # Type hints for Pyrefly IDE static analyzer (Django dynamic DB fields)
+    room_id: int | None
+    currency_id: int | None
     """Permanent nightly base price for a room in a specific currency."""
     room = models.ForeignKey(
         'Room',

@@ -40,5 +40,6 @@ class AboutCMS(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.pk and AboutCMS.objects.exists():
+            # pyrefly: ignore [missing-attribute]
             self.pk = AboutCMS.objects.first().pk
         super().save(*args, **kwargs)

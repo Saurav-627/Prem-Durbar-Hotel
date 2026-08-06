@@ -1,10 +1,12 @@
+import glob
 import os
 import shutil
-import glob
 import subprocess
-from datetime import datetime
-from django.core.management.base import BaseCommand
+
 from django.conf import settings
+from django.core.management.base import BaseCommand
+from django.utils import timezone
+
 
 class Command(BaseCommand):
     help = "Creates a backup of the configured database (SQLite or PostgreSQL) and cleans up old backups."
@@ -34,7 +36,7 @@ class Command(BaseCommand):
         db_engine = db_config.get("ENGINE", "")
         db_name = db_config.get("NAME", "")
         
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = timezone.now().strftime("%Y%m%d_%H%M%S")
         self.stdout.write(self.style.NOTICE(f"Starting backup at {timestamp}..."))
 
         if "sqlite3" in db_engine:
@@ -48,7 +50,7 @@ class Command(BaseCommand):
             try:
                 shutil.copy2(db_name, backup_path)
                 self.stdout.write(self.style.SUCCESS(f"Successfully backed up SQLite database to: {backup_path}"))
-            except Exception as e:
+            except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError) as e:
                 self.stderr.write(self.style.ERROR(f"Failed to copy SQLite database: {e}"))
                 return
 
@@ -108,7 +110,7 @@ class Command(BaseCommand):
                 try:
                     os.remove(file_path)
                     self.stdout.write(self.style.NOTICE(f"Deleted old backup: {os.path.basename(file_path)}"))
-                except Exception as e:
+                except (ValueError, TypeError, KeyError, AttributeError, RuntimeError, OSError) as e:
                     self.stderr.write(self.style.ERROR(f"Failed to delete {file_path}: {e}"))
         else:
             self.stdout.write(self.style.SUCCESS("No old backups needed to be deleted."))

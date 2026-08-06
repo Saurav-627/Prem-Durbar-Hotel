@@ -1,10 +1,12 @@
-from . import auth  # noqa: F401
-from . import home  # noqa: F401
-from . import settings  # noqa: F401
-from . import rooms  # noqa: F401
-from . import bookings  # noqa: F401
-from . import payments  # noqa: F401
-from . import dining  # noqa: F401
-from . import contact  # noqa: F401
-from . import cms  # noqa: F401
-from . import users  # noqa: F401
+from . import (
+    auth,  # noqa: F401
+    bookings,  # noqa: F401
+    cms,  # noqa: F401
+    contact,  # noqa: F401
+    dining,  # noqa: F401
+    home,  # noqa: F401
+    payments,  # noqa: F401
+    rooms,  # noqa: F401
+    settings,  # noqa: F401
+    users,  # noqa: F401
+)

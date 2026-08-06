@@ -1,4 +1,5 @@
 from django.urls import path
+
 from .views import public
 
 app_name = 'payments'
